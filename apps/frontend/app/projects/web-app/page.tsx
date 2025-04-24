@@ -5,15 +5,19 @@ import ProjectTemplate from "../project-template"
 export default function WebAppProjectPage() {
   const projectData = {
     projectTitle: "ウェブアプリ開発",
+    projectColor: "#31A9B8",
     taskGroups: [
       {
         id: "group-1",
         title: "プロジェクト準備",
         expanded: true,
+        completed: false,
         tasks: [
           {
             id: "task-1",
             title: "開発環境を構築する",
+            status: "todo" as const,
+            progress: 0,
             completed: false,
             expanded: true,
             subtasks: [
@@ -27,6 +31,8 @@ export default function WebAppProjectPage() {
           {
             id: "task-2",
             title: "デザイン要件を確認する",
+            status: "todo" as const,
+            progress: 0,
             completed: false,
             expanded: true,
             subtasks: [
@@ -42,10 +48,13 @@ export default function WebAppProjectPage() {
         id: "group-2",
         title: "フロントエンド開発 (React, Tailwind CSS, TypeScript, Next.js)",
         expanded: true,
+        completed: false,
         tasks: [
           {
             id: "task-3",
             title: "UI コンポーネントを作成する",
+            status: "todo" as const,
+            progress: 0,
             completed: false,
             expanded: true,
             subtasks: [
@@ -63,6 +72,8 @@ export default function WebAppProjectPage() {
           {
             id: "task-4",
             title: "状態管理を実装する (例: useState, useContext, Redux, Zustand など)",
+            status: "todo" as const,
+            progress: 0,
             completed: false,
             expanded: true,
             subtasks: [
@@ -74,6 +85,8 @@ export default function WebAppProjectPage() {
           {
             id: "task-5",
             title: "API クライアントを実装する (Next.js API Routes 連携)",
+            status: "todo" as const,
+            progress: 0,
             completed: false,
             expanded: true,
             subtasks: [
@@ -89,10 +102,13 @@ export default function WebAppProjectPage() {
         id: "group-3",
         title: "バックエンド開発 (Node.js, Next.js API Routes)",
         expanded: false,
+        completed: false,
         tasks: [
           {
             id: "task-6",
             title: "API エンドポイントを設計する",
+            status: "todo" as const,
+            progress: 0,
             completed: false,
             expanded: false,
             subtasks: [
@@ -105,6 +121,8 @@ export default function WebAppProjectPage() {
           {
             id: "task-7",
             title: "API ロジックを実装する",
+            status: "todo" as const,
+            progress: 0,
             completed: false,
             expanded: false,
             subtasks: [
@@ -120,7 +138,6 @@ export default function WebAppProjectPage() {
         ],
       },
     ],
-    projectColor: "#31A9B8",
   }
 
   return <ProjectTemplate {...projectData} />

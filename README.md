@@ -46,3 +46,8 @@ pnpm dev
 ## ライセンス
 
 MIT
+
+
+openAI APIkey : 
+
+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

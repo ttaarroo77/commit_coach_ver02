@@ -1,11 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { DragDropContext } from "react-beautiful-dnd"
-import { Clock } from "lucide-react"
 import { Sidebar } from "@/components/sidebar"
 import { AIChat } from "@/components/ai-chat"
-import { TaskGroup } from "@/components/dashboard/TaskGroup"
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
+import { TaskGroupList } from "@/components/dashboard/TaskGroupList"
 import { useTaskManagement } from "@/hooks/useTaskManagement"
 import { useTaskData } from "@/hooks/useTaskData"
 
@@ -23,15 +22,9 @@ export default function DashboardPage() {
     sortOrder,
     sortTasksByDueDate,
     toggleTaskGroup,
-    toggleTask,
-    updateTaskTitle,
-    updateSubtaskTitle,
-    toggleTaskStatus,
-    toggleSubtaskCompleted,
+    updateGroupTitle,
     addTask,
-    addSubtask,
     deleteTask,
-    deleteSubtask,
     handleDragEnd,
   } = useTaskManagement(fetchedTaskGroups.length > 0 ? fetchedTaskGroups : initialTaskGroups)
 
@@ -47,14 +40,6 @@ export default function DashboardPage() {
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  const formatTimeDisplay = (date: Date) => {
-    return date.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
-  }
-
-  const formatDateDisplay = (date: Date) => {
-    return date.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric", weekday: "long" })
-  }
 
   if (!mounted) {
     return null
@@ -78,41 +63,19 @@ export default function DashboardPage() {
         <main className="flex flex-1 overflow-hidden">
           <div className="flex-1 overflow-auto p-6">
             {/* ヘッダー部分 */}
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold">ダッシュボード</h1>
-                <p className="text-sm text-gray-500">{formatDateDisplay(currentTime)}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="text-right">
-                  <p className="text-sm font-medium">現在時刻</p>
-                  <p className="text-2xl font-bold">{formatTimeDisplay(currentTime)}</p>
-                </div>
-                <div className="h-10 w-10 rounded-full bg-[#31A9B8] text-white flex items-center justify-center">
-                  <Clock className="h-5 w-5" />
-                </div>
-              </div>
-            </div>
+            <DashboardHeader currentTime={currentTime} />
 
             {/* タスクグループのリスト - ドラッグ&ドロップコンテキスト */}
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <div className="space-y-6">
-                {taskGroups.map((group) => (
-                  <TaskGroup
-                    key={group.id}
-                    group={group}
-                    onToggleGroup={toggleTaskGroup}
-                    onDeleteTask={deleteTask}
-                    onAddTask={addTask}
-                    onUpdateGroupTitle={(groupId, newTitle) => {
-                      // TODO: Implement updateGroupTitle
-                    }}
-                    onSortTasks={sortTasksByDueDate}
-                    sortOrder={sortOrder}
-                  />
-                ))}
-              </div>
-            </DragDropContext>
+            <TaskGroupList
+              taskGroups={taskGroups}
+              sortOrder={sortOrder}
+              onDragEnd={handleDragEnd}
+              onToggleGroup={toggleTaskGroup}
+              onDeleteTask={deleteTask}
+              onAddTask={addTask}
+              onUpdateGroupTitle={updateGroupTitle}
+              onSortTasks={sortTasksByDueDate}
+            />
           </div>
 
           {/* AIコーチング */}

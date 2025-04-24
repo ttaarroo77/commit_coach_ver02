@@ -11,12 +11,12 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
   // 今日の日付
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   // 期限が7日以内のタスク（完了済み以外）を抽出して期限順にソート
   const upcomingTasks = tasks
-    .filter(task => 
-      task.status !== 'completed' && 
-      task.dueDate && 
+    .filter(task =>
+      task.status !== 'completed' &&
+      task.dueDate &&
       new Date(task.dueDate) >= today &&
       (new Date(task.dueDate).getTime() - today.getTime()) <= 7 * 24 * 60 * 60 * 1000
     )
@@ -25,12 +25,12 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
     })
     .slice(0, 5); // 最大5件表示
-  
+
   // 期限切れのタスク（完了済み以外）を抽出して期限順にソート
   const overdueTasks = tasks
-    .filter(task => 
-      task.status !== 'completed' && 
-      task.dueDate && 
+    .filter(task =>
+      task.status !== 'completed' &&
+      task.dueDate &&
       new Date(task.dueDate) < today
     )
     .sort((a, b) => {
@@ -44,20 +44,20 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
     const date = new Date(dateString);
     return date.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' });
   };
-  
+
   // タスクの期限までの日数を計算する関数
   const getDaysUntil = (dateString: string) => {
     const date = new Date(dateString);
     date.setHours(0, 0, 0, 0);
     const diffTime = date.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return "今日";
     if (diffDays === 1) return "明日";
     if (diffDays < 0) return `${Math.abs(diffDays)}日経過`;
     return `${diffDays}日後`;
   };
-  
+
   // プロジェクトに応じた色を返す関数
   const getProjectColor = (project: string) => {
     const colorMap: Record<string, string> = {
@@ -66,7 +66,7 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
       "QA": "bg-green-100 text-green-800",
       "チーム管理": "bg-orange-100 text-orange-800"
     };
-    
+
     return colorMap[project] || "bg-gray-100 text-gray-800";
   };
 
@@ -95,9 +95,21 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
                     </Badge>
                   </div>
                   <div className="flex items-center mt-1">
-                    {task.project && (
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${getProjectColor(task.project)}`}>
-                        {task.project}
+                    {task.priority && (
+                      <span
+                        className={`text-xs px-1.5 py-0.5 rounded-full ${task.priority === "high" || task.priority === "緊急" || task.priority === "高"
+                            ? "bg-red-100 text-red-800"
+                            : task.priority === "medium" || task.priority === "中"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                      >
+                        {task.priority}
+                      </span>
+                    )}
+                    {task.projectId && (
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${getProjectColor(task.projectId)}`}>
+                        {task.projectId}
                       </span>
                     )}
                     <span className="text-xs text-gray-500 ml-2">
@@ -109,7 +121,7 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
             </ul>
           </div>
         )}
-        
+
         {upcomingTasks.length > 0 && (
           <div>
             <div className="flex items-center mb-2">
@@ -126,9 +138,21 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
                     </Badge>
                   </div>
                   <div className="flex items-center mt-1">
-                    {task.project && (
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${getProjectColor(task.project)}`}>
-                        {task.project}
+                    {task.priority && (
+                      <span
+                        className={`text-xs px-1.5 py-0.5 rounded-full ${task.priority === "high" || task.priority === "緊急" || task.priority === "高"
+                            ? "bg-red-100 text-red-800"
+                            : task.priority === "medium" || task.priority === "中"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                      >
+                        {task.priority}
+                      </span>
+                    )}
+                    {task.projectId && (
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${getProjectColor(task.projectId)}`}>
+                        {task.projectId}
                       </span>
                     )}
                     <span className="text-xs text-gray-500 ml-2">
@@ -140,7 +164,7 @@ export function UpcomingTasksCard({ tasks }: UpcomingTasksCardProps) {
             </ul>
           </div>
         )}
-        
+
         {upcomingTasks.length === 0 && overdueTasks.length === 0 && (
           <div className="text-center py-4 text-gray-500 text-sm">
             期限間近のタスクはありません

@@ -1,45 +1,138 @@
 import { Request, Response, NextFunction } from 'express';
-import { supabase } from '../config/supabase';
+import jwt from 'jsonwebtoken';
+import { supabaseAdmin } from '../config/supabase';
+import { ApiError } from './errorHandler';
 
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-  };
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+      };
+    }
+  }
 }
 
-export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+/**
+ * JWT認証ミドルウェア
+ * このミドルウェアはリクエストヘッダーからJWTトークンを取得し、
+ * 検証後にユーザー情報をリクエストに追加します
+ */
+export const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization;
+    // Authorization ヘッダーからトークンを取得
+    const token = req.headers.authorization?.split(' ')[1];
 
-    if (!authHeader) {
-      return res.status(401).json({ error: '認証トークンが必要です' });
-    }
-
-    const token = authHeader.split(' ')[1];
     if (!token) {
-      return res.status(401).json({ error: '無効な認証トークン形式です' });
+      throw new ApiError(401, '認証トークンがありません');
     }
 
-    // SupabaseでJWTを検証
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
+    try {
+      // トークンを検証
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || 'jwt_secret'
+      ) as { userId: string };
 
-    if (error || !user) {
-      return res.status(401).json({ error: '無効な認証トークンです' });
+      // ユーザーが実際に存在するか確認
+      const { data: user, error } = await supabaseAdmin
+        .from('users')
+        .select('id')
+        .eq('id', decoded.userId)
+        .single();
+
+      if (error || !user) {
+        throw new ApiError(401, 'ユーザーが見つかりません');
+      }
+
+      // リクエストにユーザー情報を追加
+      req.user = { id: decoded.userId };
+      next();
+    } catch (error) {
+      if (error instanceof jwt.JsonWebTokenError) {
+        throw new ApiError(401, '無効なトークンです');
+      }
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new ApiError(401, 'トークンの有効期限が切れています');
+      }
+      throw error;
     }
-
-    // リクエストオブジェクトにユーザー情報を追加
-    req.user = {
-      id: user.id,
-      email: user.email || '',
-    };
-
-    next();
   } catch (error) {
-    console.error('認証エラー:', error);
-    return res.status(500).json({ error: '認証処理中にエラーが発生しました' });
+    next(error);
   }
+};
+
+/**
+ * 特定のロールを持つユーザーのみアクセスを許可するミドルウェア
+ * @param roles 許可するロールの配列
+ */
+export const restrictTo = (roles: string[]) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) {
+        throw new ApiError(401, '認証されていません');
+      }
+
+      // ユーザーのロールを取得
+      const { data: userData, error } = await supabaseAdmin
+        .from('users')
+        .select('role')
+        .eq('id', req.user.id)
+        .single();
+
+      if (error || !userData) {
+        throw new ApiError(401, 'ユーザーが見つかりません');
+      }
+
+      // 許可されたロールでない場合はアクセス拒否
+      if (!roles.includes(userData.role)) {
+        throw new ApiError(403, 'この操作を行う権限がありません');
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+/**
+ * リソースの所有者かチェックするミドルウェアを生成する関数
+ * @param resourceType リソースの種類（テーブル名）
+ * @param paramIdField リクエストパラメータのIDフィールド（デフォルト: id）
+ * @param userIdField テーブル内のユーザーIDフィールド（デフォルト: user_id）
+ */
+export const isOwner = (
+  resourceType: string,
+  paramIdField = 'id',
+  userIdField = 'user_id'
+) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) {
+        throw new ApiError(401, '認証されていません');
+      }
+
+      const resourceId = req.params[paramIdField];
+      if (!resourceId) {
+        throw new ApiError(400, 'リソースIDが指定されていません');
+      }
+
+      // リソースの所有者を確認
+      const { data, error } = await supabaseAdmin
+        .from(resourceType)
+        .select('id')
+        .eq('id', resourceId)
+        .eq(userIdField, req.user.id)
+        .single();
+
+      if (error || !data) {
+        throw new ApiError(403, 'このリソースにアクセスする権限がありません');
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
 };

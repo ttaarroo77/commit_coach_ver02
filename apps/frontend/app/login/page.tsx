@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
@@ -11,29 +9,44 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [mounted, setMounted] = useState(false)
+
+  // useAuthはクライアントサイドでマウント後にのみ使用
+  const auth = useAuth()
+  
+  // react-hook-formの設定
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
 
   // クライアントサイドでのみ実行される処理
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // useAuthはクライアントサイドでマウント後にのみ使用
-  const auth = useAuth()
-
   // デモモードを使用する関数
   const useDemoMode = useCallback(() => {
-    setEmail("demo@example.com")
-    setPassword("demopassword")
-  }, [])
+    setValue("email", "demo@example.com")
+    setValue("password", "demopassword")
+  }, [setValue])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await auth.login(email, password)
+  // フォーム送信時の処理
+  const onSubmit = async (data: LoginFormValues) => {
+    await auth.login(data.email, data.password)
   }
 
   // クライアントサイドでのみレンダリング
@@ -57,7 +70,7 @@ export default function LoginPage() {
             <CardDescription className="text-center">アカウント情報を入力してログインしてください</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {auth.error && (
                 <Alert variant="destructive">
                   <AlertDescription>{auth.error}</AlertDescription>
@@ -69,10 +82,12 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="example@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  {...register("email")}
+                  aria-invalid={errors.email ? "true" : "false"}
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -85,10 +100,12 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  {...register("password")}
+                  aria-invalid={errors.password ? "true" : "false"}
                 />
+                {errors.password && (
+                  <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
+                )}
               </div>
               <Button type="submit" className="w-full bg-[#31A9B8] hover:bg-[#2a8f9c]" disabled={auth.loading}>
                 {auth.loading ? (

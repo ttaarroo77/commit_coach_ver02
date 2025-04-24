@@ -8,16 +8,19 @@ last_updated: "2025-04-22"
 
 # 開発手順書 – 要約＋付録詳細方式 (v3.0)
 
-この文書は **分離型モノレポ (Next.js × Express) 方針の正式版** です。旧版との差分を完全に吸収し、200 Step チェックリストを再整備しました。
+この文書は **分離型モノレポ (Next.js × Express) 方針の正式版** です。
+旧版との差分を完全に吸収し、200 Step チェックリストを再整備しました。
+
+ 
 
 ---
 
 ## 1. 進捗サマリ（毎週更新）
 | レイヤ | 完了 | 直近 TODO |
 |--------|------|-----------|
-| **共通基盤** | Step 0‑6 完了 | Step 7‑10: ESLint/Husky/CI 初回コミット |
-| **Frontend** | Step 1‑38 完了 | Step 41‑60: Kanban (dnd‑kit) & UI リファクタ |
-| **Backend** | Step 101‑110 完了 | Step 111‑120: Supabase スキーマ & RLS |
+| **共通基盤** | Step 0‑20 完了 (除Step 14) | Step 14: DevContainer設定 (任意) |
+| **Frontend** | Step 21‑42 完了 | Step 43‑59: タスク管理UI & カンバンボード |
+| **Backend** | Step 101‑137 完了 | Step 138‑140: 認証E2Eテスト |
 | **品質/CI** | lint ✅ | unit/E2E テスト → CI グリーン化 |
 | **デプロイ** | 未着手 | Step 181‑190: Docker & Fly.io |
 
@@ -53,45 +56,46 @@ last_updated: "2025-04-22"
 - [x] **8**  Husky & lint‑staged (`pre-commit`: fmt+lint)
 - [x] **9**  GitHub Actions: install → lint → test ワークフロー
 - [x] **10** 初回コミット `feat: bootstrap monorepo`
-- [ ] **11** apps/frontend `tsconfig.json` 調整
-- [ ] **12** Tailwind `tailwind.config.js` カスタムテーマ
-- [ ] **13** VSCode workspace 設定
+- [x] **11** apps/frontend `tsconfig.json` 調整
+- [x] **12** Tailwind `tailwind.config.js` カスタムテーマ
+- [x] **13** VSCode workspace 設定
 - [ ] **14** DevContainer / Docker 開発環境 (任意)
-- [ ] **15** Conventional Commits チェック (commitlint)
-- [ ] **16** Dependabot / Renovate 設定
-- [ ] **17** `.editorconfig` 追加
-- [ ] **18** Issue & PR テンプレ作成
-- [ ] **19** CODEOWNERS 追加
-- [ ] **20** GitHub Discussions / Wiki 有効化
+- [x] **15** Conventional Commits チェック (commitlint)
+- [x] **16** Dependabot / Renovate 設定
+- [x] **17** `.editorconfig` 追加
+- [x] **18** Issue & PR テンプレ作成
+- [x] **19** CODEOWNERS 追加
+- [x] **20** GitHub Discussions / Wiki 有効化
 
 ### フロントエンド (21‑100)
 #### 3.1 認証 & ダッシュボード (21‑40)
-- [ ] **21** `/login` ページ – Email/PW フォーム
-- [ ] **22** `useAuth` Context (Supabase)
-- [ ] **23** JWT を Cookie 保存
-- [ ] **24** `/logout` 処理
-- [ ] **25** 認証ガード (Next.js middleware)
-- [ ] **26** `/register` & `/password/reset` ページ
-- [ ] **27** react-hook‑form + zod バリデーション
-- [ ] **28** ローディング & エラーメッセージ
-- [ ] **29** commit `feat(frontend): auth flow`
-- [ ] **30** RTL ユニットテスト(Auth)
-- [ ] **31** `/dashboard` 骨格
-- [ ] **32** AIチャットプレースホルダ
-- [ ] **33** 今日のタスク / 期限間近カード
-- [ ] **34** 時計 & mini‑calendar
-- [ ] **35** レスポンシブ調整
-- [ ] **36** モックデータ (SWR)
-- [ ] **37** UI アニメーション
-- [ ] **38** commit `feat(frontend): dashboard`
-- [ ] **39** (空き)
-- [ ] **40** (空き)
+- [x] **21** `/login` ページ – Email/PW フォーム
+- [x] **22** `useAuth` Context (Supabase)
+- [x] **23** JWT を Cookie 保存
+- [x] **24** `/logout` 処理
+- [x] **25** 認証ガード (Next.js middleware)
+- [x] **26** `/register` & `/password/reset` ページ
+- [x] **27** react-hook‑form + zod バリデーション
+- [x] **28** ローディング & エラーメッセージ
+- [x] **29** commit `feat(frontend): auth flow`
+- [x] **30** RTL ユニットテスト(Auth)
+- [x] **31** `/dashboard` 骨格 (de18e57a)
+- [x] **32** AIチャットプレースホルダ (de18e57a)
+- [x] **33** 今日のタスク / 期限間近カード (de18e57a)
+- [x] **34** 時計 & mini‑calendar (de18e57a)
+- [x] **35** レスポンシブ調整 (de18e57a)
+- [x] **36** モックデータ (SWR) (de18e57a)
+- [x] **37** UI アニメーション (de18e57a)
+- [x] **38** commit `feat(frontend): dashboard` (de18e57a)
+- [x] **39** ダッシュボードユニットテスト (de18e57a)
+- [x] **40** コンポーネントユニットテスト (de18e57a)
 
 #### 3.2 Kanban & リファクタ (41‑60)
-- [ ] **41** ダッシュボードコンポーネント分割
-- [ ] **42** `useTaskManagement` / `useDragAndDrop` hooks
-- [ ] **43** 型定義強化 (Task, Project)
+- [x] **41** ダッシュボードコンポーネント分割 (de18e57a)
+- [x] **42** `useTaskManagement` / `useDragAndDrop` hooks (de18e57a)
+- [x] **43** 型定義強化 (Task, Project) (#TYPE_PR_ID)
 - [ ] **44** RTL + Cypress テスト追加
+  - 後回しすること ：apps/frontend/__tests__/hooks/useTaskManagement.test.ts にテストケース追加
 - [ ] **45** commit `refactor(frontend): split dashboard`
 - [ ] **46** `/projects` 一覧 UI
 - [ ] **47** 検索 & フィルタ
@@ -145,47 +149,47 @@ last_updated: "2025-04-22"
 
 ### バックエンド (101‑200)
 #### 4.1 初期化 (101‑110)
-- [ ] **101** apps/backend 生成
-- [ ] **102** `npm init -y`
-- [ ] **103** TypeScript, ESLint, Prettier 設定
-- [ ] **104** Express & ts-node-dev
-- [ ] **105** tsconfig
-- [ ] **106** 開発サーバースクリプト
-- [ ] **107** commit `feat(backend): init`
-- [ ] **108** .env.example 追加
-- [ ] **109** API 方針ドキュメント
-- [ ] **110** "Hello from Backend" ルート
+- [x] **101** apps/backend 生成
+- [x] **102** `npm init -y`
+- [x] **103** TypeScript, ESLint, Prettier 設定
+- [x] **104** Express & ts-node-dev
+- [x] **105** tsconfig
+- [x] **106** 開発サーバースクリプト
+- [x] **107** commit `feat(backend): init`
+- [x] **108** .env.example 追加
+- [x] **109** API 方針ドキュメント
+- [x] **110** "Hello from Backend" ルート
 
 #### 4.2 DB & マイグレーション (111‑120)
-- [ ] **111** Supabase プロジェクト作成
-- [ ] **112** `@supabase/supabase-js` 導入
-- [ ] **113** Prisma schema → `supabase db push`
-- [ ] **114** users / projects / tasks 他テーブル
-- [ ] **115** RLS ポリシー auth.uid() 制限
-- [ ] **116** 外部キー & Index
-- [ ] **117** `supabase/migrations` コミット
-- [ ] **118** 接続テスト
-- [ ] **119** トランザクション方針
-- [ ] **120** commit `chore(backend): db schema`
+- [x] **111** Supabase プロジェクト作成
+- [x] **112** `@supabase/supabase-js` 導入
+- [x] **113** Prisma schema → `supabase db push`
+- [x] **114** users / projects / tasks 他テーブル
+- [x] **115** RLS ポリシー auth.uid() 制限
+- [x] **116** 外部キー & Index
+- [x] **117** `supabase/migrations` コミット
+- [x] **118** 接続テスト
+- [x] **119** トランザクション方針
+- [x] **120** commit `chore(backend): db schema`
 
 #### 4.3 ルーティング & 認証 (121‑140)
-- [ ] **121** `src/routes/index.ts` Router
-- [ ] **122** `/api/v1/users` CRUD
-- [ ] **123** `/api/v1/projects` CRUD
-- [ ] **124** Zod バリデーション MW
-- [ ] **125** GET `/projects` 実装
-- [ ] **126** POST `/projects` 実装
-- [ ] **127** GET `/tasks` 実装
-- [ ] **128** 共通 ErrorHandler JSON
+- [x] **121** `src/routes/index.ts` Router
+- [x] **122** `/api/v1/users` CRUD
+- [x] **123** `/api/v1/projects` CRUD
+- [x] **124** Zod バリデーション MW
+- [x] **125** GET `/projects` 実装
+- [x] **126** POST `/projects` 実装
+- [x] **127** GET `/tasks` 実装
+- [x] **128** 共通 ErrorHandler JSON
 - [ ] **129** commit `feat(backend): basic routes`
-- [ ] **130** CORS & morgan ログ
-- [ ] **131** JWT ミドルウェア
-- [ ] **132** POST `/auth/login`
-- [ ] **133** POST `/auth/signup`
-- [ ] **134** `/auth/logout`
-- [ ] **135** オーナーチェック MW
-- [ ] **136** 役割ベース guard
-- [ ] **137** 401/403 共通レスポンス
+- [x] **130** CORS & morgan ログ
+- [x] **131** JWT ミドルウェア
+- [x] **132** POST `/auth/login`
+- [x] **133** POST `/auth/signup`
+- [x] **134** `/auth/logout`
+- [x] **135** オーナーチェック MW
+- [x] **136** 役割ベース guard
+- [x] **137** 401/403 共通レスポンス
 - [ ] **138** 認証 E2E テスト
 - [ ] **139** commit `feat(backend): auth`
 - [ ] **140** 認証テスト pass
@@ -201,26 +205,16 @@ last_updated: "2025-04-22"
 - [ ] **148** 所有権チェック
 - [ ] **149** commit `feat(backend): controllers`
 - [ ] **150** Service ユニットテスト
-- [ ] **151** POST `/ai/coach` (OpenAI)
-- [ ] **152** ユーザー별モデル設定取得
-- [ ] **153** OpenAI API 呼び出し
-- [ ] **154** タスク分解 API
-- [ ] **155** redis‑rate‑limit
-- [ ] **156** OpenAI エラーリトライ
-- [ ] **157** ai_messages テーブル保存
-- [ ] **158** レスポンスフォーマット確定
-- [ ] **159** commit `feat(backend): ai endpoints`
-- [ ] **160** AI API テスト
-- [ ] **161** task_groups CRUD
-- [ ] **162** `/task-groups` ルート
-- [ ] **163** tasks CRUD
-- [ ] **164** subtasks CRUD
-- [ ] **165** 並び順更新 API
-- [ ] **166** 期限/完了更新 API
-- [ ] **167** bulk 更新トランザクション
-- [ ] **168** 所有権チェック強化
-- [ ] **169** commit `feat(backend): task crud`
-- [ ] **170** CRUD 結合テスト pass
+- [x] **151** POST `/ai/coach` (OpenAI)
+- [x] **152** ユーザー別モデル設定取得
+- [x] **153** OpenAI API 呼び出し
+- [x] **154** タスク分解 API
+- [x] **155** redis‑rate‑limit
+- [x] **156** OpenAI エラーリトライ
+- [x] **157** ai_messages テーブル保存
+- [x] **158** レスポンスフォーマット確定
+- [x] **159** commit `feat(backend): ai endpoints`
+- [x] **160** AI API テスト
 
 #### 4.5 テスト・デプロイ・運用 (171‑200)
 - [ ] **171** Supertest 統合テスト雛形

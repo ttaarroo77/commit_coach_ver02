@@ -1,14 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
-if (!process.env.SUPABASE_URL) {
-  throw new Error('SUPABASE_URL is not defined');
+// 環境変数の読み込み
+dotenv.config();
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables');
+  process.exit(1);
 }
 
-if (!process.env.SUPABASE_ANON_KEY) {
-  throw new Error('SUPABASE_ANON_KEY is not defined');
-}
+// 管理者権限を持つクライアント（バックエンド用）
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-export const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+// 匿名クライアント（認証前のフロントエンド用）
+export const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey);
+
+// テスト用にデフォルトエクスポート
+export default supabaseAdmin;
 
 // テーブル名の定数
 export const TABLES = {

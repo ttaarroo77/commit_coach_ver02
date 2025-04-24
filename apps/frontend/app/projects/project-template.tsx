@@ -22,30 +22,7 @@ import {
   GripVertical,
   RefreshCw,
 } from "lucide-react"
-
-interface SubTask {
-  id: string
-  title: string
-  completed: boolean
-}
-
-interface Task {
-  id: string
-  title: string
-  completed: boolean
-  expanded: boolean
-  subtasks: SubTask[]
-  dueDate?: string // 納期（日付と時刻）
-}
-
-interface TaskGroup {
-  id: string
-  title: string
-  expanded: boolean
-  tasks: Task[]
-  dueDate?: string // 納期（日付と時刻）
-  completed: boolean
-}
+import type { Task, TaskGroup, SubTask } from "@/types/dashboard"
 
 // ProjectTemplatePropsインターフェースを更新
 interface ProjectTemplateProps {
@@ -157,6 +134,11 @@ const reorder = <T,>(list: T[], startIndex: number, endIndex: number): T[] => {
   return result
 }
 
+// タスクの完了状態をstatusから判断する
+const isTaskCompleted = (task: Task): boolean => {
+  return task.status === "completed"
+}
+
 // ProjectTemplate関数の引数を更新
 export default function ProjectTemplate({
   projectTitle: initialProjectTitle,
@@ -174,7 +156,8 @@ export default function ProjectTemplate({
       completed: group.completed || false,
       tasks: group.tasks.map((task) => ({
         ...task,
-        completed: task.completed || false,
+        // status から completed を導出
+        completed: task.completed !== undefined ? task.completed : task.status === "completed",
       })),
     })),
   )
@@ -208,8 +191,10 @@ export default function ProjectTemplate({
         // タスクを期限でソート
         const sortedTasks = [...group.tasks].sort((a, b) => {
           // 完了したタスクは常に下部に
-          if (a.completed && !b.completed) return 1
-          if (!a.completed && b.completed) return -1
+          const aCompleted = isTaskCompleted(a)
+          const bCompleted = isTaskCompleted(b)
+          if (aCompleted && !bCompleted) return 1
+          if (!aCompleted && bCompleted) return -1
 
           // 期限がないタスクは下部に
           if (!a.dueDate && !b.dueDate) return 0
@@ -333,9 +318,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, expanded: !task.expanded } : task)),
-            }
+            ...group,
+            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, expanded: !task.expanded } : task)),
+          }
           : group,
       ),
     )
@@ -449,18 +434,18 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      subtasks: task.subtasks.map((subtask) =>
-                        subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask,
-                      ),
-                    }
-                  : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: task.subtasks.map((subtask) =>
+                    subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask,
+                  ),
+                }
+                : task,
+            ),
+          }
           : group,
       ),
     )
@@ -501,9 +486,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, title: newTitle } : task)),
-            }
+            ...group,
+            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, title: newTitle } : task)),
+          }
           : group,
       ),
     )
@@ -515,9 +500,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, dueDate: newDueDate } : task)),
-            }
+            ...group,
+            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, dueDate: newDueDate } : task)),
+          }
           : group,
       ),
     )
@@ -529,18 +514,18 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      subtasks: task.subtasks.map((subtask) =>
-                        subtask.id === subtaskId ? { ...subtask, title: newTitle } : subtask,
-                      ),
-                    }
-                  : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: task.subtasks.map((subtask) =>
+                    subtask.id === subtaskId ? { ...subtask, title: newTitle } : subtask,
+                  ),
+                }
+                : task,
+            ),
+          }
           : group,
       ),
     )
@@ -557,9 +542,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.filter((task) => task.id !== taskId),
-            }
+            ...group,
+            tasks: group.tasks.filter((task) => task.id !== taskId),
+          }
           : group,
       ),
     )
@@ -574,16 +559,16 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      subtasks: task.subtasks.filter((subtask) => subtask.id !== subtaskId),
-                    }
-                  : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: task.subtasks.filter((subtask) => subtask.id !== subtaskId),
+                }
+                : task,
+            ),
+          }
           : group,
       ),
     )
@@ -611,6 +596,8 @@ export default function ProjectTemplate({
     const newTask: Task = {
       id: `task-${Date.now()}`,
       title: "新しいタスク",
+      status: "todo", // 必須プロパティを追加
+      progress: 0,    // 必須プロパティを追加
       completed: false,
       expanded: true,
       subtasks: [],
@@ -637,11 +624,11 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId ? { ...task, subtasks: [...task.subtasks, newSubtask] } : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId ? { ...task, subtasks: [...task.subtasks, newSubtask] } : task,
+            ),
+          }
           : group,
       ),
     )
@@ -912,7 +899,9 @@ export default function ProjectTemplate({
                         onClick={() => sortTasksByDueDate(sortOrder === "asc" ? "desc" : "asc")}
                         title="更新"
                       >
-                        <RefreshCw className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : iconStyle}`} />
+                        <RefreshCw
+                          className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : "text-gray-300"}`}
+                        />
                       </Button>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="他メニュー">
                         <MoreHorizontal className={iconStyle} />
@@ -1055,7 +1044,7 @@ export default function ProjectTemplate({
                                           title="更新"
                                         >
                                           <RefreshCw
-                                            className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : iconStyle}`}
+                                            className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : "text-gray-300"}`}
                                           />
                                         </Button>
                                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="他メニュー">
@@ -1086,289 +1075,299 @@ export default function ProjectTemplate({
                                             minHeight: snapshot.isDraggingOver ? "50px" : "auto",
                                           }}
                                         >
-                                          {group.tasks.map((task, taskIndex) => (
-                                            <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
-                                              {(provided, snapshot) => (
-                                                <div
-                                                  ref={provided.innerRef}
-                                                  {...provided.draggableProps}
-                                                  style={{
-                                                    ...provided.draggableProps.style,
-                                                    opacity: snapshot.isDragging ? 0.8 : 1,
-                                                    zIndex: snapshot.isDragging ? 10 : 1,
-                                                    position: snapshot.isDragging ? "relative" : "static",
-                                                    pointerEvents: snapshot.isDragging ? "none" : "auto",
-                                                  }}
-                                                  className={snapshot.isDragging ? "" : ""}
-                                                >
+                                          {group.tasks
+                                            .sort((a, b) => {
+                                              // 完了したタスクを下に移動
+                                              const aCompleted = isTaskCompleted(a)
+                                              const bCompleted = isTaskCompleted(b)
+
+                                              if (aCompleted && !bCompleted) return 1
+                                              if (!aCompleted && bCompleted) return -1
+                                              return 0
+                                            })
+                                            .map((task, taskIndex) => (
+                                              <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
+                                                {(provided, snapshot) => (
                                                   <div
-                                                    className={`border rounded-md ${snapshot.isDragging ? "shadow-lg bg-gray-50" : ""}`}
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    style={{
+                                                      ...provided.draggableProps.style,
+                                                      opacity: snapshot.isDragging ? 0.8 : 1,
+                                                      zIndex: snapshot.isDragging ? 10 : 1,
+                                                      position: snapshot.isDragging ? "relative" : "static",
+                                                      pointerEvents: snapshot.isDragging ? "none" : "auto",
+                                                    }}
+                                                    className={snapshot.isDragging ? "" : ""}
                                                   >
-                                                    {/* 中タスク */}
                                                     <div
-                                                      className="p-3 bg-gray-50 flex items-center"
-                                                      onMouseEnter={() =>
-                                                        setHoveredTask({ groupId: group.id, taskId: task.id })
-                                                      }
-                                                      onMouseLeave={() => setHoveredTask(null)}
+                                                      className={`border rounded-md ${snapshot.isDragging ? "shadow-lg bg-gray-50" : ""}`}
                                                     >
-                                                      <div className="flex items-center flex-1 gap-4">
-                                                        {/* 展開/折りたたみボタン - 左端に配置 */}
-                                                        <Button
-                                                          variant="ghost"
-                                                          size="sm"
-                                                          className="p-0 h-6 w-6"
-                                                          onClick={() => toggleTask(group.id, task.id)}
-                                                        >
-                                                          {task.expanded ? (
-                                                            <ChevronDown className="h-4 w-4" />
-                                                          ) : (
-                                                            <ChevronRight className="h-4 w-4" />
-                                                          )}
-                                                        </Button>
+                                                      {/* 中タスク */}
+                                                      <div
+                                                        className="p-3 bg-gray-50 flex items-center"
+                                                        onMouseEnter={() =>
+                                                          setHoveredTask({ groupId: group.id, taskId: task.id })
+                                                        }
+                                                        onMouseLeave={() => setHoveredTask(null)}
+                                                      >
+                                                        <div className="flex items-center flex-1 gap-4">
+                                                          {/* 展開/折りたたみボタン - 左端に配置 */}
+                                                          <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="p-0 h-6 w-6"
+                                                            onClick={() => toggleTask(group.id, task.id)}
+                                                          >
+                                                            {task.expanded ? (
+                                                              <ChevronDown className="h-4 w-4" />
+                                                            ) : (
+                                                              <ChevronRight className="h-4 w-4" />
+                                                            )}
+                                                          </Button>
 
-                                                        {/* ドラッグハンドル */}
-                                                        <div {...provided.dragHandleProps} className="cursor-grab mr-2">
-                                                          <GripVertical className="h-4 w-4 text-gray-400" />
-                                                        </div>
+                                                          {/* ドラッグハンドル */}
+                                                          <div {...provided.dragHandleProps} className="cursor-grab mr-2">
+                                                            <GripVertical className="h-4 w-4 text-gray-400" />
+                                                          </div>
 
-                                                        {/* チェックボックス */}
-                                                        <Checkbox
-                                                          checked={task.completed}
-                                                          onCheckedChange={() => toggleTaskCompleted(group.id, task.id)}
-                                                        />
-
-                                                        {/* タスクタイトル */}
-                                                        <span
-                                                          className={`flex-1 ${task.completed ? "line-through text-gray-400" : ""}`}
-                                                        >
-                                                          <EditableText
-                                                            value={task.title}
-                                                            onChange={(newTitle) =>
-                                                              updateTaskTitle(group.id, task.id, newTitle)
-                                                            }
-                                                            prefix="### "
-                                                            className={
-                                                              task.completed ? "line-through text-gray-400" : ""
-                                                            }
-                                                            isOverdue={!task.completed && isDateOverdue(task.dueDate)}
+                                                          {/* チェックボックス */}
+                                                          <Checkbox
+                                                            checked={task.completed}
+                                                            onCheckedChange={() => toggleTaskCompleted(group.id, task.id)}
                                                           />
-                                                        </span>
 
-                                                        {/* メニューアイコン - 常に領域を確保し、ホバー時のみ表示 */}
-                                                        <div className="flex items-center gap-1 w-48 relative">
-                                                          <div
-                                                            className={`absolute right-0 flex items-center gap-1 transition-opacity ${
-                                                              hoveredTask &&
-                                                              hoveredTask.groupId === group.id &&
-                                                              hoveredTask.taskId === task.id
+                                                          {/* タスクタイトル */}
+                                                          <span
+                                                            className={`flex-1 ${task.completed ? "line-through text-gray-400" : ""}`}
+                                                          >
+                                                            <EditableText
+                                                              value={task.title}
+                                                              onChange={(newTitle) =>
+                                                                updateTaskTitle(group.id, task.id, newTitle)
+                                                              }
+                                                              prefix="### "
+                                                              className={
+                                                                task.completed ? "line-through text-gray-400" : ""
+                                                              }
+                                                              isOverdue={!task.completed && isDateOverdue(task.dueDate)}
+                                                            />
+                                                          </span>
+
+                                                          {/* メニューアイコン - 常に領域を確保し、ホバー時のみ表示 */}
+                                                          <div className="flex items-center gap-1 w-48 relative">
+                                                            <div
+                                                              className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredTask &&
+                                                                hoveredTask.groupId === group.id &&
+                                                                hoveredTask.taskId === task.id
                                                                 ? "opacity-100"
                                                                 : "opacity-0"
-                                                            }`}
-                                                          >
-                                                            <Button
-                                                              variant="ghost"
-                                                              size="sm"
-                                                              className="h-8 w-8 p-0"
-                                                              onClick={() => deleteTask(group.id, task.id)}
-                                                              title="タスク削除"
+                                                                }`}
                                                             >
-                                                              <Trash2 className="h-4 w-4 text-red-500" />
-                                                            </Button>
-                                                            <Button
-                                                              variant="ghost"
-                                                              size="sm"
-                                                              className="h-8 w-8 p-0"
-                                                              onClick={() => startVoiceInput()}
-                                                              title="音声入力"
-                                                            >
-                                                              <Mic className={iconStyle} />
-                                                            </Button>
-                                                            <Button
-                                                              variant="ghost"
-                                                              size="sm"
-                                                              className="h-8 w-8 p-0"
-                                                              onClick={() => decomposeTask(group.id, task.id)}
-                                                              title="AI分解機能"
-                                                            >
-                                                              <SplitSquareVertical className={iconStyle} />
-                                                            </Button>
-                                                            <Button
-                                                              variant="ghost"
-                                                              size="sm"
-                                                              className="h-8 w-8 p-0"
-                                                              onClick={() => addSubtask(group.id, task.id)}
-                                                              title="項目追加"
-                                                            >
-                                                              <Plus className={iconStyle} />
-                                                            </Button>
-                                                            <Button
-                                                              variant="ghost"
-                                                              size="sm"
-                                                              className="h-8 w-8 p-0"
-                                                              onClick={() => addToSchedule(group.id, task.id)}
-                                                              title="ダッシュボードに追加"
-                                                            >
-                                                              <Clock className={iconStyle} />
-                                                            </Button>
-                                                            <Button
-                                                              variant="ghost"
-                                                              size="sm"
-                                                              className="h-8 w-8 p-0"
-                                                              onClick={() =>
-                                                                sortTasksByDueDate(sortOrder === "asc" ? "desc" : "asc")
+                                                              <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => deleteTask(group.id, task.id)}
+                                                                title="タスク削除"
+                                                              >
+                                                                <Trash2 className="h-4 w-4 text-red-500" />
+                                                              </Button>
+                                                              <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => startVoiceInput()}
+                                                                title="音声入力"
+                                                              >
+                                                                <Mic className={iconStyle} />
+                                                              </Button>
+                                                              <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => decomposeTask(group.id, task.id)}
+                                                                title="AI分解機能"
+                                                              >
+                                                                <SplitSquareVertical className={iconStyle} />
+                                                              </Button>
+                                                              <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => addSubtask(group.id, task.id)}
+                                                                title="項目追加"
+                                                              >
+                                                                <Plus className={iconStyle} />
+                                                              </Button>
+                                                              <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => addToSchedule(group.id, task.id)}
+                                                                title="ダッシュボードに追加"
+                                                              >
+                                                                <Clock className={iconStyle} />
+                                                              </Button>
+                                                              <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() =>
+                                                                  sortTasksByDueDate(sortOrder === "asc" ? "desc" : "asc")
+                                                                }
+                                                                title="更新"
+                                                              >
+                                                                <RefreshCw
+                                                                  className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : "text-gray-300"}`}
+                                                                />
+                                                              </Button>
+                                                              <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                title="他メニュー"
+                                                              >
+                                                                <MoreHorizontal className={iconStyle} />
+                                                              </Button>
+                                                            </div>
+                                                          </div>
+
+                                                          {/* 納期表示 - 常に右端に固定 */}
+                                                          <div className="flex items-center min-w-[200px]">
+                                                            <DatePicker
+                                                              value={task.dueDate || ""}
+                                                              onChange={(newDate) =>
+                                                                updateTaskDueDate(group.id, task.id, newDate)
                                                               }
-                                                              title="更新"
-                                                            >
-                                                              <RefreshCw className={iconStyle} />
-                                                            </Button>
-                                                            <Button
-                                                              variant="ghost"
-                                                              size="sm"
-                                                              className="h-8 w-8 p-0"
-                                                              title="他メニュー"
-                                                            >
-                                                              <MoreHorizontal className={iconStyle} />
-                                                            </Button>
+                                                            />
                                                           </div>
                                                         </div>
-
-                                                        {/* 納期表示 - 常に右端に固定 */}
-                                                        <div className="flex items-center min-w-[200px]">
-                                                          <DatePicker
-                                                            value={task.dueDate || ""}
-                                                            onChange={(newDate) =>
-                                                              updateTaskDueDate(group.id, task.id, newDate)
-                                                            }
-                                                          />
-                                                        </div>
                                                       </div>
-                                                    </div>
 
-                                                    {/* 小タスク（サブタスク） */}
-                                                    {task.expanded && task.subtasks.length > 0 && (
-                                                      <div className="p-3 pl-10 space-y-2 border-t">
-                                                        {task.subtasks.map((subtask) => (
-                                                          <div
-                                                            key={subtask.id}
-                                                            className="flex items-center"
-                                                            onMouseEnter={() =>
-                                                              setHoveredSubtask({
-                                                                groupId: group.id,
-                                                                taskId: task.id,
-                                                                subtaskId: subtask.id,
-                                                              })
-                                                            }
-                                                            onMouseLeave={() => setHoveredSubtask(null)}
-                                                          >
-                                                            <div className="flex items-center flex-1 gap-4">
-                                                              {/* 左側の余白（展開ボタンの代わり） */}
-                                                              <div className="w-6"></div>
+                                                      {/* 小タスク（サブタスク） */}
+                                                      {task.expanded && task.subtasks.length > 0 && (
+                                                        <div className="p-3 pl-10 space-y-2 border-t">
+                                                          {task.subtasks.map((subtask) => (
+                                                            <div
+                                                              key={subtask.id}
+                                                              className="flex items-center"
+                                                              onMouseEnter={() =>
+                                                                setHoveredSubtask({
+                                                                  groupId: group.id,
+                                                                  taskId: task.id,
+                                                                  subtaskId: subtask.id,
+                                                                })
+                                                              }
+                                                              onMouseLeave={() => setHoveredSubtask(null)}
+                                                            >
+                                                              <div className="flex items-center flex-1 gap-4">
+                                                                {/* 左側の余白（展開ボタンの代わり） */}
+                                                                <div className="w-6"></div>
 
-                                                              {/* ドラッグハンドルの余白 */}
-                                                              <div className="w-6"></div>
+                                                                {/* ドラッグハンドルの余白 */}
+                                                                <div className="w-6"></div>
 
-                                                              {/* チェックボックス */}
-                                                              <Checkbox
-                                                                checked={subtask.completed}
-                                                                onCheckedChange={() =>
-                                                                  toggleSubtaskCompleted(group.id, task.id, subtask.id)
-                                                                }
-                                                                className="mr-2"
-                                                              />
-
-                                                              {/* サブタスクタイトル */}
-                                                              <span
-                                                                className={`flex-1 ${subtask.completed ? "line-through text-gray-400" : ""}`}
-                                                              >
-                                                                <EditableText
-                                                                  value={subtask.title}
-                                                                  onChange={(newTitle) =>
-                                                                    updateSubtaskTitle(
-                                                                      group.id,
-                                                                      task.id,
-                                                                      subtask.id,
-                                                                      newTitle,
-                                                                    )
+                                                                {/* チェックボックス */}
+                                                                <Checkbox
+                                                                  checked={subtask.completed}
+                                                                  onCheckedChange={() =>
+                                                                    toggleSubtaskCompleted(group.id, task.id, subtask.id)
                                                                   }
-                                                                  className={
-                                                                    subtask.completed
-                                                                      ? "line-through text-gray-400"
-                                                                      : ""
-                                                                  }
-                                                                  isOverdue={
-                                                                    !subtask.completed && isDateOverdue(task.dueDate)
-                                                                  }
+                                                                  className="mr-2"
                                                                 />
-                                                              </span>
 
-                                                              {/* メニューアイコン - 常に領域を確保し、ホバー時のみ表示 */}
-                                                              <div className="flex items-center gap-1 w-32 relative">
-                                                                <div
-                                                                  className={`absolute right-0 flex items-center gap-1 transition-opacity ${
-                                                                    hoveredSubtask &&
-                                                                    hoveredSubtask.groupId === group.id &&
-                                                                    hoveredSubtask.taskId === task.id &&
-                                                                    hoveredSubtask.subtaskId === subtask.id
-                                                                      ? "opacity-100"
-                                                                      : "opacity-0"
-                                                                  }`}
+                                                                {/* サブタスクタイトル */}
+                                                                <span
+                                                                  className={`flex-1 ${subtask.completed ? "line-through text-gray-400" : ""}`}
                                                                 >
-                                                                  <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="h-8 w-8 p-0"
-                                                                    onClick={() =>
-                                                                      deleteSubtask(group.id, task.id, subtask.id)
-                                                                    }
-                                                                    title="サブタスク削除"
-                                                                  >
-                                                                    <Trash2 className="h-4 w-4 text-red-500" />
-                                                                  </Button>
-                                                                  <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="h-8 w-8 p-0"
-                                                                    onClick={() => startVoiceInput()}
-                                                                    title="音声入力"
-                                                                  >
-                                                                    <Mic className={iconStyle} />
-                                                                  </Button>
-                                                                  <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="h-8 w-8 p-0"
-                                                                    onClick={() =>
-                                                                      addSubtaskToSchedule(
+                                                                  <EditableText
+                                                                    value={subtask.title}
+                                                                    onChange={(newTitle) =>
+                                                                      updateSubtaskTitle(
                                                                         group.id,
                                                                         task.id,
                                                                         subtask.id,
+                                                                        newTitle,
                                                                       )
                                                                     }
-                                                                    title="ダッシュボードに追加"
+                                                                    className={
+                                                                      subtask.completed
+                                                                        ? "line-through text-gray-400"
+                                                                        : ""
+                                                                    }
+                                                                    isOverdue={
+                                                                      !subtask.completed && isDateOverdue(task.dueDate)
+                                                                    }
+                                                                  />
+                                                                </span>
+
+                                                                {/* メニューアイコン - 常に領域を確保し、ホバー時のみ表示 */}
+                                                                <div className="flex items-center gap-1 w-32 relative">
+                                                                  <div
+                                                                    className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredSubtask &&
+                                                                      hoveredSubtask.groupId === group.id &&
+                                                                      hoveredSubtask.taskId === task.id &&
+                                                                      hoveredSubtask.subtaskId === subtask.id
+                                                                      ? "opacity-100"
+                                                                      : "opacity-0"
+                                                                      }`}
                                                                   >
-                                                                    <Clock className={iconStyle} />
-                                                                  </Button>
-                                                                  <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="h-8 w-8 p-0"
-                                                                    title="他メニュー"
-                                                                  >
-                                                                    <MoreHorizontal className={iconStyle} />
-                                                                  </Button>
+                                                                    <Button
+                                                                      variant="ghost"
+                                                                      size="sm"
+                                                                      className="h-8 w-8 p-0"
+                                                                      onClick={() =>
+                                                                        deleteSubtask(group.id, task.id, subtask.id)
+                                                                      }
+                                                                      title="サブタスク削除"
+                                                                    >
+                                                                      <Trash2 className="h-4 w-4 text-red-500" />
+                                                                    </Button>
+                                                                    <Button
+                                                                      variant="ghost"
+                                                                      size="sm"
+                                                                      className="h-8 w-8 p-0"
+                                                                      onClick={() => startVoiceInput()}
+                                                                      title="音声入力"
+                                                                    >
+                                                                      <Mic className={iconStyle} />
+                                                                    </Button>
+                                                                    <Button
+                                                                      variant="ghost"
+                                                                      size="sm"
+                                                                      className="h-8 w-8 p-0"
+                                                                      onClick={() =>
+                                                                        addSubtaskToSchedule(
+                                                                          group.id,
+                                                                          task.id,
+                                                                          subtask.id,
+                                                                        )
+                                                                      }
+                                                                      title="ダッシュボードに追加"
+                                                                    >
+                                                                      <Clock className={iconStyle} />
+                                                                    </Button>
+                                                                    <Button
+                                                                      variant="ghost"
+                                                                      size="sm"
+                                                                      className="h-8 w-8 p-0"
+                                                                      title="他メニュー"
+                                                                    >
+                                                                      <MoreHorizontal className={iconStyle} />
+                                                                    </Button>
+                                                                  </div>
                                                                 </div>
                                                               </div>
                                                             </div>
-                                                          </div>
-                                                        ))}
-                                                      </div>
-                                                    )}
+                                                          ))}
+                                                        </div>
+                                                      )}
+                                                    </div>
                                                   </div>
-                                                </div>
-                                              )}
-                                            </Draggable>
-                                          ))}
+                                                )}
+                                              </Draggable>
+                                            ))}
                                           {provided.placeholder}
                                         </div>
                                       )}

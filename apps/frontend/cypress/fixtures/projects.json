@@ -1,0 +1,56 @@
+{
+  "data": [
+    {
+      "id": "project-1",
+      "title": "Commit Coach開発",
+      "description": "タスク管理・コミット支援アプリの開発",
+      "dueDate": "2025-06-30T23:59:59",
+      "progress": 65,
+      "tasks": [
+        {
+          "id": "task-1",
+          "title": "ミーティング資料の準備",
+          "completed": false
+        },
+        {
+          "id": "task-4",
+          "title": "プロジェクト計画の見直し",
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "project-2",
+      "title": "ウェブサイトリニューアル",
+      "description": "企業サイトのデザイン刷新と機能強化",
+      "dueDate": "2025-05-15T23:59:59",
+      "progress": 30,
+      "tasks": [
+        {
+          "id": "task-3",
+          "title": "クライアントミーティング",
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": "project-3",
+      "title": "四半期レポート",
+      "description": "第1四半期の業績レポート作成",
+      "dueDate": "2025-04-28T23:59:59",
+      "progress": 90,
+      "tasks": [
+        {
+          "id": "task-2",
+          "title": "週報提出",
+          "completed": true
+        },
+        {
+          "id": "task-5",
+          "title": "進捗報告書の作成",
+          "completed": false
+        }
+      ]
+    }
+  ]
+}

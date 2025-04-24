@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
@@ -13,17 +11,30 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Cookies from "js-cookie"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { registerSchema, type RegisterFormValues } from "@/lib/schemas/auth"
 
 export default function RegisterPage() {
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [validationError, setValidationError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const auth = useAuth() // Initialize useAuth here
+
+  // react-hook-formの設定
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  })
 
   // クライアントサイドでのみ実行される処理
   useEffect(() => {
@@ -38,32 +49,15 @@ export default function RegisterPage() {
     }
   }, [])
 
-  // useAuthはクライアントサイドでマウント後にのみ使用
-  // const auth = mounted ? useAuth() : { register: async () => {}, loading: false, error: null }
-
   // クライアントサイドでのみレンダリング
   if (!mounted) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50">読み込み中...</div>
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setValidationError(null)
-
-    // パスワード確認
-    if (password !== confirmPassword) {
-      setValidationError("パスワードが一致しません")
-      return
-    }
-
-    // パスワード強度チェック
-    if (password.length < 8) {
-      setValidationError("パスワードは8文字以上である必要があります")
-      return
-    }
-
+  // フォーム送信時の処理
+  const onSubmit = async (data: RegisterFormValues) => {
     try {
-      await auth.register(email, password, name)
+      await auth.register(data.email, data.password, data.name)
       setSuccess(true)
     } catch (error) {
       // エラーは useAuth 内で処理されるため、ここでは何もしない
@@ -99,10 +93,10 @@ export default function RegisterPage() {
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {(auth.error || validationError) && (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                {auth.error && (
                   <Alert variant="destructive">
-                    <AlertDescription>{validationError || auth.error}</AlertDescription>
+                    <AlertDescription>{auth.error}</AlertDescription>
                   </Alert>
                 )}
                 <div className="space-y-2">
@@ -111,10 +105,12 @@ export default function RegisterPage() {
                     id="name"
                     type="text"
                     placeholder="山田 太郎"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
+                    {...register("name")}
+                    aria-invalid={errors.name ? "true" : "false"}
                   />
+                  {errors.name && (
+                    <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">メールアドレス</Label>
@@ -122,10 +118,12 @@ export default function RegisterPage() {
                     id="email"
                     type="email"
                     placeholder="example@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    {...register("email")}
+                    aria-invalid={errors.email ? "true" : "false"}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">パスワード</Label>
@@ -133,11 +131,14 @@ export default function RegisterPage() {
                     id="password"
                     type="password"
                     placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
+                    {...register("password")}
+                    aria-invalid={errors.password ? "true" : "false"}
                   />
-                  <p className="text-xs text-gray-500">8文字以上の英数字を入力してください</p>
+                  {errors.password ? (
+                    <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
+                  ) : (
+                    <p className="text-xs text-gray-500">8文字以上の英数字を入力してください</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password">パスワード（確認）</Label>
@@ -145,10 +146,12 @@ export default function RegisterPage() {
                     id="confirm-password"
                     type="password"
                     placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
+                    {...register("confirmPassword")}
+                    aria-invalid={errors.confirmPassword ? "true" : "false"}
                   />
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-red-500 mt-1">{errors.confirmPassword.message}</p>
+                  )}
                 </div>
                 <Button type="submit" className="w-full bg-[#31A9B8] hover:bg-[#2a8f9c]" disabled={auth.loading}>
                   {auth.loading ? (

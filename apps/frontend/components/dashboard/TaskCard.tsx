@@ -14,6 +14,24 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, index, groupId }: TaskCardProps) {
+  // プロジェクトの色を取得する関数
+  const getProjectColor = (projectId: string): string => {
+    switch (projectId) {
+      case "ウェブアプリ開発":
+        return "bg-indigo-100 text-indigo-800"
+      case "デザインプロジェクト":
+        return "bg-pink-100 text-pink-800"
+      case "インフラ":
+        return "bg-blue-100 text-blue-800"
+      case "チーム管理":
+        return "bg-green-100 text-green-800"
+      case "QA":
+        return "bg-orange-100 text-orange-800"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>
       {(provided, snapshot) => (
@@ -33,7 +51,7 @@ export function TaskCard({ task, index, groupId }: TaskCardProps) {
               <CardHeader className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <div 
+                    <div
                       {...provided.dragHandleProps}
                       className="cursor-grab active:cursor-grabbing"
                     >
@@ -61,12 +79,12 @@ export function TaskCard({ task, index, groupId }: TaskCardProps) {
                         {task.startTime} - {task.endTime}
                       </span>
                     )}
-                    {task.project && (
-                      <motion.span 
-                        className={`px-2 py-1 rounded-full text-xs ${getProjectColor(task.project)}`}
+                    {task.projectId && (
+                      <motion.span
+                        className={`px-2 py-1 rounded-full text-xs ${getProjectColor(task.projectId)}`}
                         whileHover={{ scale: 1.05 }}
                       >
-                        {task.project}
+                        {task.projectId}
                       </motion.span>
                     )}
                     <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
@@ -90,8 +108,8 @@ export function TaskCard({ task, index, groupId }: TaskCardProps) {
                     <CardContent className="p-4">
                       <div className="space-y-4">
                         {task.subtasks.map((subtask, idx) => (
-                          <motion.div 
-                            key={subtask.id} 
+                          <motion.div
+                            key={subtask.id}
                             className="flex items-center space-x-2 pl-8"
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -142,18 +160,9 @@ export function TaskCard({ task, index, groupId }: TaskCardProps) {
   )
 }
 
-// プロジェクトごとの色を返す関数
-function getProjectColor(project: string) {
-  switch (project) {
-    case "チーム管理":
-      return "bg-[#31A9B8]/10 text-[#31A9B8]"
-    case "ウェブアプリ開発":
-      return "bg-[#258039]/10 text-[#258039]"
-    case "デザインプロジェクト":
-      return "bg-[#F5BE41]/10 text-[#F5BE41]"
-    case "QA":
-      return "bg-[#CF3721]/10 text-[#CF3721]"
-    default:
-      return "bg-gray-100 text-gray-800"
-  }
+// 日付が過ぎているかチェックする関数
+const isDateOverdue = (date: string): boolean => {
+  const dueDate = new Date(date)
+  const today = new Date()
+  return dueDate < today
 } 

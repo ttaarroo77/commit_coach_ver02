@@ -1,18 +1,17 @@
-import express from 'express';
-import { config } from 'dotenv';
+import { createServer } from './app';
 
-config();
-
-const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(express.json());
+async function startServer() {
+  try {
+    const app = await createServer();
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
-// Hello from Backend route
-app.get('/', (req, res) => {
-  res.json({ message: 'Hello from Backend' });
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+startServer();

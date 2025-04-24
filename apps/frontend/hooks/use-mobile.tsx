@@ -17,3 +17,33 @@ export function useIsMobile() {
 
   return !!isMobile
 }
+
+/**
+ * カスタムメディアクエリフック
+ * @param query メディアクエリ文字列（例: '(max-width: 768px)'）
+ * @returns メディアクエリがマッチするかどうか
+ */
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = React.useState(false)
+
+  React.useEffect(() => {
+    // サーバーサイドレンダリング時は常にfalseを返す
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const mediaQuery = window.matchMedia(query)
+    const updateMatches = () => setMatches(mediaQuery.matches)
+
+    // 初期値を設定
+    updateMatches()
+
+    // イベントリスナーを追加
+    mediaQuery.addEventListener('change', updateMatches)
+
+    // クリーンアップ関数
+    return () => mediaQuery.removeEventListener('change', updateMatches)
+  }, [query])
+
+  return matches
+}
