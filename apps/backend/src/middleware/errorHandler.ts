@@ -32,8 +32,8 @@ export const errorHandler = (
         code: err.statusCode,
         details: err.originalError?.message,
         error: err.name,
-        message: err.message,
-      });
+      }
+    });
   }
 
   // Supabaseエラーの場合
