@@ -94,8 +94,11 @@ last_updated: "2025-04-22"
 - [x] **41** ダッシュボードコンポーネント分割 (de18e57a)
 - [x] **42** `useTaskManagement` / `useDragAndDrop` hooks (de18e57a)
 - [x] **43** 型定義強化 (Task, Project) (#TYPE_PR_ID)
-- [ ] **44** RTL + Cypress テスト追加
-  - 後回しすること ：apps/frontend/__tests__/hooks/useTaskManagement.test.ts にテストケース追加
+- [x] **44** RTL + Cypress テスト追加
+  - 実装完了：
+    - EditableText.test.tsxの追加
+    - useDragAndDrop.test.tsの修正
+    - Cypressテストの自動実行スクリプトの追加
 - [ ] **45** commit `refactor(frontend): split dashboard`
 - [ ] **46** `/projects` 一覧 UI
 - [ ] **47** 検索 & フィルタ
@@ -190,19 +193,19 @@ last_updated: "2025-04-22"
 - [x] **135** オーナーチェック MW
 - [x] **136** 役割ベース guard
 - [x] **137** 401/403 共通レスポンス
-- [ ] **138** 認証 E2E テスト
-- [ ] **139** commit `feat(backend): auth`
-- [ ] **140** 認証テスト pass
+- [x] **138** 認証 E2E テスト
+- [x] **139** commit `feat(backend): auth`
+- [x] **140** 認証テスト pass
 
 #### 4.4 CRUD & AI API (141‑170)
-- [ ] **141** projectController 実装
-- [ ] **142** taskService 実装
-- [ ] **143** createProject(userId, data)
-- [ ] **144** controller ↔ service 分離
-- [ ] **145** GET `/projects` (owner only)
-- [ ] **146** PUT `/tasks/:id`
-- [ ] **147** try‑catch → ErrorHandler
-- [ ] **148** 所有権チェック
+- [x] **141** projectController 実装
+- [x] **142** taskService 実装
+- [x] **143** createProject(userId, data)
+- [x] **144** controller ↔ service 分離 (2025-04-25)
+- [x] **145** GET `/projects` (owner only) (2025-04-25)
+- [x] **146** PUT `/tasks/:id` (2025-04-25)
+- [x] **147** try‑catch → ErrorHandler (2025-04-25)
+- [x] **148** 所有権チェック (2025-04-25)
 - [ ] **149** commit `feat(backend): controllers`
 - [ ] **150** Service ユニットテスト
 - [x] **151** POST `/ai/coach` (OpenAI)

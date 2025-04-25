@@ -1,26 +1,25 @@
 import { Router } from 'express';
-import { ProjectController } from '../controllers/project.controller';
-import { authMiddleware } from '../middleware/auth.middleware';
+import * as projectController from '../controllers/project.controller';
+import { auth, isOwner } from '../middleware/auth';
 
 const router = Router();
-const projectController = new ProjectController();
 
 // 認証が必要なルート
-router.use(authMiddleware);
+router.use(auth);
 
 // プロジェクト一覧の取得
-router.get('/', projectController.getProjects.bind(projectController));
+router.get('/', projectController.getProjects);
 
 // プロジェクトの作成
-router.post('/', projectController.createProject.bind(projectController));
+router.post('/', projectController.createProject);
 
-// プロジェクトの詳細取得
-router.get('/:id', projectController.getProject.bind(projectController));
+// プロジェクトの詳細取得 (所有権チェック付き)
+router.get('/:id', isOwner('projects'), projectController.getProject);
 
-// プロジェクトの更新
-router.put('/:id', projectController.updateProject.bind(projectController));
+// プロジェクトの更新 (所有権チェック付き)
+router.put('/:id', isOwner('projects'), projectController.updateProject);
 
-// プロジェクトの削除
-router.delete('/:id', projectController.deleteProject.bind(projectController));
+// プロジェクトの削除 (所有権チェック付き)
+router.delete('/:id', isOwner('projects'), projectController.deleteProject);
 
 export default router; 

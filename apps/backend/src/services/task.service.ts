@@ -1,12 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { Task, TaskUpdate, TaskPriority, TaskStatus } from '../types/task.types';
-import { ApiError } from '../middleware/error.middleware';
+import { ApiError } from '../middleware/errorHandler';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_ANON_KEY!
 );
 
+/**
+ * タスク管理サービス
+ * タスクのCRUD操作やステータス更新などの機能を提供する
+ */
 export class TaskService {
   async createTask(userId: string, data: Omit<Task, 'order'>): Promise<Task> {
     // プロジェクトの所有権を確認
@@ -178,19 +182,30 @@ export class TaskService {
     }
   }
 
+  /**
+   * 親タスクに紐づくサブタスクを取得する
+   * @param userId ユーザーID
+   * @param parentId 親タスクID
+   * @returns サブタスク一覧
+   */
   async getSubtasks(userId: string, parentId: string): Promise<Task[]> {
-    const { data: subtasks, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('parent_id', parentId)
-      .eq('user_id', userId)
-      .order('order', { ascending: true });
+    try {
+      const { data: subtasks, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('parent_id', parentId)
+        .eq('user_id', userId)
+        .order('order', { ascending: true });
 
-    if (error) {
-      throw new ApiError(500, 'サブタスクの取得に失敗しました');
+      if (error) {
+        throw new ApiError(500, `サブタスク取得エラー: ${error.message}`);
+      }
+
+      return subtasks || [];
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(500, 'サブタスク取得中に予期せぬエラーが発生しました');
     }
-
-    return subtasks;
   }
 
   async updateTaskStatus(
@@ -216,26 +231,134 @@ export class TaskService {
     return task;
   }
 
+  /**
+   * タスクの期限を更新する
+   * @param userId ユーザーID
+   * @param id タスクID
+   * @param dueDate 期限日
+   * @returns 更新されたタスク
+   */
   async updateTaskDueDate(
     userId: string,
     id: string,
     dueDate: string
   ): Promise<Task> {
-    const { data: task, error } = await supabase
-      .from('tasks')
-      .update({ due_date: dueDate })
-      .eq('id', id)
-      .eq('user_id', userId)
-      .select()
-      .single();
+    try {
+      const { data: task, error } = await supabase
+        .from('tasks')
+        .update({ due_date: dueDate })
+        .eq('id', id)
+        .eq('user_id', userId)
+        .select()
+        .single();
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        throw new ApiError(404, 'タスクが見つかりません');
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new ApiError(404, 'タスクが見つかりません');
+        }
+        throw new ApiError(500, `タスクの期限更新エラー: ${error.message}`);
       }
-      throw new ApiError(500, 'タスクの期限更新に失敗しました');
-    }
 
-    return task;
+      return task;
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(500, 'タスクの期限更新中に予期せぬエラーが発生しました');
+    }
+  }
+  
+  /**
+   * タスクの優先度を更新する
+   * @param userId ユーザーID
+   * @param id タスクID
+   * @param priority 優先度
+   * @returns 更新されたタスク
+   */
+  async updateTaskPriority(
+    userId: string,
+    id: string,
+    priority: TaskPriority
+  ): Promise<Task> {
+    try {
+      const { data: task, error } = await supabase
+        .from('tasks')
+        .update({ priority })
+        .eq('id', id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new ApiError(404, 'タスクが見つかりません');
+        }
+        throw new ApiError(500, `タスクの優先度更新エラー: ${error.message}`);
+      }
+
+      return task;
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(500, 'タスクの優先度更新中に予期せぬエラーが発生しました');
+    }
+  }
+  
+  /**
+   * 複数のタスクを一括更新する
+   * @param userId ユーザーID
+   * @param tasks 更新するタスクの配列
+   * @returns 更新されたタスクの配列
+   */
+  async bulkUpdateTasks(
+    userId: string,
+    tasks: { id: string; updates: TaskUpdate }[]
+  ): Promise<Task[]> {
+    try {
+      // トランザクションを開始
+      const { error: beginError } = await supabase.rpc('begin_transaction');
+      if (beginError) {
+        throw new ApiError(500, `トランザクション開始エラー: ${beginError.message}`);
+      }
+      
+      const updatedTasks: Task[] = [];
+      
+      // 各タスクを更新
+      for (const task of tasks) {
+        const { data, error } = await supabase
+          .from('tasks')
+          .update(task.updates)
+          .eq('id', task.id)
+          .eq('user_id', userId)
+          .select()
+          .single();
+          
+        if (error) {
+          // エラーが発生した場合はロールバック
+          await supabase.rpc('rollback_transaction');
+          if (error.code === 'PGRST116') {
+            throw new ApiError(404, `タスクID ${task.id} が見つかりません`);
+          }
+          throw new ApiError(500, `タスク一括更新エラー: ${error.message}`);
+        }
+        
+        if (data) updatedTasks.push(data);
+      }
+      
+      // トランザクションをコミット
+      const { error: commitError } = await supabase.rpc('commit_transaction');
+      if (commitError) {
+        throw new ApiError(500, `トランザクションコミットエラー: ${commitError.message}`);
+      }
+      
+      return updatedTasks;
+    } catch (error) {
+      // 予期せぬエラーが発生した場合はロールバックを試みる
+      try {
+        await supabase.rpc('rollback_transaction');
+      } catch (rollbackError) {
+        console.error('ロールバック失敗:', rollbackError);
+      }
+      
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(500, 'タスク一括更新中に予期せぬエラーが発生しました');
+    }
   }
 } 
