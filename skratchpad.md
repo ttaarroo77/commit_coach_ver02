@@ -1,8 +1,6 @@
 <!-- scratchpad.md : 2025-04-23 更新 -->
 常にこの skratchpad.md と 開発ロードマップを比較しながら作業すること。
-なお、Monorepo構造における開発分限を守ること
-- windsurf : /apps/frontend
-- cursor ： apps/backend 
+
 
 [🗺 開発ロードマップ](./docs/overview/development_flow.md) :プロジェクトの正式なロードマップとチェックリストを共有・履歴化	
 
@@ -47,15 +45,29 @@
    - 優先度（TaskPriority）の日本語対応
    - deleteSubtaskメソッド追加
    - プロジェクトページの型エラー修正
-4. 次のステップ：テスト追加とコミット作成（Step 44-45）
+4. テスト追加とコミット作成（Step 44-45）
 
 ## 📊 進捗状況
 - 開発ロードマップ：Step 44-45（テスト追加とコミット作成）
+
+### バックエンドの進捗
+- [x] Step 150（Serviceユニットテスト）完了
+- [x] Step 171-175（統合テスト実装）完了
+- [x] Step 176-178（テストカバレッジ向上とロガー導入）完了
+- [x] Step 179（テストカバレッジコミット）完了
 - 進捗度：
   - Step 41「ダッシュボードコンポーネント分割」完了（DashboardHeader.tsx, TaskGroupList.tsx作成完了）
   - Step 42「useTaskManagement / useDragAndDrop hooks」完了（useDragAndDrop.ts分離完了、useTaskManagement.ts整理完了）
   - Step 43「型定義強化 (Task, Project)」完了（Task/Project型強化、テスト修正、deleteSubtask追加）
-- 次のステップ：Step 44「RTL + Cypress テスト追加」
+  - Step 44「RTL + Cypress テスト追加」完了（以下実装完了）：
+    - EditableText.test.tsx の追加（コンポーネントのテスト）
+    - useDragAndDrop.test.ts の型エラー修正
+    - cypress-drag-drop プラグインの導入
+    - ドラッグ＆ドロップ機能のCypressテスト（drag-and-drop.cy.ts）実装
+    - Jest設定ファイルの更新（jest.setup.js, jest.config.mjs）
+    - Cypressテストの自動実行スクリプト（run-e2e-tests.sh）追加
+    - cronジョブ設定スクリプト（setup-e2e-cron.sh）追加
+- 次のステップ：Step 45「コミット作成」
 
 ## ✨ 完了タスク
 
@@ -105,7 +117,6 @@ Apply
    - 優先度（TaskPriority）の日本語対応
    - deleteSubtaskメソッド追加
    - プロジェクトページの型エラー修正
-4. 次のステップ：テスト追加とコミット作成（Step 44-45）
 
 ### 📋 型エラー修正（残り30%）の詳細計画
 #### 1. テストファイルの型エラー修正
@@ -253,6 +264,12 @@ Apply
    - テスト用データベースの設定
 
 ## 📊 cursorの進捗状況
-- 開発ロードマップ：Step 138-140（認証E2Eテスト）
-- 進捗度：0%
-- 次のステップ：テスト環境のセットアップ
+- 開発ロードマップ：Step 179（テストカバレッジコミット）
+- 進捗度：100%
+- 完了タスク：
+  - [x] Jestカバレッジ設定の追加（85%以上のカバレッジ目標）
+  - [x] pinoロガーの導入と設定
+  - [x] リクエストロガーミドルウェアの実装
+  - [x] データベース操作のラッパー関数の実装
+  - [x] グローバルエラーハンドラーの実装
+- 次のステップ：Step 180（コードリファクタリング）
