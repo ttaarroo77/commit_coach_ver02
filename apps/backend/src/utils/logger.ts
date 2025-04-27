@@ -1,30 +1,37 @@
 import pino from 'pino';
-import pretty from 'pino-pretty';
-import { Request, Response, NextFunction } from 'express';
+import express from 'express';
 
 // 環境変数に基づいてログレベルを設定
 const logLevel = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
 
-// 開発環境では読みやすいフォーマットで出力、本番環境ではJSON形式で出力
-const transport = process.env.NODE_ENV !== 'production'
-  ? pretty({
-      colorize: true,
-      translateTime: 'SYS:standard',
-      ignore: 'pid,hostname',
-    })
-  : undefined;
-
 // ロガーの設定
-export const logger = pino({
-  level: logLevel,
-  transport,
-  base: undefined, // pid, hostnameなどのデフォルト値を含めない
-  timestamp: pino.stdTimeFunctions.isoTime,
-  redact: {
-    paths: ['req.headers.authorization', 'req.headers.cookie', 'password', 'token'],
-    censor: '***REDACTED***'
-  },
-});
+export const logger = process.env.NODE_ENV !== 'production'
+  ? pino({
+      level: logLevel,
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:standard',
+          ignore: 'pid,hostname',
+        }
+      },
+      base: undefined, // pid, hostnameなどのデフォルト値を含めない
+      timestamp: pino.stdTimeFunctions.isoTime,
+      redact: {
+        paths: ['req.headers.authorization', 'req.headers.cookie', 'password', 'token'],
+        censor: '***REDACTED***'
+      },
+    })
+  : pino({
+      level: logLevel,
+      base: undefined,
+      timestamp: pino.stdTimeFunctions.isoTime,
+      redact: {
+        paths: ['req.headers.authorization', 'req.headers.cookie', 'password', 'token'],
+        censor: '***REDACTED***'
+      },
+    });
 
 /**
  * リクエストログ用のミドルウェア
@@ -34,7 +41,7 @@ export const logger = pino({
  * @param {Response} res - Expressレスポンスオブジェクト
  * @param {NextFunction} next - Expressミドルウェアの次の処理を呼び出す関数
  */
-export const requestLogger = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+export const requestLogger = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const startTime = Date.now();
   
   // レスポンス送信後にログを記録
@@ -61,7 +68,7 @@ export const requestLogger = (req: Express.Request, res: Express.Response, next:
  * @param {Error} err - ログに記録するエラーオブジェクト
  * @param {Express.Request} [req] - 関連するリクエストオブジェクト（あれば）
  */
-export const logError = (err: Error, req?: Express.Request) => {
+export const logError = (err: Error, req?: express.Request) => {
   const logData: any = {
     error: {
       name: err.name,

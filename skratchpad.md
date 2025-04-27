@@ -1,9 +1,10 @@
-<!-- scratchpad.md : 2025-04-23 更新 -->
-常にこの skratchpad.md と 開発ロードマップを比較しながら作業すること。
-
-
-[🗺 開発ロードマップ](./docs/overview/development_flow.md) :プロジェクトの正式なロードマップとチェックリストを共有・履歴化	
-
+---
+id: scratchpad
+title: コミットコーチ - 作業メモ帳
+owner: nakazawatarou
+stakeholders: [dev_team, ai_assistant]
+tasks_note: 必ず、終わったタスクには[x]印をつけて、ここに報連相の記録を残すこと
+---
 
 # Scratchpad :
 - 目的：1つのタスク／スプリントを進めるための一時的な思考メモ
@@ -12,8 +13,20 @@
 - 想定読者：今作業している自分＋AI
 - サイズ上限：実務上 500 行程度でローテーション推奨
 
-## 必須タスク
-- 必ず、終わったタスクには[x]印をつけて、ここに報連相の記録を残すこと
+
+
+# 📚 重要参照ファイル
+
+以下のファイルは本プロジェクト開発において常に参照すべき重要文書です。常に参考比較しなさい：
+
+- **[📝 skratchpad.md](./skratchpad.md)** - 作業メモ帳（短期記憶）
+- **[🏗️ architecture.spec.md](./docs/overview/architecture.spec.md)** - アーキテクチャ仕様
+- **[🗺️ development_flow.md](./docs/overview/development_flow.md)** - 作業全体のロードマップ（長期記憶）
+- **[📋 overview ディレクトリ](./docs/overview)** - プロジェクト全体の要件定義書
+- **[📦 zips ディレクトリ](./zips)** - 実装のための参考となるコードやコンポーネントを保管
+- **[🚀 frontend ディレクトリ](./apps/frontend)** - 実際の実装が行われる場所。このディレクトリのコードは、`/zips`から必要に応じて移植・最適化される
+
+----------
 
 
 ## 🎯 Current Task (JIRA-457: ダッシュボード実装)
@@ -32,6 +45,28 @@
 - [x] ユニットテストの実装
 
 ## 🛠️ 現在の作業
+
+### 💻 バックエンド開発 (JIRA-460: バックエンド改善)
+
+1. バックエンド環境の整備
+   - [x] Gitブランチの作成と切り替え (`feat/backend-initial-setup`)
+   - [ ] Edge Functionsディレクトリの作成
+   - [ ] バックエンドAPIの基本構造の確認と整備
+   - [ ] Supabase連携の設定強化
+   - [ ] モデルとスキーマの拡張
+
+2. Edge Functionsの実装
+   - [ ] Edge Functions用のディレクトリ構造の作成
+   - [ ] タスク関連のEdge Functionsの実装
+   - [ ] 認証関連のEdge Functionsの実装
+   - [ ] Edge Functions用のTypeScript設定の整備
+
+3. テストとドキュメント作成
+   - [ ] Edge Functions用のe2eテストの作成
+   - [ ] APIドキュメントの更新
+   - [ ] テストカバレッジの向上
+
+### 前回のフロントエンド作業
 1. ダッシュボードコンポーネント分割作業
    - DashboardHeader.tsx作成完了
    - TaskGroupList.tsx作成完了
