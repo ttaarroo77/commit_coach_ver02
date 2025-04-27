@@ -52,6 +52,8 @@ tasks_note: 必ず、終わったタスクには[x]印をつけて、ここに�
    - [x] Gitブランチの作成と切り替え (`feat/backend-initial-setup`)
    - [x] Edge Functionsディレクトリの作成
    - [x] バックエンドAPIの基本構造の確認と整備
+   - [x] バックエンドのビルドエラー修正（TaskController、AIController、TaskGroupController）
+   - [x] 認証ミドルウェアの修正
    - [ ] Supabase連携の設定強化
    - [ ] モデルとスキーマの拡張
 

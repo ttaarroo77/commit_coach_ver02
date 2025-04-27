@@ -19,12 +19,10 @@ describe('Auth Endpoints', () => {
 
   describe('POST /auth/login', () => {
     it('should login with valid credentials', async () => {
-      const response = await request(app)
-        .post('/auth/login')
-        .send({
-          email: testEmail,
-          password: testPassword,
-        });
+      const response = await request(app).post('/auth/login').send({
+        email: testEmail,
+        password: testPassword,
+      });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('token');
@@ -32,12 +30,10 @@ describe('Auth Endpoints', () => {
     });
 
     it('should fail with invalid password', async () => {
-      const response = await request(app)
-        .post('/auth/login')
-        .send({
-          email: testEmail,
-          password: 'wrong-password',
-        });
+      const response = await request(app).post('/auth/login').send({
+        email: testEmail,
+        password: 'wrong-password',
+      });
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty('error');
@@ -47,12 +43,10 @@ describe('Auth Endpoints', () => {
   describe('POST /auth/signup', () => {
     it('should create a new user', async () => {
       const newEmail = 'newuser@example.com';
-      const response = await request(app)
-        .post('/auth/signup')
-        .send({
-          email: newEmail,
-          password: testPassword,
-        });
+      const response = await request(app).post('/auth/signup').send({
+        email: newEmail,
+        password: testPassword,
+      });
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('user');
@@ -61,12 +55,10 @@ describe('Auth Endpoints', () => {
     });
 
     it('should fail with existing email', async () => {
-      const response = await request(app)
-        .post('/auth/signup')
-        .send({
-          email: testEmail,
-          password: testPassword,
-        });
+      const response = await request(app).post('/auth/signup').send({
+        email: testEmail,
+        password: testPassword,
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error');
@@ -75,20 +67,17 @@ describe('Auth Endpoints', () => {
 
   describe('POST /auth/logout', () => {
     it('should logout successfully', async () => {
-      const response = await request(app)
-        .post('/auth/logout')
-        .set(getTestHeaders(testToken));
+      const response = await request(app).post('/auth/logout').set(getTestHeaders(testToken));
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('message', 'Logged out successfully');
     });
 
     it('should fail without token', async () => {
-      const response = await request(app)
-        .post('/auth/logout');
+      const response = await request(app).post('/auth/logout');
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty('error');
     });
   });
-}); 
+});

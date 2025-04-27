@@ -37,7 +37,7 @@ export async function verifyDatabaseSchema(): Promise<boolean> {
       'task_groups',
       'tasks',
       'subtasks',
-      'ai_messages'
+      'ai_messages',
     ];
 
     const { data: tables, error } = await supabaseAdmin
@@ -50,8 +50,8 @@ export async function verifyDatabaseSchema(): Promise<boolean> {
       throw new Error(`Failed to query tables: ${error.message}`);
     }
 
-    const existingTables = tables.map(t => t.table_name);
-    const missingTables = requiredTables.filter(t => !existingTables.includes(t));
+    const existingTables = tables.map((t) => t.table_name);
+    const missingTables = requiredTables.filter((t) => !existingTables.includes(t));
 
     if (missingTables.length > 0) {
       throw new Error(`Missing required tables: ${missingTables.join(', ')}`);
@@ -80,4 +80,4 @@ if (require.main === module) {
       process.exit(1);
     }
   })();
-} 
+}

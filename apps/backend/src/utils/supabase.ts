@@ -11,10 +11,13 @@ const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'dummy-key';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy-service-key';
 
 // 開発環境での警告
-if (process.env.NODE_ENV !== 'production' && (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY)) {
+if (
+  process.env.NODE_ENV !== 'production' &&
+  (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY)
+) {
   logger.warn(
     'Supabase環境変数が設定されていません。開発用のダミー値を使用します。' +
-    '実際のSupabaseプロジェクトに接続するには、.envファイルを設定してください。'
+      '実際のSupabaseプロジェクトに接続するには、.envファイルを設定してください。'
   );
 }
 
@@ -58,12 +61,12 @@ export const createSupabaseClientWithToken = (token: string) => {
 export const testSupabaseConnection = async (): Promise<boolean> => {
   try {
     const { data, error } = await supabaseClient.from('_test_connection').select('*').limit(1);
-    
+
     if (error) {
       logger.error({ error }, 'Supabase接続テストエラー');
       return false;
     }
-    
+
     logger.info('Supabase接続テスト成功');
     return true;
   } catch (error) {

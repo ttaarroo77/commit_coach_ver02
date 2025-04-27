@@ -10,7 +10,7 @@ export enum ProjectType {
   BACKEND = 'backend',
   FRONTEND = 'frontend',
   FULLSTACK = 'fullstack',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 /**
@@ -21,7 +21,7 @@ export enum ProjectStatus {
   IN_PROGRESS = 'in_progress',
   ON_HOLD = 'on_hold',
   COMPLETED = 'completed',
-  ARCHIVED = 'archived'
+  ARCHIVED = 'archived',
 }
 
 /**
@@ -29,7 +29,10 @@ export enum ProjectStatus {
  */
 export const projectSchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().min(1, 'プロジェクト名は必須です').max(100, 'プロジェクト名は100文字以内にしてください'),
+  name: z
+    .string()
+    .min(1, 'プロジェクト名は必須です')
+    .max(100, 'プロジェクト名は100文字以内にしてください'),
   description: z.string().max(2000, '説明は2000文字以内にしてください').optional(),
   type: z.nativeEnum(ProjectType).default(ProjectType.WEB_APP),
   status: z.nativeEnum(ProjectStatus).default(ProjectStatus.PLANNING),
@@ -53,7 +56,7 @@ export const projectSchema = z.object({
 export const createProjectSchema = projectSchema.omit({
   id: true,
   created_at: true,
-  updated_at: true
+  updated_at: true,
 });
 
 /**
@@ -64,7 +67,7 @@ export const updateProjectSchema = projectSchema
     id: true,
     created_at: true,
     updated_at: true,
-    user_id: true
+    user_id: true,
   })
   .partial();
 

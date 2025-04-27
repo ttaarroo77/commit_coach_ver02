@@ -8,26 +8,22 @@ import { z } from 'zod';
 
 const projectService = new ProjectService();
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
 // プロジェクト作成のバリデーションスキーマ
 const createProjectSchema = z.object({
   title: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
 });
 
 /**
  * プロジェクト一覧を取得
  */
-export const getProjects = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
@@ -44,11 +40,7 @@ export const getProjects = async (
 /**
  * 特定のプロジェクトを取得
  */
-export const getProject = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId;
     const projectId = req.params.id;
@@ -197,11 +189,7 @@ export const removeMember = async (req: Request, res: Response) => {
 /**
  * プロジェクトメンバーの一覧を取得
  */
-export const getProjectMembers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getProjectMembers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -216,7 +204,7 @@ export const getProjectMembers = async (
     }
 
     // 整形したメンバー情報
-    const formattedMembers = data?.map(member => ({
+    const formattedMembers = data?.map((member) => ({
       id: member.user_id,
       role: member.role,
       ...member.users,
@@ -229,4 +217,4 @@ export const getProjectMembers = async (
   } catch (error) {
     next(error);
   }
-}; 
+};

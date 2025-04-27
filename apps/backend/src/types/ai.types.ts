@@ -11,12 +11,14 @@ export type AIConfig = z.infer<typeof aiConfigSchema>;
 
 export const taskBreakdownSchema = z.object({
   taskId: z.string(),
-  breakdown: z.array(z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    estimatedTime: z.number().optional(),
-    priority: z.enum(['low', 'medium', 'high']).optional(),
-  })),
+  breakdown: z.array(
+    z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      estimatedTime: z.number().optional(),
+      priority: z.enum(['low', 'medium', 'high']).optional(),
+    })
+  ),
 });
 
 export type TaskBreakdown = z.infer<typeof taskBreakdownSchema>;
@@ -26,4 +28,4 @@ export const aiMessageSchema = z.object({
   content: z.string(),
 });
 
-export type AIMessage = z.infer<typeof aiMessageSchema>; 
+export type AIMessage = z.infer<typeof aiMessageSchema>;

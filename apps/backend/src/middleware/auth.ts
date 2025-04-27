@@ -32,10 +32,9 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       // トークンを検証
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET || 'jwt_secret'
-      ) as { userId: string };
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'jwt_secret') as {
+        userId: string;
+      };
 
       // ユーザーが実際に存在するか確認
       const { data: user, error } = await supabaseAdmin
@@ -105,11 +104,7 @@ export const restrictTo = (roles: string[]) => {
  * @param paramIdField リクエストパラメータのIDフィールド（デフォルト: id）
  * @param userIdField テーブル内のユーザーIDフィールド（デフォルト: user_id）
  */
-export const isOwner = (
-  resourceType: string,
-  paramIdField = 'id',
-  userIdField = 'user_id'
-) => {
+export const isOwner = (resourceType: string, paramIdField = 'id', userIdField = 'user_id') => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {

@@ -11,4 +11,4 @@ export const projectSchema = z.object({
 export type Project = z.infer<typeof projectSchema>;
 
 export const updateProjectSchema = projectSchema.partial();
-export type UpdateProject = z.infer<typeof updateProjectSchema>; 
+export type UpdateProject = z.infer<typeof updateProjectSchema>;

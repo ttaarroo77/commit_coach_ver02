@@ -87,9 +87,9 @@ describe('TaskController', () => {
     it('認証されていない場合はエラーになる', async () => {
       req.user = undefined;
 
-      await expect(
-        taskController.createTask(req as Request, res as Response)
-      ).rejects.toThrow('認証が必要です');
+      await expect(taskController.createTask(req as Request, res as Response)).rejects.toThrow(
+        '認証が必要です'
+      );
     });
   });
 
@@ -108,10 +108,7 @@ describe('TaskController', () => {
 
       await taskController.getTasksByProject(req as Request, res as Response);
 
-      expect(taskService.getTasksByProject).toHaveBeenCalledWith(
-        userId,
-        projectId
-      );
+      expect(taskService.getTasksByProject).toHaveBeenCalledWith(userId, projectId);
       expect(res.json).toHaveBeenCalledWith(tasks);
     });
 
@@ -139,19 +136,16 @@ describe('TaskController', () => {
 
       await taskController.getTasksByGroup(req as Request, res as Response);
 
-      expect(taskService.getTasksByGroup).toHaveBeenCalledWith(
-        userId,
-        groupId
-      );
+      expect(taskService.getTasksByGroup).toHaveBeenCalledWith(userId, groupId);
       expect(res.json).toHaveBeenCalledWith(tasks);
     });
 
     it('認証されていない場合はエラーになる', async () => {
       req.user = undefined;
 
-      await expect(
-        taskController.getTasksByGroup(req as Request, res as Response)
-      ).rejects.toThrow('認証が必要です');
+      await expect(taskController.getTasksByGroup(req as Request, res as Response)).rejects.toThrow(
+        '認証が必要です'
+      );
     });
   });
 
@@ -175,17 +169,17 @@ describe('TaskController', () => {
       req.params = { id: 'non-existent-id' };
       taskService.getTaskById.mockResolvedValue(null);
 
-      await expect(
-        taskController.getTaskById(req as Request, res as Response)
-      ).rejects.toThrow('タスクが見つかりません');
+      await expect(taskController.getTaskById(req as Request, res as Response)).rejects.toThrow(
+        'タスクが見つかりません'
+      );
     });
 
     it('認証されていない場合はエラーになる', async () => {
       req.user = undefined;
 
-      await expect(
-        taskController.getTaskById(req as Request, res as Response)
-      ).rejects.toThrow('認証が必要です');
+      await expect(taskController.getTaskById(req as Request, res as Response)).rejects.toThrow(
+        '認証が必要です'
+      );
     });
   });
 
@@ -205,20 +199,16 @@ describe('TaskController', () => {
 
       await taskController.updateTask(req as Request, res as Response);
 
-      expect(taskService.updateTask).toHaveBeenCalledWith(
-        userId,
-        taskId,
-        req.body
-      );
+      expect(taskService.updateTask).toHaveBeenCalledWith(userId, taskId, req.body);
       expect(res.json).toHaveBeenCalledWith(updatedTask);
     });
 
     it('認証されていない場合はエラーになる', async () => {
       req.user = undefined;
 
-      await expect(
-        taskController.updateTask(req as Request, res as Response)
-      ).rejects.toThrow('認証が必要です');
+      await expect(taskController.updateTask(req as Request, res as Response)).rejects.toThrow(
+        '認証が必要です'
+      );
     });
   });
 
@@ -236,9 +226,9 @@ describe('TaskController', () => {
     it('認証されていない場合はエラーになる', async () => {
       req.user = undefined;
 
-      await expect(
-        taskController.deleteTask(req as Request, res as Response)
-      ).rejects.toThrow('認証が必要です');
+      await expect(taskController.deleteTask(req as Request, res as Response)).rejects.toThrow(
+        '認証が必要です'
+      );
     });
   });
 
@@ -268,17 +258,17 @@ describe('TaskController', () => {
       req.params = { id: taskId };
       req.body = {};
 
-      await expect(
-        taskController.updateTaskOrder(req as Request, res as Response)
-      ).rejects.toThrow('無効なリクエストです');
+      await expect(taskController.updateTaskOrder(req as Request, res as Response)).rejects.toThrow(
+        '無効なリクエストです'
+      );
     });
 
     it('認証されていない場合はエラーになる', async () => {
       req.user = undefined;
 
-      await expect(
-        taskController.updateTaskOrder(req as Request, res as Response)
-      ).rejects.toThrow('認証が必要です');
+      await expect(taskController.updateTaskOrder(req as Request, res as Response)).rejects.toThrow(
+        '認証が必要です'
+      );
     });
   });
 
@@ -304,9 +294,9 @@ describe('TaskController', () => {
     it('認証されていない場合はエラーになる', async () => {
       req.user = undefined;
 
-      await expect(
-        taskController.getSubtasks(req as Request, res as Response)
-      ).rejects.toThrow('認証が必要です');
+      await expect(taskController.getSubtasks(req as Request, res as Response)).rejects.toThrow(
+        '認証が必要です'
+      );
     });
   });
 
@@ -323,11 +313,7 @@ describe('TaskController', () => {
 
       await taskController.updateTaskStatus(req as Request, res as Response);
 
-      expect(taskService.updateTaskStatus).toHaveBeenCalledWith(
-        userId,
-        taskId,
-        TaskStatus.DONE
-      );
+      expect(taskService.updateTaskStatus).toHaveBeenCalledWith(userId, taskId, TaskStatus.DONE);
       expect(res.json).toHaveBeenCalledWith(updatedTask);
     });
 
@@ -363,11 +349,7 @@ describe('TaskController', () => {
 
       await taskController.updateTaskDueDate(req as Request, res as Response);
 
-      expect(taskService.updateTaskDueDate).toHaveBeenCalledWith(
-        userId,
-        taskId,
-        dueDate
-      );
+      expect(taskService.updateTaskDueDate).toHaveBeenCalledWith(userId, taskId, dueDate);
       expect(res.json).toHaveBeenCalledWith(updatedTask);
     });
 
@@ -388,4 +370,4 @@ describe('TaskController', () => {
       ).rejects.toThrow('認証が必要です');
     });
   });
-}); 
+});

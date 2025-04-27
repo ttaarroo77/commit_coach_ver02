@@ -14,11 +14,7 @@ declare global {
   }
 }
 
-export const authMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -29,10 +25,9 @@ export const authMiddleware = (
     const token = authHeader.split(' ')[1];
 
     try {
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET || 'your-secret-key'
-      ) as { userId: string };
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as {
+        userId: string;
+      };
 
       req.user = { id: decoded.userId, userId: decoded.userId };
       next();
@@ -42,4 +37,4 @@ export const authMiddleware = (
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
-}; 
+};

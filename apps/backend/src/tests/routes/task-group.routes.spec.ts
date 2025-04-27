@@ -101,10 +101,7 @@ describe('TaskGroup Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(groups);
-      expect(taskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(
-        userId,
-        projectId
-      );
+      expect(taskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(userId, projectId);
     });
   });
 
@@ -158,11 +155,7 @@ describe('TaskGroup Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedGroup);
-      expect(taskGroupService.updateTaskGroup).toHaveBeenCalledWith(
-        userId,
-        groupId,
-        updates
-      );
+      expect(taskGroupService.updateTaskGroup).toHaveBeenCalledWith(userId, groupId, updates);
     });
   });
 
@@ -198,4 +191,4 @@ describe('TaskGroup Routes', () => {
       );
     });
   });
-}); 
+});

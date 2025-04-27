@@ -112,10 +112,7 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(tasks);
-      expect(taskService.getTasksByProject).toHaveBeenCalledWith(
-        userId,
-        projectId
-      );
+      expect(taskService.getTasksByProject).toHaveBeenCalledWith(userId, projectId);
     });
   });
 
@@ -137,10 +134,7 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(tasks);
-      expect(taskService.getTasksByGroup).toHaveBeenCalledWith(
-        userId,
-        groupId
-      );
+      expect(taskService.getTasksByGroup).toHaveBeenCalledWith(userId, groupId);
     });
   });
 
@@ -194,11 +188,7 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedTask);
-      expect(taskService.updateTask).toHaveBeenCalledWith(
-        userId,
-        taskId,
-        updates
-      );
+      expect(taskService.updateTask).toHaveBeenCalledWith(userId, taskId, updates);
     });
   });
 
@@ -276,11 +266,7 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedTask);
-      expect(taskService.updateTaskStatus).toHaveBeenCalledWith(
-        userId,
-        taskId,
-        TaskStatus.DONE
-      );
+      expect(taskService.updateTaskStatus).toHaveBeenCalledWith(userId, taskId, TaskStatus.DONE);
     });
   });
 
@@ -302,11 +288,7 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedTask);
-      expect(taskService.updateTaskDueDate).toHaveBeenCalledWith(
-        userId,
-        taskId,
-        dueDate
-      );
+      expect(taskService.updateTaskDueDate).toHaveBeenCalledWith(userId, taskId, dueDate);
     });
   });
-}); 
+});

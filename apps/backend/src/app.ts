@@ -20,9 +20,7 @@ export async function createServer() {
   // CORSの設定
   app.use(
     cors({
-      origin: process.env.NODE_ENV === 'production'
-        ? process.env.FRONTEND_URL
-        : '*',
+      origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : '*',
       credentials: true,
     })
   );

@@ -13,17 +13,15 @@ describe('Task API', () => {
     const user = new User({
       email: 'test@example.com',
       password: 'password123',
-      name: 'Test User'
+      name: 'Test User',
     });
     await user.save();
     userId = user._id.toString();
 
     // JWTトークンの生成
-    token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET || 'test-secret',
-      { expiresIn: '1h' }
-    );
+    token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'test-secret', {
+      expiresIn: '1h',
+    });
   });
 
   describe('POST /api/tasks', () => {
@@ -35,7 +33,7 @@ describe('Task API', () => {
           title: 'Test Task',
           description: 'Test Description',
           dueDate: new Date(),
-          priority: 'high'
+          priority: 'high',
         });
 
       expect(response.status).toBe(201);
@@ -48,7 +46,7 @@ describe('Task API', () => {
         .post('/api/tasks')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          description: 'Test Description'
+          description: 'Test Description',
         });
 
       expect(response.status).toBe(400);
@@ -63,7 +61,7 @@ describe('Task API', () => {
         description: 'Description 1',
         dueDate: new Date(),
         priority: 'high',
-        userId
+        userId,
       });
 
       await Task.create({
@@ -71,12 +69,10 @@ describe('Task API', () => {
         description: 'Description 2',
         dueDate: new Date(),
         priority: 'medium',
-        userId
+        userId,
       });
 
-      const response = await request(app)
-        .get('/api/tasks')
-        .set('Authorization', `Bearer ${token}`);
+      const response = await request(app).get('/api/tasks').set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(2);
@@ -90,7 +86,7 @@ describe('Task API', () => {
         description: 'Original Description',
         dueDate: new Date(),
         priority: 'high',
-        userId
+        userId,
       });
 
       const response = await request(app)
@@ -98,7 +94,7 @@ describe('Task API', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           title: 'Updated Task',
-          status: 'completed'
+          status: 'completed',
         });
 
       expect(response.status).toBe(200);
@@ -111,7 +107,7 @@ describe('Task API', () => {
         .put('/api/tasks/507f1f77bcf86cd799439011')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          title: 'Updated Task'
+          title: 'Updated Task',
         });
 
       expect(response.status).toBe(404);
@@ -125,7 +121,7 @@ describe('Task API', () => {
         description: 'Description',
         dueDate: new Date(),
         priority: 'high',
-        userId
+        userId,
       });
 
       const response = await request(app)
@@ -138,4 +134,4 @@ describe('Task API', () => {
       expect(deletedTask).toBeNull();
     });
   });
-}); 
+});

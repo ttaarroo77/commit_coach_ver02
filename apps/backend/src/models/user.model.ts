@@ -6,7 +6,7 @@ import { z } from 'zod';
 export enum UserRole {
   USER = 'user',
   ADMIN = 'admin',
-  TEAM_LEAD = 'team_lead'
+  TEAM_LEAD = 'team_lead',
 }
 
 /**
@@ -22,12 +22,14 @@ export const userSchema = z.object({
   updated_at: z.string().datetime().optional(),
   last_sign_in_at: z.string().datetime().optional(),
   team_id: z.string().uuid().optional(),
-  preferences: z.object({
-    theme: z.enum(['light', 'dark', 'system']).default('system'),
-    notifications: z.boolean().default(true),
-    language: z.string().default('ja'),
-    timezone: z.string().default('Asia/Tokyo'),
-  }).optional(),
+  preferences: z
+    .object({
+      theme: z.enum(['light', 'dark', 'system']).default('system'),
+      notifications: z.boolean().default(true),
+      language: z.string().default('ja'),
+      timezone: z.string().default('Asia/Tokyo'),
+    })
+    .optional(),
   github_username: z.string().optional(),
   bio: z.string().max(500, '自己紹介は500文字以内にしてください').optional(),
   is_onboarded: z.boolean().default(false),
@@ -43,7 +45,7 @@ export const updateProfileSchema = userSchema
     created_at: true,
     updated_at: true,
     last_sign_in_at: true,
-    role: true
+    role: true,
   })
   .partial();
 
@@ -58,14 +60,16 @@ export const authUserSchema = z.object({
 /**
  * パスワードリセット用スキーマ
  */
-export const resetPasswordSchema = z.object({
-  token: z.string(),
-  password: z.string().min(8, 'パスワードは8文字以上必要です'),
-  confirmPassword: z.string().min(8, 'パスワードは8文字以上必要です'),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "パスワードが一致しません",
-  path: ["confirmPassword"],
-});
+export const resetPasswordSchema = z
+  .object({
+    token: z.string(),
+    password: z.string().min(8, 'パスワードは8文字以上必要です'),
+    confirmPassword: z.string().min(8, 'パスワードは8文字以上必要です'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'パスワードが一致しません',
+    path: ['confirmPassword'],
+  });
 
 /**
  * ユーザーのタイプ定義

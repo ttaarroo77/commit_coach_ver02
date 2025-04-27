@@ -7,7 +7,7 @@ import {
   deleteProject,
   addProjectMember,
   removeProjectMember,
-  getProjectMembers
+  getProjectMembers,
 } from '../controllers/project.controller';
 import { validate } from '../middleware/validate';
 import {
@@ -17,7 +17,7 @@ import {
   deleteProjectSchema,
   getProjectsSchema,
   addProjectMemberSchema,
-  removeProjectMemberSchema
+  removeProjectMemberSchema,
 } from '../validators/project.validator';
 import { auth, isOwner } from '../middleware/auth';
 
@@ -70,4 +70,4 @@ router.delete(
   removeProjectMember
 );
 
-export { router as projectRouter }; 
+export { router as projectRouter };

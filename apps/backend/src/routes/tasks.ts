@@ -8,7 +8,7 @@ router.post('/', async (req, res) => {
   try {
     const task = new Task({
       ...req.body,
-      userId: req.user?.id
+      userId: req.user?.id,
     });
     await task.save();
     res.status(201).json(task);
@@ -61,7 +61,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const task = await Task.findOneAndDelete({
       _id: req.params.id,
-      userId: req.user?.id
+      userId: req.user?.id,
     });
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
@@ -76,4 +76,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-export { router as taskRouter }; 
+export { router as taskRouter };

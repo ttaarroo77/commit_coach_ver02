@@ -5,7 +5,7 @@ import {
   logout,
   refreshToken,
   resetPasswordRequest,
-  resetPassword
+  resetPassword,
 } from '../controllers/auth.controller';
 import { validate } from '../middleware/validate';
 import {
@@ -13,7 +13,7 @@ import {
   signupSchema,
   refreshTokenSchema,
   resetPasswordRequestSchema,
-  resetPasswordSchema
+  resetPasswordSchema,
 } from '../validators/auth.validator';
 
 const router = Router();

@@ -97,10 +97,7 @@ describe('TaskGroupController', () => {
 
       await taskGroupController.getTaskGroupsByProject(req as Request, res as Response);
 
-      expect(taskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(
-        userId,
-        projectId
-      );
+      expect(taskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(userId, projectId);
       expect(res.json).toHaveBeenCalledWith(groups);
     });
 
@@ -163,11 +160,7 @@ describe('TaskGroupController', () => {
 
       await taskGroupController.updateTaskGroup(req as Request, res as Response);
 
-      expect(taskGroupService.updateTaskGroup).toHaveBeenCalledWith(
-        userId,
-        groupId,
-        req.body
-      );
+      expect(taskGroupService.updateTaskGroup).toHaveBeenCalledWith(userId, groupId, req.body);
       expect(res.json).toHaveBeenCalledWith(updatedGroup);
     });
 
@@ -235,4 +228,4 @@ describe('TaskGroupController', () => {
       ).rejects.toThrow('認証が必要です');
     });
   });
-}); 
+});

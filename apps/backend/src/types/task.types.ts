@@ -41,4 +41,4 @@ export interface TaskResponse extends Task {
   created_at: string;
   updated_at: string;
   user_id: string;
-} 
+}

@@ -15,7 +15,7 @@ describe('認証 E2E テスト', () => {
   const testUser = {
     email: `test-${Date.now()}@example.com`,
     password: 'Password123!',
-    name: 'テストユーザー'
+    name: 'テストユーザー',
   };
   let accessToken: string;
 
@@ -29,7 +29,7 @@ describe('認証 E2E テスト', () => {
     try {
       // テストユーザーがあれば削除
       const { data } = await supabase.auth.admin.listUsers();
-      const user = data.users.find(u => u.email === testUser.email);
+      const user = data.users.find((u) => u.email === testUser.email);
       if (user) {
         await supabase.auth.admin.deleteUser(user.id);
       }
@@ -40,10 +40,7 @@ describe('認証 E2E テスト', () => {
 
   describe('サインアップ (POST /auth/signup)', () => {
     it('正常: 有効な情報で新規ユーザーを作成できる', async () => {
-      const response = await request(app)
-        .post('/auth/signup')
-        .send(testUser)
-        .expect(201);
+      const response = await request(app).post('/auth/signup').send(testUser).expect(201);
 
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('email', testUser.email);
@@ -52,10 +49,7 @@ describe('認証 E2E テスト', () => {
     });
 
     it('異常: 既存のメールアドレスで登録するとエラーになる', async () => {
-      const response = await request(app)
-        .post('/auth/signup')
-        .send(testUser)
-        .expect(400);
+      const response = await request(app).post('/auth/signup').send(testUser).expect(400);
 
       expect(response.body).toHaveProperty('error');
     });
@@ -65,7 +59,7 @@ describe('認証 E2E テスト', () => {
         .post('/auth/signup')
         .send({
           ...testUser,
-          email: 'invalid-email'
+          email: 'invalid-email',
         })
         .expect(400);
 
@@ -78,7 +72,7 @@ describe('認証 E2E テスト', () => {
         .send({
           ...testUser,
           email: `test-short-${Date.now()}@example.com`,
-          password: '123'
+          password: '123',
         })
         .expect(400);
 
@@ -92,7 +86,7 @@ describe('認証 E2E テスト', () => {
         .post('/auth/login')
         .send({
           email: testUser.email,
-          password: testUser.password
+          password: testUser.password,
         })
         .expect(200);
 
@@ -105,7 +99,7 @@ describe('認証 E2E テスト', () => {
         .post('/auth/login')
         .send({
           email: testUser.email,
-          password: 'wrong-password'
+          password: 'wrong-password',
         })
         .expect(401);
 
@@ -117,7 +111,7 @@ describe('認証 E2E テスト', () => {
         .post('/auth/login')
         .send({
           email: `nonexistent-${Date.now()}@example.com`,
-          password: testUser.password
+          password: testUser.password,
         })
         .expect(401);
 
@@ -136,9 +130,7 @@ describe('認証 E2E テスト', () => {
     });
 
     it('異常: トークンなしでログアウトするとエラーになる', async () => {
-      const response = await request(app)
-        .post('/auth/logout')
-        .expect(401);
+      const response = await request(app).post('/auth/logout').expect(401);
 
       expect(response.body).toHaveProperty('error');
     });
@@ -147,12 +139,10 @@ describe('認証 E2E テスト', () => {
   describe('保護されたルート', () => {
     // 再度ログインしてトークンを取得
     beforeAll(async () => {
-      const response = await request(app)
-        .post('/auth/login')
-        .send({
-          email: testUser.email,
-          password: testUser.password
-        });
+      const response = await request(app).post('/auth/login').send({
+        email: testUser.email,
+        password: testUser.password,
+      });
 
       accessToken = response.body.accessToken;
     });
@@ -179,11 +169,9 @@ describe('認証 E2E テスト', () => {
     });
 
     it('認証が必要なルートにトークンなしでアクセスするとエラーになる', async () => {
-      const response = await request(app)
-        .get('/api/v1/projects')
-        .expect(401);
+      const response = await request(app).get('/api/v1/projects').expect(401);
 
       expect(response.body).toHaveProperty('error');
     });
   });
-}); 
+});

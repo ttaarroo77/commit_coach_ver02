@@ -15,4 +15,4 @@ export const createTestClient = () => {
   const testSupabaseKey = process.env.TEST_SUPABASE_KEY || supabaseKey;
 
   return createClient(testSupabaseUrl, testSupabaseKey);
-}; 
+};

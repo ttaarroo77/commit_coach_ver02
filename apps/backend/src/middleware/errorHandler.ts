@@ -19,22 +19,18 @@ export class ApiError extends Error {
 /**
  * 共通エラーハンドラーミドルウェア
  */
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   // 構造化されたログを出力
   logError(err, req);
 
   // エラーの詳細情報（開発環境のみ）
-  const errorDetails = process.env.NODE_ENV === 'development' 
-    ? {
-        stack: err.stack,
-        originalError: err instanceof ApiError ? err.originalError?.message : undefined
-      }
-    : undefined;
+  const errorDetails =
+    process.env.NODE_ENV === 'development'
+      ? {
+          stack: err.stack,
+          originalError: err instanceof ApiError ? err.originalError?.message : undefined,
+        }
+      : undefined;
 
   // ApiErrorの場合
   if (err instanceof ApiError) {
@@ -43,8 +39,8 @@ export const errorHandler = (
         message: err.message,
         code: err.errorCode || 'API_ERROR',
         statusCode: err.statusCode,
-        ...(errorDetails && { details: errorDetails })
-      }
+        ...(errorDetails && { details: errorDetails }),
+      },
     });
   }
 
@@ -56,8 +52,8 @@ export const errorHandler = (
         message: pgError.message || 'Database error',
         code: `DB_${pgError.code || 'ERROR'}`,
         statusCode: 400,
-        ...(errorDetails && { details: errorDetails })
-      }
+        ...(errorDetails && { details: errorDetails }),
+      },
     });
   }
 
@@ -68,30 +64,33 @@ export const errorHandler = (
         message: 'Invalid or expired token',
         code: err.name === 'TokenExpiredError' ? 'TOKEN_EXPIRED' : 'INVALID_TOKEN',
         statusCode: 401,
-        ...(errorDetails && { details: errorDetails })
-      }
+        ...(errorDetails && { details: errorDetails }),
+      },
     });
   }
 
   // その他の全てのエラーの場合
-  logger.error({
-    error: {
-      name: err.name,
-      message: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  logger.error(
+    {
+      error: {
+        name: err.name,
+        message: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      },
+      path: req.path,
+      method: req.method,
+      ip: req.ip || req.headers['x-forwarded-for'],
     },
-    path: req.path,
-    method: req.method,
-    ip: req.ip || req.headers['x-forwarded-for']
-  }, '予期せぬエラーが発生しました');
-  
+    '予期せぬエラーが発生しました'
+  );
+
   res.status(500).json({
     error: {
       message: 'An unexpected error occurred',
       code: 'INTERNAL_SERVER_ERROR',
       statusCode: 500,
-      ...(errorDetails && { details: errorDetails })
-    }
+      ...(errorDetails && { details: errorDetails }),
+    },
   });
 };
 
@@ -100,18 +99,21 @@ export const errorHandler = (
  */
 export const notFoundHandler = (req: Request, res: Response) => {
   // 404エラーをログに記録
-  logger.warn({
-    path: req.path,
-    method: req.method,
-    ip: req.ip || req.headers['x-forwarded-for'],
-    userAgent: req.headers['user-agent']
-  }, 'リソースが見つかりません');
-  
+  logger.warn(
+    {
+      path: req.path,
+      method: req.method,
+      ip: req.ip || req.headers['x-forwarded-for'],
+      userAgent: req.headers['user-agent'],
+    },
+    'リソースが見つかりません'
+  );
+
   res.status(404).json({
     error: {
       message: 'The requested resource was not found',
       code: 'RESOURCE_NOT_FOUND',
-      statusCode: 404
-    }
+      statusCode: 404,
+    },
   });
-}; 
+};

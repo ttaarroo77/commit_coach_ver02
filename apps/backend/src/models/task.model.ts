@@ -7,7 +7,7 @@ export enum TaskPriority {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  URGENT = 'urgent'
+  URGENT = 'urgent',
 }
 
 /**
@@ -17,7 +17,7 @@ export enum TaskStatus {
   TODO = 'todo',
   IN_PROGRESS = 'in_progress',
   REVIEW = 'review',
-  DONE = 'done'
+  DONE = 'done',
 }
 
 /**
@@ -50,7 +50,7 @@ export const createTaskSchema = taskSchema.omit({
   id: true,
   created_at: true,
   updated_at: true,
-  completed_at: true
+  completed_at: true,
 });
 
 /**
@@ -61,7 +61,7 @@ export const updateTaskSchema = taskSchema
     id: true,
     created_at: true,
     updated_at: true,
-    user_id: true
+    user_id: true,
   })
   .partial();
 

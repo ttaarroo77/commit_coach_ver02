@@ -2,10 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { TaskGroup, TaskGroupUpdate } from '../types/task-group.types';
 import { ApiError } from '../middleware/errorHandler';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
 export class TaskGroupService {
   async createTaskGroup(userId: string, data: Omit<TaskGroup, 'order'>): Promise<TaskGroup> {
@@ -78,11 +75,7 @@ export class TaskGroupService {
     return taskGroup;
   }
 
-  async updateTaskGroup(
-    userId: string,
-    id: string,
-    updates: TaskGroupUpdate
-  ): Promise<TaskGroup> {
+  async updateTaskGroup(userId: string, id: string, updates: TaskGroupUpdate): Promise<TaskGroup> {
     const { data: taskGroup, error } = await supabase
       .from('task_groups')
       .update(updates)
@@ -131,4 +124,4 @@ export class TaskGroupService {
       throw new ApiError(500, 'タスクグループの順序更新に失敗しました');
     }
   }
-} 
+}

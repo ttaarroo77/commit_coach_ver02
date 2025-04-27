@@ -150,4 +150,3 @@ export async function updateTaskDueDate(req: Request, res: Response) {
   const task = await taskService.updateTaskDueDate(userId, id, dueDate);
   res.json(task);
 }
-

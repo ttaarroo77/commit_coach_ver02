@@ -4,10 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { ApiError } from '../middleware/errorHandler';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_ANON_KEY || ''
-);
+const supabase = createClient(process.env.SUPABASE_URL || '', process.env.SUPABASE_ANON_KEY || '');
 
 const signupSchema = z.object({
   email: z.string().email(),
@@ -24,11 +21,9 @@ const loginSchema = z.object({
  * JWTトークンを生成する
  */
 const generateTokens = (userId: string) => {
-  const accessToken = jwt.sign(
-    { userId },
-    process.env.JWT_SECRET || 'jwt_secret',
-    { expiresIn: process.env.JWT_EXPIRES_IN || '1h' } as jwt.SignOptions
-  );
+  const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET || 'jwt_secret', {
+    expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+  } as jwt.SignOptions);
 
   const refreshToken = jwt.sign(
     { userId },
@@ -107,11 +102,7 @@ export const login = async (req: Request, res: Response) => {
 /**
  * トークンのリフレッシュ
  */
-export const refreshToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { refreshToken: token } = req.body;
 
@@ -121,10 +112,9 @@ export const refreshToken = async (
 
     // リフレッシュトークンを検証
     try {
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_REFRESH_SECRET || 'jwt_refresh_secret'
-      ) as { userId: string };
+      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'jwt_refresh_secret') as {
+        userId: string;
+      };
 
       // 新しいトークンを生成
       const { accessToken, refreshToken } = generateTokens(decoded.userId);
@@ -164,11 +154,7 @@ export const logout = async (req: Request, res: Response) => {
 /**
  * パスワードリセットリクエスト
  */
-export const resetPasswordRequest = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const resetPasswordRequest = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email } = req.body;
 
@@ -193,11 +179,7 @@ export const resetPasswordRequest = async (
 /**
  * パスワードリセット
  */
-export const resetPassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, password } = req.body;
 
@@ -217,4 +199,4 @@ export const resetPassword = async (
   } catch (error) {
     next(error);
   }
-}; 
+};

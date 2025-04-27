@@ -4,10 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '../app.module';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -38,7 +35,9 @@ describe('AuthController (e2e)', () => {
     await app.close();
 
     // テスト用ユーザーの削除
-    const { data: { user } } = await supabase.auth.signInWithPassword({
+    const {
+      data: { user },
+    } = await supabase.auth.signInWithPassword({
       email: testUserEmail,
       password: testUserPassword,
     });
@@ -51,19 +50,19 @@ describe('AuthController (e2e)', () => {
   describe('/auth/signup (POST)', () => {
     it('should create a new user', async () => {
       const newUserEmail = `newuser${Date.now()}@example.com`;
-      const response = await request(app.getHttpServer())
-        .post('/auth/signup')
-        .send({
-          email: newUserEmail,
-          password: 'NewUser123!',
-        });
+      const response = await request(app.getHttpServer()).post('/auth/signup').send({
+        email: newUserEmail,
+        password: 'NewUser123!',
+      });
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('accessToken');
       expect(response.body).toHaveProperty('user');
 
       // テスト後にユーザーを削除
-      const { data: { user } } = await supabase.auth.signInWithPassword({
+      const {
+        data: { user },
+      } = await supabase.auth.signInWithPassword({
         email: newUserEmail,
         password: 'NewUser123!',
       });
@@ -87,12 +86,10 @@ describe('AuthController (e2e)', () => {
 
   describe('/auth/login (POST)', () => {
     it('should return access token for valid credentials', async () => {
-      const response = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          email: testUserEmail,
-          password: testUserPassword,
-        });
+      const response = await request(app.getHttpServer()).post('/auth/login').send({
+        email: testUserEmail,
+        password: testUserPassword,
+      });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('accessToken');
@@ -100,12 +97,10 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should return 401 for invalid credentials', async () => {
-      const response = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          email: testUserEmail,
-          password: 'WrongPassword123!',
-        });
+      const response = await request(app.getHttpServer()).post('/auth/login').send({
+        email: testUserEmail,
+        password: 'WrongPassword123!',
+      });
 
       expect(response.status).toBe(401);
       expect(response.body.error.message).toBe('認証に失敗しました');
@@ -115,12 +110,10 @@ describe('AuthController (e2e)', () => {
   describe('/auth/logout (POST)', () => {
     it('should logout successfully', async () => {
       // まずログイン
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          email: testUserEmail,
-          password: testUserPassword,
-        });
+      const loginResponse = await request(app.getHttpServer()).post('/auth/login').send({
+        email: testUserEmail,
+        password: testUserPassword,
+      });
 
       const { accessToken } = loginResponse.body;
 
@@ -133,4 +126,4 @@ describe('AuthController (e2e)', () => {
       expect(response.body.message).toBe('ログアウトしました');
     });
   });
-}); 
+});

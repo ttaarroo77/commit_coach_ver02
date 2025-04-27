@@ -9,26 +9,21 @@ describe('Auth Middleware', () => {
 
   describe('Protected Routes', () => {
     it('should allow access with valid token', async () => {
-      const response = await request(app)
-        .get('/api/v1/projects')
-        .set(getTestHeaders(validToken));
+      const response = await request(app).get('/api/v1/projects').set(getTestHeaders(validToken));
 
       expect(response.status).not.toBe(401);
       expect(response.status).not.toBe(403);
     });
 
     it('should deny access without token', async () => {
-      const response = await request(app)
-        .get('/api/v1/projects');
+      const response = await request(app).get('/api/v1/projects');
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty('error');
     });
 
     it('should deny access with invalid token', async () => {
-      const response = await request(app)
-        .get('/api/v1/projects')
-        .set(getTestHeaders(invalidToken));
+      const response = await request(app).get('/api/v1/projects').set(getTestHeaders(invalidToken));
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty('error');
@@ -54,4 +49,4 @@ describe('Auth Middleware', () => {
       expect(response.body).toHaveProperty('error');
     });
   });
-}); 
+});

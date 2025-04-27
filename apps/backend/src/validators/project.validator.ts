@@ -32,9 +32,18 @@ export const deleteProjectSchema = z.object({
 
 export const getProjectsSchema = z.object({
   query: z.object({
-    limit: z.string().optional().transform((val) => val ? parseInt(val, 10) : 10),
-    offset: z.string().optional().transform((val) => val ? parseInt(val, 10) : 0),
-    include_archived: z.string().optional().transform((val) => val === 'true'),
+    limit: z
+      .string()
+      .optional()
+      .transform((val) => (val ? parseInt(val, 10) : 10)),
+    offset: z
+      .string()
+      .optional()
+      .transform((val) => (val ? parseInt(val, 10) : 0)),
+    include_archived: z
+      .string()
+      .optional()
+      .transform((val) => val === 'true'),
   }),
 });
 
@@ -45,7 +54,9 @@ export const addProjectMemberSchema = z.object({
   body: z.object({
     user_id: z.string().uuid('有効なユーザーIDを指定してください'),
     role: z.enum(['owner', 'editor', 'viewer'], {
-      errorMap: () => ({ message: 'ロールは owner, editor, viewer のいずれかである必要があります' })
+      errorMap: () => ({
+        message: 'ロールは owner, editor, viewer のいずれかである必要があります',
+      }),
     }),
   }),
 });
@@ -55,4 +66,4 @@ export const removeProjectMemberSchema = z.object({
     id: z.string().uuid('有効なプロジェクトIDを指定してください'),
     userId: z.string().uuid('有効なユーザーIDを指定してください'),
   }),
-}); 
+});

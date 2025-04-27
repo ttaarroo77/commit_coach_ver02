@@ -22,4 +22,4 @@ router.put('/:id', isOwner('projects'), projectController.updateProject);
 // プロジェクトの削除 (所有権チェック付き)
 router.delete('/:id', isOwner('projects'), projectController.deleteProject);
 
-export default router; 
+export default router;

@@ -26,4 +26,4 @@ router.delete('/:id', isOwner('task_groups'), taskGroupController.deleteTaskGrou
 // タスクグループの順序を更新
 router.post('/order', taskGroupController.updateTaskGroupOrder);
 
-export default router; 
+export default router;

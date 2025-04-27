@@ -64,9 +64,7 @@ describe('TaskService', () => {
         status: TaskStatus.TODO,
       };
 
-      await expect(taskService.createTask(userId, taskData)).rejects.toThrow(
-        ApiError
-      );
+      await expect(taskService.createTask(userId, taskData)).rejects.toThrow(ApiError);
     });
 
     it('存在しないグループIDでタスクを作成しようとするとエラーになる', async () => {
@@ -79,9 +77,7 @@ describe('TaskService', () => {
         status: TaskStatus.TODO,
       };
 
-      await expect(taskService.createTask(userId, taskData)).rejects.toThrow(
-        ApiError
-      );
+      await expect(taskService.createTask(userId, taskData)).rejects.toThrow(ApiError);
     });
   });
 
@@ -109,9 +105,9 @@ describe('TaskService', () => {
     });
 
     it('存在しないグループIDでタスク一覧を取得しようとするとエラーになる', async () => {
-      await expect(
-        taskService.getTasksByGroup(userId, 'non-existent-group-id')
-      ).rejects.toThrow(ApiError);
+      await expect(taskService.getTasksByGroup(userId, 'non-existent-group-id')).rejects.toThrow(
+        ApiError
+      );
     });
   });
 
@@ -123,10 +119,7 @@ describe('TaskService', () => {
     });
 
     it('存在しないタスクIDで詳細を取得しようとするとnullを返す', async () => {
-      const task = await taskService.getTaskById(
-        userId,
-        'non-existent-task-id'
-      );
+      const task = await taskService.getTaskById(userId, 'non-existent-task-id');
       expect(task).toBeNull();
     });
   });
@@ -148,9 +141,9 @@ describe('TaskService', () => {
         title: '更新されたテストタスク',
       };
 
-      await expect(
-        taskService.updateTask(userId, 'non-existent-task-id', updates)
-      ).rejects.toThrow(ApiError);
+      await expect(taskService.updateTask(userId, 'non-existent-task-id', updates)).rejects.toThrow(
+        ApiError
+      );
     });
   });
 
@@ -163,9 +156,9 @@ describe('TaskService', () => {
     });
 
     it('存在しないタスクIDで削除しようとするとエラーになる', async () => {
-      await expect(
-        taskService.deleteTask(userId, 'non-existent-task-id')
-      ).rejects.toThrow(ApiError);
+      await expect(taskService.deleteTask(userId, 'non-existent-task-id')).rejects.toThrow(
+        ApiError
+      );
     });
   });
 
@@ -178,13 +171,7 @@ describe('TaskService', () => {
 
     it('存在しないタスクIDで順序を更新しようとするとエラーになる', async () => {
       await expect(
-        taskService.updateTaskOrder(
-          userId,
-          'non-existent-task-id',
-          1,
-          projectId,
-          groupId
-        )
+        taskService.updateTaskOrder(userId, 'non-existent-task-id', 1, projectId, groupId)
       ).rejects.toThrow(ApiError);
     });
   });
@@ -192,12 +179,7 @@ describe('TaskService', () => {
   describe('getSubtasks', () => {
     it('サブタスクを取得できる', async () => {
       const parentTask = await createTestTask(userId, projectId, groupId);
-      const subtask = await createTestTask(
-        userId,
-        projectId,
-        groupId,
-        parentTask.id
-      );
+      const subtask = await createTestTask(userId, projectId, groupId, parentTask.id);
 
       const subtasks = await taskService.getSubtasks(userId, parentTask.id);
       expect(subtasks).toBeInstanceOf(Array);
@@ -208,29 +190,21 @@ describe('TaskService', () => {
     });
 
     it('存在しない親タスクIDでサブタスクを取得しようとするとエラーになる', async () => {
-      await expect(
-        taskService.getSubtasks(userId, 'non-existent-parent-id')
-      ).rejects.toThrow(ApiError);
+      await expect(taskService.getSubtasks(userId, 'non-existent-parent-id')).rejects.toThrow(
+        ApiError
+      );
     });
   });
 
   describe('updateTaskStatus', () => {
     it('タスクのステータスを更新できる', async () => {
-      const task = await taskService.updateTaskStatus(
-        userId,
-        taskId,
-        TaskStatus.DONE
-      );
+      const task = await taskService.updateTaskStatus(userId, taskId, TaskStatus.DONE);
       expect(task.status).toBe(TaskStatus.DONE);
     });
 
     it('存在しないタスクIDでステータスを更新しようとするとエラーになる', async () => {
       await expect(
-        taskService.updateTaskStatus(
-          userId,
-          'non-existent-task-id',
-          TaskStatus.DONE
-        )
+        taskService.updateTaskStatus(userId, 'non-existent-task-id', TaskStatus.DONE)
       ).rejects.toThrow(ApiError);
     });
   });
@@ -238,22 +212,14 @@ describe('TaskService', () => {
   describe('updateTaskDueDate', () => {
     it('タスクの期限を更新できる', async () => {
       const newDueDate = new Date().toISOString();
-      const task = await taskService.updateTaskDueDate(
-        userId,
-        taskId,
-        newDueDate
-      );
+      const task = await taskService.updateTaskDueDate(userId, taskId, newDueDate);
       expect(task.due_date).toBe(newDueDate);
     });
 
     it('存在しないタスクIDで期限を更新しようとするとエラーになる', async () => {
       await expect(
-        taskService.updateTaskDueDate(
-          userId,
-          'non-existent-task-id',
-          new Date().toISOString()
-        )
+        taskService.updateTaskDueDate(userId, 'non-existent-task-id', new Date().toISOString())
       ).rejects.toThrow(ApiError);
     });
   });
-}); 
+});

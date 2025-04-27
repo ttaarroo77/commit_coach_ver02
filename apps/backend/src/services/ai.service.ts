@@ -4,10 +4,7 @@ import { AIConfig, AIMessage, TaskBreakdown } from '../types/ai.types';
 import { Task } from '../types/task.types';
 import { ApiError } from '../middleware/errorHandler';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,7 +12,7 @@ const openai = new OpenAI({
   timeout: 30000,
 });
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export class AIService {
   async getUserConfig(userId: string): Promise<AIConfig> {
@@ -38,17 +35,13 @@ export class AIService {
   }
 
   async saveUserConfig(userId: string, config: AIConfig) {
-    const { error } = await supabase
-      .from('ai_configs')
-      .upsert({ userId, ...config });
+    const { error } = await supabase.from('ai_configs').upsert({ userId, ...config });
 
     if (error) throw error;
   }
 
   async saveMessage(userId: string, message: AIMessage) {
-    const { error } = await supabase
-      .from('ai_messages')
-      .insert({ userId, ...message });
+    const { error } = await supabase.from('ai_messages').insert({ userId, ...message });
 
     if (error) throw error;
   }
@@ -79,12 +72,13 @@ export class AIService {
           messages: [
             {
               role: 'system',
-              content: 'あなたはタスクを効率的に分解するAIアシスタントです。タスクを小さなサブタスクに分解し、各サブタスクの見積もり時間と優先度を設定してください。'
+              content:
+                'あなたはタスクを効率的に分解するAIアシスタントです。タスクを小さなサブタスクに分解し、各サブタスクの見積もり時間と優先度を設定してください。',
             },
             {
               role: 'user',
-              content: `以下のタスクを分解してください：\nタイトル: ${task.title}\n説明: ${task.description || '説明なし'}`
-            }
+              content: `以下のタスクを分解してください：\nタイトル: ${task.title}\n説明: ${task.description || '説明なし'}`,
+            },
           ],
           temperature: 0.7,
           max_tokens: 1000,
@@ -163,4 +157,4 @@ export class AIService {
 
     return breakdown;
   }
-} 
+}

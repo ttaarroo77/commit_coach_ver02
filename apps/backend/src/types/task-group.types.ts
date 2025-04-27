@@ -14,4 +14,4 @@ export const taskGroupUpdateSchema = z.object({
 });
 
 export type TaskGroup = z.infer<typeof taskGroupSchema>;
-export type TaskGroupUpdate = z.infer<typeof taskGroupUpdateSchema>; 
+export type TaskGroupUpdate = z.infer<typeof taskGroupUpdateSchema>;

@@ -19,4 +19,4 @@ export const rateLimit = (windowMs: number, max: number) => {
 
     next();
   };
-}; 
+};

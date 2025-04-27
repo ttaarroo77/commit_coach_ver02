@@ -7,4 +7,4 @@ declare namespace Express {
       role?: string;
     };
   }
-} 
+}

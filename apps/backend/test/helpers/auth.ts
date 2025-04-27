@@ -25,7 +25,9 @@ export const getTestHeaders = (token: string) => ({
 
 export const cleanupTestUser = async (email: string) => {
   const supabase = createTestClient();
-  const { data: { user } } = await supabase.auth.signInWithPassword({
+  const {
+    data: { user },
+  } = await supabase.auth.signInWithPassword({
     email,
     password: 'test-password',
   });

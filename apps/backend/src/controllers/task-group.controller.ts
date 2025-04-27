@@ -43,10 +43,7 @@ export class TaskGroupController {
         throw new ApiError(401, '認証が必要です');
       }
 
-      const taskGroups = await this.taskGroupService.getTaskGroupsByProject(
-        userId,
-        projectId
-      );
+      const taskGroups = await this.taskGroupService.getTaskGroupsByProject(userId, projectId);
       res.json(taskGroups);
     } catch (error) {
       throw error;
@@ -80,11 +77,7 @@ export class TaskGroupController {
         throw new ApiError(401, '認証が必要です');
       }
 
-      const taskGroup = await this.taskGroupService.updateTaskGroup(
-        userId,
-        id,
-        updates
-      );
+      const taskGroup = await this.taskGroupService.updateTaskGroup(userId, id, updates);
       res.json(taskGroup);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -117,12 +110,7 @@ export class TaskGroupController {
         throw new ApiError(401, '認証が必要です');
       }
 
-      await this.taskGroupService.updateTaskGroupOrder(
-        userId,
-        id,
-        newOrder,
-        projectId
-      );
+      await this.taskGroupService.updateTaskGroupOrder(userId, id, newOrder, projectId);
       res.status(204).send();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -131,4 +119,4 @@ export class TaskGroupController {
       throw error;
     }
   };
-} 
+}

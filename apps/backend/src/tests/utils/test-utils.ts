@@ -2,10 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 import { Task, TaskPriority, TaskStatus } from '../../types/task.types';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
 export const createTestUser = async () => {
   const email = `test-${uuidv4()}@example.com`;
@@ -97,4 +94,4 @@ export const createTestTask = async (
 export const deleteTestTask = async (id: string) => {
   const { error } = await supabase.from('tasks').delete().eq('id', id);
   if (error) throw error;
-}; 
+};

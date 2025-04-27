@@ -36,9 +36,7 @@ describe('認証E2Eテスト', () => {
 
   describe('サインアップ', () => {
     it('新しいユーザーを登録できる', async () => {
-      const response = await request(app)
-        .post('/api/v1/auth/signup')
-        .send(testUser);
+      const response = await request(app).post('/api/v1/auth/signup').send(testUser);
 
       expect(response.status).toBe(201);
       expect(response.body.status).toBe('success');
@@ -89,23 +87,19 @@ describe('認証E2Eテスト', () => {
 
       if (authData.user) {
         userId = authData.user.id;
-        await supabaseAdmin
-          .from('users')
-          .insert({
-            id: userId,
-            email: testUser.email,
-            name: testUser.name,
-          });
+        await supabaseAdmin.from('users').insert({
+          id: userId,
+          email: testUser.email,
+          name: testUser.name,
+        });
       }
     });
 
     it('正しい認証情報でログインできる', async () => {
-      const response = await request(app)
-        .post('/api/v1/auth/login')
-        .send({
-          email: testUser.email,
-          password: testUser.password,
-        });
+      const response = await request(app).post('/api/v1/auth/login').send({
+        email: testUser.email,
+        password: testUser.password,
+      });
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
@@ -116,12 +110,10 @@ describe('認証E2Eテスト', () => {
     });
 
     it('間違ったパスワードでログインできない', async () => {
-      const response = await request(app)
-        .post('/api/v1/auth/login')
-        .send({
-          email: testUser.email,
-          password: 'wrong-password',
-        });
+      const response = await request(app).post('/api/v1/auth/login').send({
+        email: testUser.email,
+        password: 'wrong-password',
+      });
 
       expect(response.status).toBe(401);
       expect(response.body.status).toBe('error');
@@ -129,12 +121,10 @@ describe('認証E2Eテスト', () => {
     });
 
     it('存在しないユーザーでログインできない', async () => {
-      const response = await request(app)
-        .post('/api/v1/auth/login')
-        .send({
-          email: 'nonexistent@example.com',
-          password: testUser.password,
-        });
+      const response = await request(app).post('/api/v1/auth/login').send({
+        email: 'nonexistent@example.com',
+        password: testUser.password,
+      });
 
       expect(response.status).toBe(401);
       expect(response.body.status).toBe('error');
@@ -154,30 +144,24 @@ describe('認証E2Eテスト', () => {
       });
 
       if (authData.user) {
-        await supabaseAdmin
-          .from('users')
-          .insert({
-            id: authData.user.id,
-            email: testUser.email,
-            name: testUser.name,
-          });
+        await supabaseAdmin.from('users').insert({
+          id: authData.user.id,
+          email: testUser.email,
+          name: testUser.name,
+        });
 
         // ログインしてリフレッシュトークンを取得
-        const loginResponse = await request(app)
-          .post('/api/v1/auth/login')
-          .send({
-            email: testUser.email,
-            password: testUser.password,
-          });
+        const loginResponse = await request(app).post('/api/v1/auth/login').send({
+          email: testUser.email,
+          password: testUser.password,
+        });
 
         refreshToken = loginResponse.body.data.refreshToken;
       }
     });
 
     it('有効なリフレッシュトークンで新しいトークンを取得できる', async () => {
-      const response = await request(app)
-        .post('/api/v1/auth/refresh-token')
-        .send({ refreshToken });
+      const response = await request(app).post('/api/v1/auth/refresh-token').send({ refreshToken });
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
@@ -198,12 +182,11 @@ describe('認証E2Eテスト', () => {
 
   describe('ログアウト', () => {
     it('ログアウトできる', async () => {
-      const response = await request(app)
-        .post('/api/v1/auth/logout');
+      const response = await request(app).post('/api/v1/auth/logout');
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe('success');
       expect(response.body.message).toBe('ログアウトしました');
     });
   });
-}); 
+});

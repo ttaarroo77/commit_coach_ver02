@@ -34,10 +34,7 @@ describe('TaskGroupService', () => {
         project_id: testProject.id,
       };
 
-      const group = await taskGroupService.createTaskGroup(
-        testUser.user.id,
-        groupData
-      );
+      const group = await taskGroupService.createTaskGroup(testUser.user.id, groupData);
       testTaskGroup = group;
 
       expect(group).toHaveProperty('id');
@@ -63,10 +60,7 @@ describe('TaskGroupService', () => {
 
   describe('getTaskGroupById', () => {
     it('特定のタスクグループを取得できること', async () => {
-      const group = await taskGroupService.getTaskGroupById(
-        testUser.user.id,
-        testTaskGroup.id
-      );
+      const group = await taskGroupService.getTaskGroupById(testUser.user.id, testTaskGroup.id);
 
       expect(group).not.toBeNull();
       expect(group?.id).toBe(testTaskGroup.id);
@@ -74,10 +68,7 @@ describe('TaskGroupService', () => {
     });
 
     it('存在しないタスクグループの場合はnullを返すこと', async () => {
-      const group = await taskGroupService.getTaskGroupById(
-        testUser.user.id,
-        'non-existent-id'
-      );
+      const group = await taskGroupService.getTaskGroupById(testUser.user.id, 'non-existent-id');
       expect(group).toBeNull();
     });
   });
@@ -105,11 +96,7 @@ describe('TaskGroupService', () => {
       };
 
       await expect(
-        taskGroupService.updateTaskGroup(
-          testUser.user.id,
-          'non-existent-id',
-          updates
-        )
+        taskGroupService.updateTaskGroup(testUser.user.id, 'non-existent-id', updates)
       ).rejects.toThrow();
     });
   });
@@ -121,10 +108,7 @@ describe('TaskGroupService', () => {
       ).resolves.not.toThrow();
 
       // 削除後は取得できないことを確認
-      const group = await taskGroupService.getTaskGroupById(
-        testUser.user.id,
-        testTaskGroup.id
-      );
+      const group = await taskGroupService.getTaskGroupById(testUser.user.id, testTaskGroup.id);
       expect(group).toBeNull();
     });
 
@@ -138,22 +122,14 @@ describe('TaskGroupService', () => {
   describe('updateTaskGroupOrder', () => {
     it('タスクグループの順序を更新できること', async () => {
       // 新しいタスクグループを作成
-      const newGroup = await createTestTaskGroup(
-        testUser.user.id,
-        testProject.id
-      );
+      const newGroup = await createTestTaskGroup(testUser.user.id, testProject.id);
 
       await expect(
-        taskGroupService.updateTaskGroupOrder(
-          testUser.user.id,
-          newGroup.id,
-          1,
-          testProject.id
-        )
+        taskGroupService.updateTaskGroupOrder(testUser.user.id, newGroup.id, 1, testProject.id)
       ).resolves.not.toThrow();
 
       // クリーンアップ
       await deleteTestTaskGroup(newGroup.id);
     });
   });
-}); 
+});
