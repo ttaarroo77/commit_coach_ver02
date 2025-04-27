@@ -99,3 +99,6 @@ coverage.xml
 
 # backup
 backup_frontend/
+
+# reference code
+zips/
