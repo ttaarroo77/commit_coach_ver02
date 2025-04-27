@@ -5,7 +5,10 @@ declare global {
   namespace Express {
     interface Request {
       user?: {
+        id: string;
         userId: string;
+        email?: string;
+        role?: string;
       };
     }
   }
@@ -31,7 +34,7 @@ export const authMiddleware = (
         process.env.JWT_SECRET || 'your-secret-key'
       ) as { userId: string };
 
-      req.user = decoded;
+      req.user = { id: decoded.userId, userId: decoded.userId };
       next();
     } catch (error) {
       return res.status(401).json({ error: 'Invalid token' });

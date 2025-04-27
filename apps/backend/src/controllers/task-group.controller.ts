@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { TaskGroupService } from '../services/task-group.service';
 import { taskGroupSchema, taskGroupUpdateSchema } from '../types/task-group.types';
-import { ApiError } from '../middleware/error.middleware';
+import { ApiError } from '../middleware/errorHandler';
 import { z } from 'zod';
 
 const orderUpdateSchema = z.object({
@@ -20,13 +20,16 @@ export class TaskGroupController {
   createTaskGroup = async (req: Request, res: Response) => {
     try {
       const data = taskGroupSchema.parse(req.body);
-      const userId = req.user.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new ApiError(401, '認証が必要です');
+      }
 
       const taskGroup = await this.taskGroupService.createTaskGroup(userId, data);
       res.status(201).json(taskGroup);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new ApiError(400, '無効なリクエストデータ', error.errors);
+        throw new ApiError(400, '無効なリクエストデータ', error as Error);
       }
       throw error;
     }
@@ -35,7 +38,10 @@ export class TaskGroupController {
   getTaskGroupsByProject = async (req: Request, res: Response) => {
     try {
       const projectId = req.params.projectId;
-      const userId = req.user.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new ApiError(401, '認証が必要です');
+      }
 
       const taskGroups = await this.taskGroupService.getTaskGroupsByProject(
         userId,
@@ -50,7 +56,10 @@ export class TaskGroupController {
   getTaskGroupById = async (req: Request, res: Response) => {
     try {
       const id = req.params.id;
-      const userId = req.user.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new ApiError(401, '認証が必要です');
+      }
 
       const taskGroup = await this.taskGroupService.getTaskGroupById(userId, id);
       if (!taskGroup) {
@@ -66,7 +75,10 @@ export class TaskGroupController {
     try {
       const id = req.params.id;
       const updates = taskGroupUpdateSchema.parse(req.body);
-      const userId = req.user.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new ApiError(401, '認証が必要です');
+      }
 
       const taskGroup = await this.taskGroupService.updateTaskGroup(
         userId,
@@ -76,7 +88,7 @@ export class TaskGroupController {
       res.json(taskGroup);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new ApiError(400, '無効なリクエストデータ', error.errors);
+        throw new ApiError(400, '無効なリクエストデータ', error as Error);
       }
       throw error;
     }
@@ -85,7 +97,10 @@ export class TaskGroupController {
   deleteTaskGroup = async (req: Request, res: Response) => {
     try {
       const id = req.params.id;
-      const userId = req.user.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new ApiError(401, '認証が必要です');
+      }
 
       await this.taskGroupService.deleteTaskGroup(userId, id);
       res.status(204).send();
@@ -97,7 +112,10 @@ export class TaskGroupController {
   updateTaskGroupOrder = async (req: Request, res: Response) => {
     try {
       const { id, newOrder, projectId } = orderUpdateSchema.parse(req.body);
-      const userId = req.user.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new ApiError(401, '認証が必要です');
+      }
 
       await this.taskGroupService.updateTaskGroupOrder(
         userId,
@@ -108,7 +126,7 @@ export class TaskGroupController {
       res.status(204).send();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new ApiError(400, '無効なリクエストデータ', error.errors);
+        throw new ApiError(400, '無効なリクエストデータ', error as Error);
       }
       throw error;
     }

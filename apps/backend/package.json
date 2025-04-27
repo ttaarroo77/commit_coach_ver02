@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "ts-node src/index.ts",
     "build": "tsc",
     "test": "NODE_ENV=test jest",
     "test:watch": "NODE_ENV=test jest --watch",
@@ -34,7 +34,9 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "morgan": "^1.10.0",
-    "typescript": "^5.3.3",
+    "openai": "^4.96.0",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -45,7 +47,7 @@
     "@types/helmet": "^4.0.0",
     "@types/jest": "^29.5.14",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^20.11.19",
+    "@types/node": "^20.17.31",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
@@ -58,6 +60,8 @@
     "prettier": "^3.1.1",
     "supertest": "^7.1.0",
     "ts-jest": "^29.3.2",
-    "ts-node-dev": "^2.0.0"
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
   }
 }

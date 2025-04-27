@@ -1,20 +1,23 @@
 import { Router } from 'express';
-import { AIController } from '../controllers/ai.controller';
+// import * as aiController from '../controllers/ai.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
-const aiController = new AIController();
 
 // 認証ミドルウェアを適用
 router.use(authMiddleware);
 
-// タスクの分解
-router.post('/breakdown', aiController.breakDownTask);
+// 一時的にAI機能を無効化
+router.post('/breakdown', (req, res) => {
+  res.status(501).json({ error: 'この機能は現在メンテナンス中です' });
+});
 
-// タスクの分析
-router.post('/analyze', aiController.analyzeTask);
+router.post('/analyze', (req, res) => {
+  res.status(501).json({ error: 'この機能は現在メンテナンス中です' });
+});
 
-// プロジェクトの分析
-router.post('/analyze-project', aiController.analyzeProject);
+router.post('/analyze-project', (req, res) => {
+  res.status(501).json({ error: 'この機能は現在メンテナンス中です' });
+});
 
-export default router; 
+export default router;

@@ -50,21 +50,26 @@ tasks_note: 必ず、終わったタスクには[x]印をつけて、ここに�
 
 1. バックエンド環境の整備
    - [x] Gitブランチの作成と切り替え (`feat/backend-initial-setup`)
-   - [ ] Edge Functionsディレクトリの作成
-   - [ ] バックエンドAPIの基本構造の確認と整備
+   - [x] Edge Functionsディレクトリの作成
+   - [x] バックエンドAPIの基本構造の確認と整備
    - [ ] Supabase連携の設定強化
    - [ ] モデルとスキーマの拡張
 
 2. Edge Functionsの実装
-   - [ ] Edge Functions用のディレクトリ構造の作成
-   - [ ] タスク関連のEdge Functionsの実装
-   - [ ] 認証関連のEdge Functionsの実装
-   - [ ] Edge Functions用のTypeScript設定の整備
+   - [x] Edge Functions用のディレクトリ構造の作成
+   - [x] タスク関連のEdge Functionsの実装 (`list-tasks.ts`, `create-task.ts`)
+   - [x] 認証関連のEdge Functionsの実装 (`verify-session.ts`)
+   - [x] Edge Functions用のTypeScript設定の整備 (`tsconfig.edge.json`)
 
 3. テストとドキュメント作成
    - [ ] Edge Functions用のe2eテストの作成
    - [ ] APIドキュメントの更新
    - [ ] テストカバレッジの向上
+
+4. デプロイプロセスの整備
+   - [x] Edge Functionsビルドスクリプトの作成 (`scripts/build-edge.js`)
+   - [ ] Supabaseデプロイ用の設定ファイルの整備
+   - [ ] CI/CDパイプラインの構築
 
 ### 前回のフロントエンド作業
 1. ダッシュボードコンポーネント分割作業

@@ -8,6 +8,9 @@ declare global {
     interface Request {
       user?: {
         id: string;
+        userId: string;
+        email?: string;
+        role?: string;
       };
     }
   }
@@ -46,7 +49,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       // リクエストにユーザー情報を追加
-      req.user = { id: decoded.userId };
+      req.user = { id: decoded.userId, userId: decoded.userId };
       next();
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {

@@ -67,7 +67,10 @@ export class AIService {
 
   async breakDownTask(task: Task): Promise<TaskBreakdown> {
     const maxRetries = 3;
-    let lastError: Error | null = null;
+    let lastError: Error | undefined = undefined;
+
+    // タスクIDの確認
+    const taskId = task.id || 'unknown';
 
     for (let i = 0; i < maxRetries; i++) {
       try {
@@ -80,7 +83,7 @@ export class AIService {
             },
             {
               role: 'user',
-              content: `以下のタスクを分解してください：\nタイトル: ${task.title}\n説明: ${task.description}`
+              content: `以下のタスクを分解してください：\nタイトル: ${task.title}\n説明: ${task.description || '説明なし'}`
             }
           ],
           temperature: 0.7,
@@ -94,14 +97,16 @@ export class AIService {
 
         const breakdown = this.parseBreakdown(content);
         return {
-          taskId: task.id,
+          taskId,
           breakdown,
         };
-      } catch (error) {
-        lastError = error as Error;
+      } catch (error: unknown) {
+        // エラーをError型として扱う
+        lastError = error instanceof Error ? error : new Error(String(error));
 
+        // OpenAI APIエラーの場合の特別処理
         if (error instanceof OpenAI.APIError) {
-          if (error.status === 429) {
+          if ('status' in error && error.status === 429) {
             // レート制限エラーの場合、指数バックオフで待機
             await delay(Math.pow(2, i) * 1000);
             continue;

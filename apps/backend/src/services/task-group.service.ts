@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { TaskGroup, TaskGroupUpdate } from '../types/task-group.types';
-import { ApiError } from '../middleware/error.middleware';
+import { ApiError } from '../middleware/errorHandler';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

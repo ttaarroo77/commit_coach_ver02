@@ -29,7 +29,7 @@ export const getProjects = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     if (!userId) {
       throw new ApiError(401, '認証が必要です');
     }
@@ -50,7 +50,7 @@ export const getProject = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const projectId = req.params.id;
 
     if (!userId) {
@@ -72,7 +72,7 @@ export const getProject = async (
  */
 export const createProject = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     if (!userId) {
       throw new ApiError(401, '認証が必要です');
     }
@@ -104,7 +104,7 @@ export const createProject = async (req: Request, res: Response) => {
  */
 export const updateProject = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const projectId = req.params.id;
 
     if (!userId) {
@@ -142,7 +142,7 @@ export const updateProject = async (req: Request, res: Response) => {
  */
 export const deleteProject = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const projectId = req.params.id;
 
     if (!userId) {
