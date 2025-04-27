@@ -1,10 +1,75 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { supabase } from '@/lib/supabase';
+
+// ログインフォームのバリデーションスキーマ
+const loginSchema = z.object({
+  email: z
+    .string()
+    .email('有効なメールアドレスを入力してください')
+    .min(1, 'メールアドレスは必須です'),
+  password: z
+    .string()
+    .min(8, 'パスワードは8文字以上必要です')
+    .max(72, 'パスワードは72文字以下にしてください'),
+  remember: z.boolean().optional(),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      remember: false,
+    },
+  });
+
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(null);
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // ログイン成功時、ダッシュボードにリダイレクト
+      router.push('/dashboard');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'ログインに失敗しました';
+      setErrorMessage(errorMsg);
+      console.error('ログインエラー:', errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -14,15 +79,25 @@ export default function LoginPage() {
         </p>
       </div>
       
-      <form className="space-y-4">
+      {errorMessage && (
+        <div className="p-3 rounded-md bg-red-50 text-red-700 text-sm">
+          {errorMessage}
+        </div>
+      )}
+      
+      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-2">
           <Label htmlFor="email">メールアドレス</Label>
           <Input
             id="email"
             type="email"
             placeholder="name@example.com"
-            required
+            aria-invalid={errors.email ? 'true' : 'false'}
+            {...register('email')}
           />
+          {errors.email && (
+            <p className="text-sm text-red-500">{errors.email.message}</p>
+          )}
         </div>
         
         <div className="space-y-2">
@@ -38,12 +113,19 @@ export default function LoginPage() {
           <Input
             id="password"
             type="password"
-            required
+            aria-invalid={errors.password ? 'true' : 'false'}
+            {...register('password')}
           />
+          {errors.password && (
+            <p className="text-sm text-red-500">{errors.password.message}</p>
+          )}
         </div>
         
         <div className="flex items-center space-x-2">
-          <Checkbox id="remember" />
+          <Checkbox 
+            id="remember" 
+            {...register('remember')} 
+          />
           <Label 
             htmlFor="remember" 
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -52,8 +134,12 @@ export default function LoginPage() {
           </Label>
         </div>
         
-        <Button type="submit" className="w-full">
-          ログイン
+        <Button 
+          type="submit" 
+          className="w-full" 
+          disabled={isLoading}
+        >
+          {isLoading ? 'ログイン中...' : 'ログイン'}
         </Button>
       </form>
       
