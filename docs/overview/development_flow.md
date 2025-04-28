@@ -2,8 +2,8 @@
 id: development_flow
 title: "Commit Coach 開発フロー – モノレポ構成 (Next.js + Express)"
 description: "フロントエンド (Next.js + TypeScript + Tailwind CSS) とバックエンド (Express + TypeScript + Supabase) の開発ロードマップと詳細チェックリスト"
-version: "6.0"
-last_updated: "2025-04-27"
+version: "6.1"
+last_updated: "2025-04-28"
 owner: "nakazawatarou"
 stakeholders: ["dev_team", "ai_assistant"]
 ---
@@ -209,10 +209,10 @@ stakeholders: ["dev_team", "ai_assistant"]
 - [x] **154** タスク分解 API
 - [x] **155** redis‑rate‑limit
 - [x] **156** OpenAI エラーリトライ
-- [x] **157** ai_messages テーブル保存
-- [x] **158** レスポンスフォーマット確定
-- [x] **159** commit `feat(backend): ai endpoints`
-- [x] **160** AI API テスト
+- [x] **157** ai_messages テーブル保存 (2025-04-28)
+- [x] **158** レスポンスフォーマット確定 (2025-04-28)
+- [x] **159** commit `feat(backend): ai endpoints` (2025-04-28)
+- [x] **160** AI API テスト (2025-04-28)
 
 #### 4.5 テスト・デプロイ・運用 (171‑200)
 - [x] **171** Supertest 統合テスト雛形 (2025-04-25)
@@ -350,6 +350,7 @@ stakeholders: ["dev_team", "ai_assistant"]
 ## 6. 改訂履歴
 | Ver | 日付 | 変更概要 | 編集者 |
 |-----|------|----------|--------|
+| 6.1 | 2025‑04‑28 | AIコーチの会話履歴機能の実装完了を反映、進捗状況を更新 | AI Assistant |
 | 6.0 | 2025‑04‑27 | AIアシスタントとの協業フロー追加、チェックリストとリスク管理セクション追加 | Cascade |
 | 5.0 | 2025‑04‑25 | フロントエンド進捗リセット、AI使用量最適化セクション追加、バックエンド優先開発の強化 | Windsurf |
 | 4.0 | 2025‑04‑25 | 開発環境変更（Windsurfのみ使用）に対応した新開発フロー導入、バックエンド優先アプローチの詳細化 | Windsurf |

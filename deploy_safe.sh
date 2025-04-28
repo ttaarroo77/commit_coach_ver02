@@ -33,6 +33,8 @@ git add .
 echo "コミットを実行しています..."
 git commit -m "$COMMIT_MESSAGE"
 
+safe:frontend010: deepwikiの仮整備
+
 # コミットログの表示
 echo "直近のコミットログを表示します..."
 git log -1
