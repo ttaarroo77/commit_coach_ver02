@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useProjects } from '@/hooks/useProjects';
 import { ProjectWithStats, ProjectFormValues } from '@/types/project';
@@ -13,7 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProjectForm } from '@/components/projects/project-form';
 import { DraggableTask } from '@/components/dashboard/draggable-task';
 import { AddTaskButton } from '@/components/dashboard/add-task-button';
-import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users } from 'lucide-react';
+import { KanbanBoard } from '@/components/kanban/kanban-board';
+import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users, LayoutKanban } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Link from 'next/link';
@@ -101,22 +102,22 @@ export default function ProjectDetailPage() {
         
         // タスク情報の取得（モックデータ）
         // TODO: Supabase実装
+        // パフォーマンス最適化: 不要なタイムアウトを短縮
         setTimeout(() => {
           setTasks(mockTasks);
           setIsLoading(false);
-        }, 500);
+        }, 100);
       } catch (error) {
-        console.error('プロジェクトデータの取得中にエラーが発生しました:', error);
+        console.error('Error fetching project data:', error);
+        alert('プロジェクト情報の取得に失敗しました');
         setIsLoading(false);
       }
     };
     
-    if (projectId) {
-      fetchProjectData();
-    }
+    fetchProjectData();
   }, [projectId, allProjects, router]);
 
-  const handleUpdateProject = async (values: ProjectFormValues) => {
+  const handleUpdateProject = useCallback(async (values: ProjectFormValues) => {
     if (!project) return;
     
     try {
@@ -126,9 +127,9 @@ export default function ProjectDetailPage() {
     } catch (err) {
       alert('エラーが発生しました: 更新中に問題が発生しました。もう一度お試しください。');
     }
-  };
+  }, [project, updateProject]);
 
-  const handleDeleteProject = async () => {
+  const handleDeleteProject = useCallback(async () => {
     if (!project) return;
     
     if (!confirm(`プロジェクト「${project.name}」を削除してもよろしいですか？この操作は元に戻せません。`)) {
@@ -142,78 +143,83 @@ export default function ProjectDetailPage() {
     } catch (err) {
       alert('エラーが発生しました: 削除中に問題が発生しました。もう一度お試しください。');
     }
-  };
+  }, [project, deleteProject, router]);
 
   // タスク関連の仮実装（実際にはダッシュボードと同様の実装が必要）
-  const handleToggleTask = (taskId: string) => {
+  const handleToggleTask = useCallback((taskId: string) => {
     console.log('タスク切り替え:', taskId);
-  };
-  
-  const handleUpdateTaskTitle = (taskId: string, title: string) => {
+  }, []);
+
+  const handleUpdateTaskTitle = useCallback((taskId: string, title: string) => {
     console.log('タスクタイトル更新:', taskId, title);
-  };
-  
-  const handleUpdateSubtaskTitle = (taskId: string, subtaskId: string, title: string) => {
+  }, []);
+
+  const handleUpdateSubtaskTitle = useCallback((taskId: string, subtaskId: string, title: string) => {
     console.log('サブタスクタイトル更新:', taskId, subtaskId, title);
-  };
-  
-  const handleToggleTaskStatus = (taskId: string) => {
+  }, []);
+
+  const handleToggleTaskStatus = useCallback((taskId: string) => {
     console.log('タスクステータス切り替え:', taskId);
-  };
-  
-  const handleToggleSubtaskCompleted = (taskId: string, subtaskId: string) => {
+  }, []);
+
+  const handleToggleSubtaskCompleted = useCallback((taskId: string, subtaskId: string) => {
     console.log('サブタスク完了切り替え:', taskId, subtaskId);
-  };
-  
-  const handleAddSubtask = (taskId: string, title: string) => {
+  }, []);
+
+  const handleAddSubtask = useCallback((taskId: string, title: string) => {
     console.log('サブタスク追加:', taskId, title);
-  };
-  
-  const handleDeleteTask = (taskId: string) => {
+  }, []);
+
+  const handleDeleteTask = useCallback((taskId: string) => {
     console.log('タスク削除:', taskId);
-  };
-  
-  const handleDeleteSubtask = (taskId: string, subtaskId: string) => {
+  }, []);
+
+  const handleDeleteSubtask = useCallback((taskId: string, subtaskId: string) => {
     console.log('サブタスク削除:', taskId, subtaskId);
-  };
-  
-  const handleTaskSubmit = (task: Partial<Task>) => {
+  }, []);
+
+  const handleTaskSubmit = useCallback((task: Partial<Task>) => {
     console.log('タスク送信:', task);
-  };
+  }, []);
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = useCallback((status: string) => {
     switch (status) {
-      case 'active':
-        return <Badge className="bg-blue-500">進行中</Badge>;
+      case 'in-progress':
+        return <Badge variant="warning">進行中</Badge>;
       case 'completed':
-        return <Badge className="bg-green-500">完了</Badge>;
+        return <Badge variant="success">完了</Badge>;
       case 'archived':
-        return <Badge className="bg-gray-500">アーカイブ</Badge>;
+        return <Badge variant="secondary">アーカイブ</Badge>;
       default:
-        return null;
+        return <Badge>未着手</Badge>;
     }
-  };
+  }, []);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     try {
       return format(new Date(dateString), 'yyyy年MM月dd日', { locale: ja });
-    } catch (e) {
-      return '日付不明';
+    } catch (error) {
+      return '日付なし';
     }
-  };
+  }, []);
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-1/3"></div>
-          <div className="h-64 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
-          <div className="h-96 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+  // ローディング状態とプロジェクトが存在しない場合のメモ化されたコンポーネント
+  const LoadingOrNotFound = useMemo(() => {
+    if (isLoading || !project) {
+      return (
+        <div className="flex justify-center items-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">読み込み中...</p>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
+    return null;
+  }, [isLoading, project]);
 
+  if (isLoading || !project) {
+    return LoadingOrNotFound;
   if (!project) {
     return (
       <div className="container mx-auto py-8 px-4 text-center">
@@ -265,9 +271,29 @@ export default function ProjectDetailPage() {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList>
-            <TabsTrigger value="overview">概要</TabsTrigger>
-            <TabsTrigger value="tasks">タスク</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger 
+              value="overview" 
+              onClick={() => setActiveTab('overview')}
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              概要
+            </TabsTrigger>
+            <TabsTrigger 
+              value="tasks" 
+              onClick={() => setActiveTab('tasks')}
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              タスク
+            </TabsTrigger>
+            <TabsTrigger 
+              value="kanban" 
+              onClick={() => setActiveTab('kanban')}
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <LayoutKanban className="h-4 w-4 mr-2" />
+              カンバン
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview">
@@ -378,6 +404,13 @@ export default function ProjectDetailPage() {
                 ))}
               </AnimatedList>
             )}
+          </TabsContent>
+          
+          <TabsContent value="kanban">
+            <KanbanBoard 
+              projectId={project.id} 
+              initialTasks={tasks}
+            />
           </TabsContent>
         </Tabs>
       </FadeIn>
