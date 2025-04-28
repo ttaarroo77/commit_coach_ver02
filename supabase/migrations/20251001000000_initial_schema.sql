@@ -82,6 +82,16 @@ CREATE TABLE IF NOT EXISTS "ai_messages" (
   "created_at" TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
 );
 
+-- 会話履歴テーブル
+CREATE TABLE IF NOT EXISTS "conversations" (
+  "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  "user_id" UUID NOT NULL REFERENCES "users"(id) ON DELETE CASCADE,
+  "user_message" TEXT NOT NULL,
+  "ai_response" TEXT NOT NULL,
+  "created_at" TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+  "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
+);
+
 -- Step 116: インデックスの作成
 CREATE INDEX IF NOT EXISTS "idx_projects_owner" ON "projects" ("owner_id");
 CREATE INDEX IF NOT EXISTS "idx_task_groups_project" ON "task_groups" ("project_id");
@@ -90,6 +100,8 @@ CREATE INDEX IF NOT EXISTS "idx_tasks_assignee" ON "tasks" ("assignee_id");
 CREATE INDEX IF NOT EXISTS "idx_tasks_creator" ON "tasks" ("created_by");
 CREATE INDEX IF NOT EXISTS "idx_subtasks_task" ON "subtasks" ("task_id");
 CREATE INDEX IF NOT EXISTS "idx_ai_messages_user" ON "ai_messages" ("user_id");
+CREATE INDEX IF NOT EXISTS "idx_conversations_user" ON "conversations" ("user_id");
+CREATE INDEX IF NOT EXISTS "idx_conversations_created" ON "conversations" ("created_at");
 
 -- Step 115: RLSポリシーの設定
 -- RLSを有効化
@@ -100,6 +112,7 @@ ALTER TABLE "task_groups" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "tasks" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "subtasks" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "ai_messages" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "conversations" ENABLE ROW LEVEL SECURITY;
 
 -- ユーザー自身のみが自分のデータにアクセス可能
 CREATE POLICY "users_access_own" ON "users"
@@ -161,6 +174,10 @@ CREATE POLICY "subtasks_task_access" ON "subtasks"
 
 -- AIメッセージは作成者のみがアクセス可能
 CREATE POLICY "ai_messages_user_access" ON "ai_messages"
+  FOR ALL USING (user_id = auth.uid());
+
+-- 会話履歴は作成者のみがアクセス可能
+CREATE POLICY "conversations_user_access" ON "conversations"
   FOR ALL USING (user_id = auth.uid());
 
 -- ビューの作成：期限間近のタスク

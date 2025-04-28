@@ -1,4 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google"
+import { Toaster } from "@/components/ui/toaster"
+import { ChatProvider } from "@/components/chat/chat-context"
 
 import "./globals.css"
 
@@ -23,7 +25,10 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
       >
-        {children}
+        <ChatProvider>
+          {children}
+          <Toaster />
+        </ChatProvider>
       </body>
     </html>
   )

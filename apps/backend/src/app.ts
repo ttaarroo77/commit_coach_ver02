@@ -7,6 +7,10 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import router from './routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { compressionMiddleware } from './middleware/compression';
+import { rateLimitMiddleware } from './middleware/rateLimit';
+import { authRouter } from './routes/auth';
+import { logger } from './utils/logger';
 
 // 環境変数の読み込み
 dotenv.config();
@@ -30,7 +34,7 @@ export async function createServer() {
   app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
   // 圧縮
-  app.use(compression());
+  app.use(compressionMiddleware);
 
   // リクエストのログ
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
@@ -50,7 +54,8 @@ export async function createServer() {
   }
 
   // ルーティング
-  app.use(router);
+  app.use('/api', router);
+  app.use('/api/auth', authRouter);
 
   // 404エラーハンドラー
   app.use(notFoundHandler);

@@ -4,6 +4,7 @@ import projectRoutes from './project.routes';
 import taskRoutes from './task.routes';
 import aiRoutes from './ai.routes';
 import taskGroupRoutes from './task-group.routes';
+import coachingSessionRoutes from './coachingSession.routes';
 import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
@@ -16,16 +17,17 @@ router.use('/projects', authMiddleware, projectRoutes);
 router.use('/tasks', authMiddleware, taskRoutes);
 router.use('/ai', authMiddleware, aiRoutes);
 router.use('/task-groups', authMiddleware, taskGroupRoutes);
+router.use('/coaching-sessions', authMiddleware, coachingSessionRoutes);
 
 // ヘルスチェック
 router.get('/health', (req, res) => {
   // パッケージ情報を取得するためのpackage.jsonの読み込み
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const packageInfo = require('../../package.json');
-  
+
   // メモリ使用量取得
   const memoryUsage = process.memoryUsage();
-  
+
   res.json({
     status: 'ok',
     version: packageInfo.version,

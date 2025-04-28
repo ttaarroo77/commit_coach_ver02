@@ -2,19 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { ApiError } from '../middleware/errorHandler';
+import { ApiError } from '../middleware/ApiError';
 
 const supabase = createClient(process.env.SUPABASE_URL || '', process.env.SUPABASE_ANON_KEY || '');
 
 const signupSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  name: z.string().min(2),
+  email: z.string().email('有効なメールアドレスを入力してください'),
+  password: z.string().min(8, 'パスワードは8文字以上で入力してください'),
+  name: z.string().min(2, '名前は2文字以上で入力してください'),
 });
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
+  email: z.string().email('有効なメールアドレスを入力してください'),
+  password: z.string().min(1, 'パスワードを入力してください'),
 });
 
 /**
@@ -37,7 +37,7 @@ const generateTokens = (userId: string) => {
 /**
  * サインアップ
  */
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, name } = signupSchema.parse(req.body);
 
@@ -52,26 +52,30 @@ export const signup = async (req: Request, res: Response) => {
     });
 
     if (error) {
-      return res.status(400).json({ error: error.message });
+      if (error.message.includes('already registered')) {
+        throw new ApiError(409, 'このメールアドレスは既に登録されています');
+      }
+      throw new ApiError(400, error.message);
+    }
+
+    if (!data.user) {
+      throw new ApiError(500, 'ユーザー登録に失敗しました');
     }
 
     return res.status(201).json({
-      id: data.user?.id,
-      email: data.user?.email,
-      name: data.user?.user_metadata.name,
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.user_metadata.name,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
-    }
-    return res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 /**
  * ログイン
  */
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
 
@@ -81,21 +85,29 @@ export const login = async (req: Request, res: Response) => {
     });
 
     if (error) {
-      return res.status(401).json({ error: error.message });
+      if (error.message.includes('Invalid login credentials')) {
+        throw new ApiError(401, 'メールアドレスまたはパスワードが正しくありません');
+      }
+      throw new ApiError(400, error.message);
     }
 
-    const accessToken = jwt.sign(
-      { userId: data.user.id },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '1d' }
-    );
+    if (!data.user) {
+      throw new ApiError(500, 'ログインに失敗しました');
+    }
 
-    return res.status(200).json({ accessToken });
+    const { accessToken, refreshToken } = generateTokens(data.user.id);
+
+    return res.status(200).json({
+      accessToken,
+      refreshToken,
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.user_metadata.name,
+      },
+    });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
-    }
-    return res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 

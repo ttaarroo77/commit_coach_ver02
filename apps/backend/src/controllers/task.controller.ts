@@ -42,8 +42,19 @@ export async function getTasksByGroup(req: Request, res: Response) {
   res.json(tasks);
 }
 
+// タスク一覧取得
+export async function getTasks(req: Request, res: Response) {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new ApiError(401, '認証が必要です');
+  }
+
+  const tasks = await taskService.getTasks(userId);
+  res.json(tasks);
+}
+
 // タスクの詳細取得
-export async function getTaskById(req: Request, res: Response) {
+export async function getTask(req: Request, res: Response) {
   const userId = req.user?.id;
   if (!userId) {
     throw new ApiError(401, '認証が必要です');

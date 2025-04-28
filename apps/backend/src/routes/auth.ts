@@ -18,6 +18,15 @@ import {
 
 const router = Router();
 
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'auth',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // ユーザー登録
 router.post('/signup', validate(signupSchema), signup);
 

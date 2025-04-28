@@ -85,7 +85,7 @@ export const createProject = async (req: Request, res: Response) => {
     res.status(201).json(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw new ApiError(400, 'バリデーションエラー', error);
+      throw new ApiError(400, `バリデーションエラー: ${error.message}`);
     }
     throw error;
   }
@@ -123,7 +123,7 @@ export const updateProject = async (req: Request, res: Response) => {
     res.json(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw new ApiError(400, 'バリデーションエラー', error);
+      throw new ApiError(400, `バリデーションエラー: ${error.message}`);
     }
     throw error;
   }

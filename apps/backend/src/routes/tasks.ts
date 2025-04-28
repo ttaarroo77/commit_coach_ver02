@@ -3,6 +3,15 @@ import { Task } from '../models/Task';
 
 const router = express.Router();
 
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'tasks',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Create a new task
 router.post('/', async (req, res) => {
   try {

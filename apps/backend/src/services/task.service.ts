@@ -498,4 +498,27 @@ export class TaskService {
       throw new ApiError(500, 'タスクの一括更新中に予期せぬエラーが発生しました');
     }
   }
+
+  async getTasks(userId: string): Promise<Task[]> {
+    try {
+      logger.info({ userId }, 'タスク一覧取得開始');
+
+      const { data: tasks, error } = await dbService.select('tasks', {
+        filters: { user_id: userId },
+        orderBy: { column: 'created_at', ascending: false },
+      });
+
+      if (error) {
+        logger.error({ error }, 'タスク取得エラー');
+        throw new ApiError(500, 'タスクの取得に失敗しました');
+      }
+
+      logger.info({ taskCount: tasks?.length }, 'タスク取得成功');
+      return tasks || [];
+    } catch (error) {
+      logger.error({ error }, 'タスク取得例外');
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(500, 'タスク取得中に予期せぬエラーが発生しました');
+    }
+  }
 }

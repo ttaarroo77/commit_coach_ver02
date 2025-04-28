@@ -20,8 +20,19 @@ import {
   removeProjectMemberSchema,
 } from '../validators/project.validator';
 import { auth, isOwner } from '../middleware/auth';
+import express from 'express';
+import { Project } from '../models/Project';
 
 const router = Router();
+
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'projects',
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // すべてのルートで認証が必要
 router.use(auth);
