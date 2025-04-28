@@ -26,6 +26,7 @@ import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { Task } from './task-group';
 import { DraggableTask } from './draggable-task';
 import { useDragContext } from './drag-context';
+import { AnimatedCard, AnimatedList } from '@/components/ui/animations';
 
 interface SortableTaskGroupProps {
   id: string;
@@ -143,7 +144,7 @@ export function SortableTaskGroup({
   };
 
   return (
-    <Card className="mb-4">
+    <AnimatedCard className="mb-4">
       <CardHeader className="py-3 px-4 flex flex-row items-center justify-between cursor-pointer" onClick={() => onToggleExpand(id)}>
         <CardTitle className="text-lg font-medium flex items-center">
           {expanded ? (
@@ -181,7 +182,7 @@ export function SortableTaskGroup({
                 data-group-id={id}
                 data-type="group"
               >
-              <div className="space-y-0">
+              <AnimatedList staggerDelay={0.05} className="space-y-0">
                 {tasks.map((task) => (
                   <DraggableTask
                     key={task.id}
@@ -196,7 +197,7 @@ export function SortableTaskGroup({
                     onDeleteSubtask={onDeleteSubtask}
                   />
                 ))}
-              </div>
+              </AnimatedList>
               </div>
             </SortableContext>
             
@@ -234,6 +235,6 @@ export function SortableTaskGroup({
           )}
         </CardContent>
       )}
-    </Card>
+    </AnimatedCard>
   );
 }

@@ -1,18 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Bot } from 'lucide-react';
+import { Send, Bot, GitCommit, Code, RefreshCw } from 'lucide-react';
+import { AIService, CommitSuggestion } from '@/lib/ai-service';
+import { Task } from './task-group';
+import { FadeIn, SlideIn, BouncyButton } from '@/components/ui/animations';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  suggestions?: string[];
 }
 
-export function AICoach() {
+interface AICoachProps {
+  tasks?: Task[];
+}
+
+export function AICoach({ tasks = [] }: AICoachProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -23,8 +31,11 @@ export function AICoach() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [commitSuggestion, setCommitSuggestion] = useState<CommitSuggestion | null>(null);
+  const [isGeneratingCommit, setIsGeneratingCommit] = useState(false);
 
-  const handleSendMessage = () => {
+  // メッセージ送信処理
+  const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
@@ -38,42 +49,147 @@ export function AICoach() {
     setInput('');
     setIsLoading(true);
 
-    // 実際の実装ではここでAIからの応答を取得します
-    setTimeout(() => {
-      const aiResponses: string[] = [
-        'タスクの進捗はいかがですか？何か困っていることはありますか？',
-        'コミットメッセージの作成をお手伝いしましょうか？最近の変更内容を教えてください。',
-        'お疲れ様です！休憩を取ることも大切ですよ。5分間のストレッチをおすすめします。',
-        '今日のタスクリストを見ると、「フロントエンド開発」が優先度高めですね。何か具体的なヘルプが必要ですか？',
-        'プロジェクトの締め切りが近づいていますね。何かサポートできることはありますか？'
-      ];
+    // 会話履歴を準備
+    const history = messages.map(msg => ({
+      role: msg.role,
+      content: msg.content
+    }));
+
+    try {
+      // AIサービスからレスポンスを取得
+      const aiResponse = await AIService.getResponse(input, history);
       
-      const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
-      
-      const aiResponse: Message = {
+      const newMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: randomResponse,
+        content: aiResponse.content,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        suggestions: aiResponse.suggestions
+      };
+      
+      setMessages((prev) => [...prev, newMessage]);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'すみません、エラーが発生しました。しばらくしてからもう一度お試しください。',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       
-      setMessages((prev) => [...prev, aiResponse]);
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
+  };
+
+  // コミット提案生成
+  const handleGenerateCommitSuggestion = async () => {
+    if (isGeneratingCommit) return;
+    
+    setIsGeneratingCommit(true);
+    
+    try {
+      const suggestion = await AIService.generateCommitSuggestion(tasks);
+      setCommitSuggestion(suggestion);
+      
+      // コミット提案をメッセージとして追加
+      const commitMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: `コミット提案を生成しました：\n\n**タイプ**: ${suggestion.type}${suggestion.scope ? `(${suggestion.scope})` : ''}\n**メッセージ**: ${suggestion.message}\n\n${suggestion.description || ''}`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      
+      setMessages((prev) => [...prev, commitMessage]);
+    } catch (error) {
+      console.error('Error generating commit suggestion:', error);
+      
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: 'コミット提案の生成中にエラーが発生しました。',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsGeneratingCommit(false);
+    }
+  };
+  
+  // コードの分析
+  const handleAnalyzeCode = async () => {
+    const code = prompt('分析したいコードを入力してください：');
+    if (!code) return;
+    
+    const language = prompt('プログラミング言語を入力してください（例：typescript, javascript, python）：', 'typescript');
+    if (!language) return;
+    
+    setIsLoading(true);
+    
+    try {
+      const analysis = await AIService.analyzeCode(code, language);
+      
+      const analysisMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: analysis.content,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      
+      setMessages((prev) => [...prev, analysisMessage]);
+    } catch (error) {
+      console.error('Error analyzing code:', error);
+      
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: 'コード分析中にエラーが発生しました。',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="flex h-full flex-col rounded-lg border bg-white dark:bg-gray-800 shadow-sm">
-      <div className="border-b p-3 flex items-center gap-2">
-        <Bot className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-        <h3 className="font-medium">AIコーチ</h3>
+    <FadeIn className="flex h-full flex-col rounded-lg border bg-white dark:bg-gray-800 shadow-sm">
+      <div className="border-b p-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <h3 className="font-medium">AIコーチ</h3>
+          </div>
+          <div className="flex items-center gap-1">
+            <BouncyButton 
+              onClick={handleGenerateCommitSuggestion}
+              className="h-8 w-8 p-0 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700" 
+              disabled={isGeneratingCommit || tasks.filter(t => t.status === 'completed').length === 0}
+            >
+              <GitCommit className="h-4 w-4" title="コミット提案を生成" />
+            </BouncyButton>
+            <BouncyButton 
+              onClick={handleAnalyzeCode}
+              className="h-8 w-8 p-0 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700" 
+              disabled={isLoading}
+            >
+              <Code className="h-4 w-4" title="コード分析" />
+            </BouncyButton>
+          </div>
+        </div>
       </div>
       <div className="flex-1 overflow-auto p-4">
         <div className="space-y-4">
           {messages.map((message) => (
-            <div
+            <SlideIn
               key={message.id}
+              direction={message.role === 'user' ? 'left' : 'right'}
               className={`flex items-start gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
+              delay={0.1}
             >
               {message.role === 'assistant' && (
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-700 text-white">
@@ -88,9 +204,25 @@ export function AICoach() {
                 }`}
               >
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                {message.suggestions && message.suggestions.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    {message.suggestions.map((suggestion, index) => (
+                      <div 
+                        key={index}
+                        className="text-xs bg-gray-200 dark:bg-gray-600 p-1.5 rounded cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-500"
+                        onClick={() => {
+                          navigator.clipboard.writeText(suggestion);
+                          alert(`「${suggestion}」をクリップボードにコピーしました。`);
+                        }}
+                      >
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <p className="mt-1 text-xs opacity-70">{message.timestamp}</p>
               </div>
-            </div>
+            </SlideIn>
           ))}
           {isLoading && (
             <div className="flex items-start gap-3">
@@ -123,16 +255,15 @@ export function AICoach() {
             }}
             disabled={isLoading}
           />
-          <Button 
-            size="icon" 
-            className="h-10 w-10 shrink-0 rounded-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800" 
+          <BouncyButton 
             onClick={handleSendMessage}
+            className="h-10 w-10 shrink-0 rounded-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 flex items-center justify-center" 
             disabled={isLoading}
           >
-            <Send className="h-4 w-4" />
-          </Button>
+            <Send className="h-4 w-4 text-white" />
+          </BouncyButton>
         </div>
       </div>
-    </div>
+    </FadeIn>
   );
 }

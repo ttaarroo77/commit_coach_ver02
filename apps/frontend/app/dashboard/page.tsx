@@ -79,7 +79,7 @@ export default function DashboardPage() {
               {
                 id: '1',
                 title: 'フロントエンド認証フロー実装',
-                status: 'completed' as 'todo' | 'in-progress' | 'completed',
+                status: 'completed',
                 project: 'ウェブアプリ開発',
                 priority: 'high',
                 progress: 100,
@@ -94,7 +94,7 @@ export default function DashboardPage() {
               {
                 id: '2',
                 title: 'ダッシュボード画面の実装',
-                status: 'in-progress' as 'todo' | 'in-progress' | 'completed',
+                status: 'in-progress',
                 project: 'ウェブアプリ開発',
                 priority: 'high',
                 progress: 50,
@@ -119,7 +119,7 @@ export default function DashboardPage() {
               {
                 id: '3',
                 title: 'タスク管理機能の実装',
-                status: 'todo' as 'todo' | 'in-progress' | 'completed',
+                status: 'todo',
                 project: 'ウェブアプリ開発',
                 priority: 'medium',
                 progress: 0,
@@ -134,7 +134,7 @@ export default function DashboardPage() {
               {
                 id: '4',
                 title: 'AIコーチング機能の実装',
-                status: 'todo' as 'todo' | 'in-progress' | 'completed',
+                status: 'todo',
                 project: 'ウェブアプリ開発',
                 priority: 'medium',
                 progress: 0,
@@ -158,7 +158,7 @@ export default function DashboardPage() {
               {
                 id: '5',
                 title: '環境構築',
-                status: 'completed' as 'todo' | 'in-progress' | 'completed',
+                status: 'completed',
                 project: 'チーム管理',
                 priority: 'high',
                 progress: 100,
@@ -567,7 +567,7 @@ export default function DashboardPage() {
         progress: 0,
         subtasks: [],
         expanded: false,
-        dueDate: values.dueDate ? format(values.dueDate, 'yyyy-MM-dd') : undefined
+        dueDate: values.dueDate ? values.dueDate.toISOString().split('T')[0] : undefined
       };
       
       setTaskGroups(prevGroups =>
@@ -770,10 +770,11 @@ export default function DashboardPage() {
         
         {/* AIコーチング */}
         <div className="w-96 border-l bg-gray-50 dark:bg-gray-900 p-4 overflow-auto">
-          <AICoach />
+          <AICoach tasks={taskGroups.flatMap(group => group.tasks)} />
         </div>
       </main>
     </div>
       </div>
     </DragProvider>
   );
+}
