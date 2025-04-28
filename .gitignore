@@ -101,4 +101,5 @@ coverage.xml
 backup_frontend/
 
 # reference code
-zips/
+# 下をコメントアウトした。
+# zips/

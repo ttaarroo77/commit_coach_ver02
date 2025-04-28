@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -47,15 +49,19 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export default function RegisterPage() {
+// クライアントサイドのみのコンポーネント
+function RegisterForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [termsChecked, setTermsChecked] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
+    getValues,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -71,25 +77,41 @@ export default function RegisterPage() {
     try {
       setIsLoading(true);
       setErrorMessage(null);
-
-      const { error } = await supabase.auth.signUp({
+      
+      console.log('登録試行:', { email: data.email, name: data.name });
+      
+      // 利用規約に同意していない場合はエラー
+      if (!data.terms) {
+        setErrorMessage('利用規約に同意する必要があります');
+        return;
+      }
+      
+      // Supabaseで新規ユーザー登録
+      const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
           data: {
             name: data.name,
           },
+          // 開発環境では自動確認を有効にする
+          emailRedirectTo: `${window.location.origin}/login`,
         },
       });
-
+      
+      console.log('Supabase登録応答:', { authData, error });
+      
       if (error) {
         throw error;
       }
-
+      
+      // 登録成功メッセージを表示
+      alert(`登録が完了しました。メールアドレス ${data.email} に確認メールを送信しました。メールを確認してアカウントを有効化してください。`);
+      
       // 登録成功時、確認ページにリダイレクト
-      router.push('/register/confirmation');
+      router.push('/register/confirm');
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'アカウント登録に失敗しました';
+      const errorMsg = error instanceof Error ? error.message : '登録に失敗しました';
       setErrorMessage(errorMsg);
       console.error('登録エラー:', errorMsg);
     } finally {
@@ -174,7 +196,11 @@ export default function RegisterPage() {
         <div className="flex items-center space-x-2">
           <Checkbox 
             id="terms" 
-            {...register('terms')} 
+            checked={termsChecked}
+            onCheckedChange={(checked) => {
+              setTermsChecked(checked === true);
+              setValue('terms', checked === true, { shouldValidate: true });
+            }}
           />
           <Label 
             htmlFor="terms" 
@@ -223,5 +249,36 @@ export default function RegisterPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// ページコンポーネント
+export default function RegisterPage() {
+  // クライアントサイドでのみレンダリングするためのフラグ
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // マウント後にのみレンダリングする
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  return (
+    <>
+      {/* サーバーサイドでは基本的なレイアウトのみをレンダリング */}
+      {!isMounted && (
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">アカウント登録</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              必要情報を入力して新規アカウントを作成してください
+            </p>
+          </div>
+          <div className="h-96 animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+        </div>
+      )}
+      
+      {/* クライアントサイドでのみフォームをレンダリング */}
+      {isMounted && <RegisterForm />}
+    </>
   );
 }

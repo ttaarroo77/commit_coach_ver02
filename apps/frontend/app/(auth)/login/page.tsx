@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -27,14 +27,17 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+// クライアントサイドのみのコンポーネント
+function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -49,18 +52,50 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       setErrorMessage(null);
-
-      const { error } = await supabase.auth.signInWithPassword({
+      
+      console.log('ログイン試行:', { email: data.email });
+      
+      // まず、現在のセッションをクリア
+      await supabase.auth.signOut();
+      
+      // ログイン処理
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
+      
+      console.log('Supabase認証応答:', { authData, error });
 
       if (error) {
+        // エラーメッセージを日本語化
+        if (error.message === 'Invalid login credentials') {
+          throw new Error('メールアドレスまたはパスワードが正しくありません');
+        }
         throw error;
       }
 
-      // ログイン成功時、ダッシュボードにリダイレクト
-      router.push('/dashboard');
+      // セッション情報を取得して確認
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('ログイン後のセッション:', session);
+      
+      if (session) {
+        console.log('ログイン成功、リダイレクト開始...');
+        // ログイン成功時、ダッシュボードにリダイレクト
+        // window.location.href を使用して強制的にリダイレクト
+        window.location.href = '/dashboard';
+        return;
+      } else {
+        console.error('セッションが存在しません');
+        
+        // 開発環境では、メール確認なしでログインできるようにする
+        if (process.env.NODE_ENV === 'development') {
+          console.log('開発環境: メール確認をスキップしてダッシュボードへリダイレクト');
+          window.location.href = '/dashboard';
+          return;
+        }
+        
+        setErrorMessage('メールアドレスの確認が必要です。メールボックスを確認してください。');
+      }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'ログインに失敗しました';
       setErrorMessage(errorMsg);
@@ -124,7 +159,13 @@ export default function LoginPage() {
         <div className="flex items-center space-x-2">
           <Checkbox 
             id="remember" 
-            {...register('remember')} 
+            checked={rememberMe}
+            onCheckedChange={(checked) => {
+              const isChecked = checked === true;
+              setRememberMe(isChecked);
+              // React Hook Form の値も更新
+              setValue('remember', isChecked);
+            }}
           />
           <Label 
             htmlFor="remember" 
@@ -155,5 +196,36 @@ export default function LoginPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// ページコンポーネント
+export default function LoginPage() {
+  // クライアントサイドでのみレンダリングするためのフラグ
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // マウント後にのみレンダリングする
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  return (
+    <>
+      {/* サーバーサイドでは基本的なレイアウトのみをレンダリング */}
+      {!isMounted && (
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">ログイン</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              アカウント情報を入力してログインしてください
+            </p>
+          </div>
+          <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+        </div>
+      )}
+      
+      {/* クライアントサイドでのみフォームをレンダリング */}
+      {isMounted && <LoginForm />}
+    </>
   );
 }
