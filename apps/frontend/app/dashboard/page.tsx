@@ -22,6 +22,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/lib/supabase';
 import { AICoach } from '@/components/dashboard/ai-coach';
 import { TaskGroup, Task as TaskType, SubTask } from '@/components/dashboard/task-group';
+import { SortableTaskGroup } from '@/components/dashboard/sortable-task-group';
+import { DragProvider } from '@/components/dashboard/drag-context';
 import { isDateOverdue } from '@/components/dashboard/editable-text';
 import { AddTaskButton } from '@/components/dashboard/add-task-button';
 import { TaskForm } from '@/components/dashboard/task-form';
@@ -434,6 +436,52 @@ export default function DashboardPage() {
     return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
   };
   
+  // タスクの並び替え処理
+  const handleTasksReordered = (groupId: string, reorderedTasks: TaskType[]) => {
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group =>
+        group.id === groupId
+          ? {
+              ...group,
+              tasks: reorderedTasks
+            }
+          : group
+      )
+    );
+  };
+  
+  // タスクのグループ間移動処理
+  const handleTaskMoved = (taskId: string, sourceGroupId: string, targetGroupId: string) => {
+    setTaskGroups(prevGroups => {
+      // 移動元グループからタスクを取得
+      const sourceGroup = prevGroups.find(group => group.id === sourceGroupId);
+      if (!sourceGroup) return prevGroups;
+      
+      const taskToMove = sourceGroup.tasks.find(task => task.id === taskId);
+      if (!taskToMove) return prevGroups;
+      
+      // 移動元グループからタスクを削除
+      const updatedSourceGroup = {
+        ...sourceGroup,
+        tasks: sourceGroup.tasks.filter(task => task.id !== taskId)
+      };
+      
+      // 移動先グループにタスクを追加
+      return prevGroups.map(group => {
+        if (group.id === sourceGroupId) {
+          return updatedSourceGroup;
+        } else if (group.id === targetGroupId) {
+          return {
+            ...group,
+            tasks: [...group.tasks, taskToMove]
+          };
+        } else {
+          return group;
+        }
+      });
+    });
+  };
+  
   // 検索機能
   const filterTasks = () => {
     if (!searchQuery && !selectedProject) return taskGroups;
@@ -546,7 +594,8 @@ export default function DashboardPage() {
   }
   
   return (
-    <div className="flex h-screen overflow-hidden">
+    <DragProvider>
+      <div className="flex h-screen overflow-hidden">
       {showTaskForm && (
         <TaskForm
           open={showTaskForm}
@@ -691,7 +740,7 @@ export default function DashboardPage() {
 
           <div className="space-y-6">
             {filterTasks().map(group => (
-              <TaskGroup
+              <SortableTaskGroup
                 key={group.id}
                 id={group.id}
                 title={group.title}
@@ -712,6 +761,8 @@ export default function DashboardPage() {
                 onDeleteTask={(taskId) => deleteTask(group.id, taskId)}
                 onDeleteSubtask={(taskId, subtaskId) => 
                   deleteSubtask(group.id, taskId, subtaskId)}
+                onTasksReordered={(tasks) => handleTasksReordered(group.id, tasks)}
+                onTaskMoved={handleTaskMoved}
               />
             ))}
           </div>
@@ -723,5 +774,6 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
-  </div>
-);
+      </div>
+    </DragProvider>
+  );
