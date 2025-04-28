@@ -11,20 +11,31 @@ import {
   RefreshCw,
   ArrowDown,
   ArrowUp,
-  SplitSquareVertical
+  SplitSquareVertical,
+  Search,
+  Filter
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/lib/supabase';
 import { AICoach } from '@/components/dashboard/ai-coach';
 import { TaskGroup, Task as TaskType, SubTask } from '@/components/dashboard/task-group';
 import { isDateOverdue } from '@/components/dashboard/editable-text';
+import { AddTaskButton } from '@/components/dashboard/add-task-button';
+import { TaskForm } from '@/components/dashboard/task-form';
 
 export default function DashboardPage() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'none'>('none');
   const [isLoading, setIsLoading] = useState(true);
   const [userName, setUserName] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [editingTask, setEditingTask] = useState<TaskType | null>(null);
+  const [targetGroupId, setTargetGroupId] = useState<string | null>(null);
   
   // タスクグループ
   const [taskGroups, setTaskGroups] = useState<{
@@ -423,6 +434,109 @@ export default function DashboardPage() {
     return date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
   };
   
+  // 検索機能
+  const filterTasks = () => {
+    if (!searchQuery && !selectedProject) return taskGroups;
+    
+    return taskGroups.map(group => {
+      const filteredTasks = group.tasks.filter(task => {
+        const matchesSearch = searchQuery ? 
+          task.title.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+        
+        const matchesProject = selectedProject ? 
+          task.project === selectedProject : true;
+          
+        return matchesSearch && matchesProject;
+      });
+      
+      return {
+        ...group,
+        tasks: filteredTasks
+      };
+    });
+  };
+  
+  // プロジェクト一覧を取得
+  const getProjects = () => {
+    const projects = new Set<string>();
+    taskGroups.forEach(group => {
+      group.tasks.forEach(task => {
+        if (task.project) projects.add(task.project);
+      });
+    });
+    return Array.from(projects);
+  };
+  
+  // タスク作成フォームを開く
+  const openTaskForm = (groupId: string, task?: TaskType) => {
+    setTargetGroupId(groupId);
+    setEditingTask(task || null);
+    setShowTaskForm(true);
+  };
+  
+  // タスク作成フォームを閉じる
+  const closeTaskForm = () => {
+    setShowTaskForm(false);
+    setEditingTask(null);
+    setTargetGroupId(null);
+  };
+  
+  // タスクを保存（新規作成または更新）
+  const handleTaskSubmit = (values: any) => {
+    if (!targetGroupId) return;
+    
+    if (editingTask) {
+      // 既存タスクの更新
+      setTaskGroups(prevGroups =>
+        prevGroups.map(group =>
+          group.id === targetGroupId
+            ? {
+                ...group,
+                tasks: group.tasks.map(t =>
+                  t.id === editingTask.id
+                    ? {
+                        ...t,
+                        title: values.title,
+                        status: values.status as 'todo' | 'in-progress' | 'completed',
+                        project: values.project,
+                        priority: values.priority as 'low' | 'medium' | 'high',
+                        dueDate: values.dueDate ? values.dueDate.toISOString().split('T')[0] : undefined
+                      }
+                    : t
+                )
+              }
+            : group
+        )
+      );
+    } else {
+      // 新規タスクの作成
+      const newTask: TaskType = {
+        id: Date.now().toString(),
+        title: values.title,
+        status: values.status as 'todo' | 'in-progress' | 'completed',
+        project: values.project,
+        priority: values.priority as 'low' | 'medium' | 'high',
+        progress: 0,
+        subtasks: [],
+        expanded: false,
+        dueDate: values.dueDate ? format(values.dueDate, 'yyyy-MM-dd') : undefined
+      };
+      
+      setTaskGroups(prevGroups =>
+        prevGroups.map(group =>
+          group.id === targetGroupId
+            ? {
+                ...group,
+                tasks: [...group.tasks, newTask]
+              }
+            : group
+        )
+      );
+    }
+    
+    closeTaskForm();
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -433,6 +547,21 @@ export default function DashboardPage() {
   
   return (
     <div className="flex h-screen overflow-hidden">
+      {showTaskForm && (
+        <TaskForm
+          open={showTaskForm}
+          onOpenChange={setShowTaskForm}
+          onSubmit={handleTaskSubmit}
+          initialValues={editingTask ? {
+            title: editingTask.title,
+            status: editingTask.status as 'todo' | 'in-progress' | 'completed',
+            project: editingTask.project,
+            priority: editingTask.priority as 'low' | 'medium' | 'high',
+            dueDate: editingTask.dueDate ? new Date(editingTask.dueDate) : undefined
+          } : undefined}
+          isEditing={!!editingTask}
+        />
+      )}
       <div className="flex flex-col flex-1 overflow-hidden">
         <main className="flex flex-1 overflow-hidden">
           <div className="flex-1 overflow-auto p-6">
@@ -452,7 +581,16 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => sortTasksByDueDate('asc')} 
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={() => openTaskForm('today')}
+                    className="flex items-center"
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    タスク追加
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => sortTasksByDueDate('asc')}
                     className={sortOrder === 'asc' ? 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800' : ''}>
                     <ArrowUp className="h-4 w-4 mr-1" />
                     期限順
@@ -517,8 +655,42 @@ export default function DashboardPage() {
             </Card>
           </div>
           
+          {/* 検索とフィルタリング */}
+          <div className="mb-6 flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="タスクを検索..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="w-full sm:w-64">
+              <Select
+                value={selectedProject || 'all'}
+                onValueChange={(value) => setSelectedProject(value === 'all' ? null : value)}
+              >
+                <SelectTrigger>
+                  <div className="flex items-center">
+                    <Filter className="mr-2 h-4 w-4 text-gray-400" />
+                    <SelectValue placeholder="プロジェクトでフィルタ" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">すべてのプロジェクト</SelectItem>
+                  {getProjects().map(project => (
+                    <SelectItem key={project} value={project}>
+                      {project}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div className="space-y-6">
-            {taskGroups.map(group => (
+            {filterTasks().map(group => (
               <TaskGroup
                 key={group.id}
                 id={group.id}
@@ -535,7 +707,7 @@ export default function DashboardPage() {
                 onToggleTaskStatus={(taskId) => toggleTaskStatus(group.id, taskId)}
                 onToggleSubtaskCompleted={(taskId, subtaskId) => 
                   toggleSubtaskCompleted(group.id, taskId, subtaskId)}
-                onAddTask={() => addTask(group.id)}
+                onAddTask={() => openTaskForm(group.id)}
                 onAddSubtask={(taskId) => addSubtask(group.id, taskId)}
                 onDeleteTask={(taskId) => deleteTask(group.id, taskId)}
                 onDeleteSubtask={(taskId, subtaskId) => 

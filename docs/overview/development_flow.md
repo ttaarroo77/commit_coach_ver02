@@ -90,9 +90,9 @@ stakeholders: ["dev_team", "ai_assistant"]
 - [ ] **40** コンポーネントユニットテスト
 
 #### 3.2 Kanban & リファクタ (41‑60)
-- [ ] **41** ダッシュボードコンポーネント分割
-- [ ] **42** `useTaskManagement` / `useDragAndDrop` hooks
-- [ ] **43** 型定義強化 (Task, Project)
+- [x] **41** ダッシュボードコンポーネント分割 (2025-04-28)
+- [x] **42** `useTaskManagement` / `useDragAndDrop` hooks (2025-04-28)
+- [x] **43** 型定義強化 (Task, Project) (2025-04-28)
 - [ ] **44** RTL + Cypress テスト追加
 - [ ] **45** commit `refactor(frontend): split dashboard`
 - [ ] **46** `/projects` 一覧 UI
