@@ -17,8 +17,8 @@ stakeholders: ["dev_team", "ai_assistant"]
 ## 1. 進捗サマリ（毎週更新）
 | レイヤ | 完了 | 直近 TODO |
 |--------|------|-------------|
-| **共通基盤** | Step 0‑20 完了 (除Step 14) | Step 14: DevContainer設定 (任意) |
-| **Frontend** | 未着手 | Step 21-40: 認証フロー & ダッシュボード基本実装 |
+| **共通基盤** | Step 0‑9 完了 (除Step 14) | Step 14: DevContainer設定 (任意) |
+| **Frontend** | Step 21-29, 31-36, 38 完了 | Step 30, 37, 39-40: テストとアニメーション |
 | **Backend** | Step 101‑180, 186 完了 | Step 181‑185: Docker & Fly.io セットアップ |
 | **品質/CI** | lint ✅ | unit/E2E テスト → CI グリーン化 |
 | **デプロイ** | 未着手 | Step 181‑190: Docker & Fly.io |
@@ -68,24 +68,24 @@ stakeholders: ["dev_team", "ai_assistant"]
 
 ### フロントエンド (21‑100)
 #### 3.1 認証 & ダッシュボード (21‑40)
-- [ ] **21** `/login` ページ – Email/PW フォーム
-- [ ] **22** `useAuth` Context (Supabase)
-- [ ] **23** JWT を Cookie 保存
-- [ ] **24** `/logout` 処理
-- [ ] **25** 認証ガード (Next.js middleware)
-- [ ] **26** `/register` & `/password/reset` ページ
-- [ ] **27** react-hook‑form + zod バリデーション
-- [ ] **28** ローディング & エラーメッセージ
-- [ ] **29** commit `feat(frontend): auth flow`
+- [x] **21** `/login` ページ – Email/PW フォーム (2025-04-27)
+- [x] **22** `useAuth` Context (Supabase) (2025-04-27)
+- [x] **23** JWT を Cookie 保存 (2025-04-27)
+- [x] **24** `/logout` 処理 (2025-04-27)
+- [x] **25** 認証ガード (Next.js middleware) (2025-04-28)
+- [x] **26** `/register` & `/password/reset` ページ (2025-04-27)
+- [x] **27** react-hook‑form + zod バリデーション (2025-04-27)
+- [x] **28** ローディング & エラーメッセージ (2025-04-28)
+- [x] **29** commit `feat(frontend): auth flow` (2025-04-28)
 - [ ] **30** RTL ユニットテスト(Auth)
-- [ ] **31** `/dashboard` 骨格
-- [ ] **32** AIチャットプレースホルダ
-- [ ] **33** 今日のタスク / 期限間近カード
-- [ ] **34** 時計 & mini‑calendar
-- [ ] **35** レスポンシブ調整
-- [ ] **36** モックデータ (SWR)
+- [x] **31** `/dashboard` 骨格 (2025-04-28)
+- [x] **32** AIチャットプレースホルダ (2025-04-28)
+- [x] **33** 今日のタスク / 期限間近カード (2025-04-28)
+- [x] **34** 時計 & mini‑calendar (2025-04-28)
+- [x] **35** レスポンシブ調整 (2025-04-28)
+- [x] **36** モックデータ (SWR) (2025-04-28)
 - [ ] **37** UI アニメーション
-- [ ] **38** commit `feat(frontend): dashboard`
+- [x] **38** commit `feat(frontend): dashboard` (2025-04-28)
 - [ ] **39** ダッシュボードユニットテスト
 - [ ] **40** コンポーネントユニットテスト
 
