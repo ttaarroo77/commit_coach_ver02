@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Clock, Tag, MoreHorizontal, AlertCircle } from 'lucide-react';
+import { FadeIn, motion } from '@/components/ui/animations';
 
 export interface Task {
   id: string;
@@ -19,9 +20,10 @@ export interface Task {
 interface TaskItemProps {
   task: Task;
   onStatusChange?: (taskId: string, newStatus: 'todo' | 'in_progress' | 'done') => void;
+  index?: number;
 }
 
-export function TaskItem({ task, onStatusChange }: TaskItemProps) {
+export function TaskItem({ task, onStatusChange, index = 0 }: TaskItemProps) {
   const [isCompleted, setIsCompleted] = useState(task.status === 'done');
 
   const handleStatusChange = (checked: boolean) => {
@@ -50,12 +52,23 @@ export function TaskItem({ task, onStatusChange }: TaskItemProps) {
   };
 
   return (
-    <div className={`mb-3 rounded-lg border p-4 shadow-sm ${statusColor[task.status]}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      className={`mb-3 rounded-lg border p-4 shadow-sm ${statusColor[task.status]}`}
+      whileHover={{
+        scale: 1.02,
+        boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+        transition: { duration: 0.2 }
+      }}
+    >
       <div className="flex items-start">
         <div className="mr-3 mt-0.5">
-          <Checkbox 
-            checked={isCompleted} 
-            onCheckedChange={handleStatusChange} 
+          <Checkbox
+            checked={isCompleted}
+            onCheckedChange={handleStatusChange}
             className="h-5 w-5"
           />
         </div>
@@ -66,10 +79,14 @@ export function TaskItem({ task, onStatusChange }: TaskItemProps) {
               {task.title}
             </h3>
             {isOverdue && (
-              <span className="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900 px-2 py-0.5 text-xs text-red-800 dark:text-red-200">
+              <motion.span
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900 px-2 py-0.5 text-xs text-red-800 dark:text-red-200"
+              >
                 <AlertCircle className="mr-1 h-3 w-3" />
                 期限切れ
-              </span>
+              </motion.span>
             )}
           </div>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
@@ -86,12 +103,15 @@ export function TaskItem({ task, onStatusChange }: TaskItemProps) {
               <div className="flex items-center gap-1">
                 <Tag className="h-3 w-3 text-gray-500 dark:text-gray-400" />
                 {task.tags.map((tag, index) => (
-                  <span 
-                    key={index} 
+                  <motion.span
+                    key={index}
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + index * 0.05 }}
                     className="rounded-full bg-blue-100 dark:bg-blue-900 px-2 py-0.5 text-xs text-blue-800 dark:text-blue-200"
                   >
                     {tag}
-                  </span>
+                  </motion.span>
                 ))}
               </div>
             )}
@@ -101,6 +121,6 @@ export function TaskItem({ task, onStatusChange }: TaskItemProps) {
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }

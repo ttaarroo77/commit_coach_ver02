@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FadeInProps {
   children: ReactNode;
@@ -9,26 +10,29 @@ interface FadeInProps {
   className?: string;
 }
 
-export function FadeIn({ children, duration = 0.3, delay = 0, className = '' }: FadeInProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), delay * 1000);
-    return () => clearTimeout(timer);
-  }, [delay]);
-  
-  const durationClass = duration === 0.3 ? 'duration-300' : 
-                        duration === 0.5 ? 'duration-500' : 
-                        duration === 1 ? 'duration-1000' : 'duration-300';
-  
+export const FadeIn = ({
+  children,
+  delay = 0,
+  duration = 0.5,
+  className = ""
+}: {
+  children: ReactNode;
+  delay?: number;
+  duration?: number;
+  className?: string;
+}) => {
   return (
-    <div
-      className={`transition-opacity ${durationClass} ${isVisible ? 'opacity-100' : 'opacity-0'} ${className}`}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration, delay }}
+      className={className}
     >
       {children}
-    </div>
+    </motion.div>
   );
-}
+};
 
 interface SlideInProps {
   children: ReactNode;
@@ -39,25 +43,25 @@ interface SlideInProps {
   className?: string;
 }
 
-export function SlideIn({ 
-  children, 
-  direction = 'right', 
-  duration = 0.3, 
-  delay = 0, 
+export function SlideIn({
+  children,
+  direction = 'right',
+  duration = 0.3,
+  delay = 0,
   distance = 20,
-  className = '' 
+  className = ''
 }: SlideInProps) {
   const [isVisible, setIsVisible] = useState(false);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), delay * 1000);
     return () => clearTimeout(timer);
   }, [delay]);
-  
-  const durationClass = duration === 0.3 ? 'duration-300' : 
-                        duration === 0.5 ? 'duration-500' : 
-                        duration === 1 ? 'duration-1000' : 'duration-300';
-  
+
+  const durationClass = duration === 0.3 ? 'duration-300' :
+    duration === 0.5 ? 'duration-500' :
+      duration === 1 ? 'duration-1000' : 'duration-300';
+
   const getTransformClass = () => {
     if (!isVisible) {
       switch (direction) {
@@ -92,26 +96,29 @@ interface ScaleInProps {
   className?: string;
 }
 
-export function ScaleIn({ children, duration = 0.3, delay = 0, className = '' }: ScaleInProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), delay * 1000);
-    return () => clearTimeout(timer);
-  }, [delay]);
-  
-  const durationClass = duration === 0.3 ? 'duration-300' : 
-                        duration === 0.5 ? 'duration-500' : 
-                        duration === 1 ? 'duration-1000' : 'duration-300';
-  
+export const ScaleIn = ({
+  children,
+  delay = 0,
+  duration = 0.5,
+  className = ""
+}: {
+  children: ReactNode;
+  delay?: number;
+  duration?: number;
+  className?: string;
+}) => {
   return (
-    <div
-      className={`transition-all ${durationClass} ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'} ${className}`}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration, delay }}
+      className={className}
     >
       {children}
-    </div>
+    </motion.div>
   );
-}
+};
 
 interface AnimatedListProps {
   children: ReactNode[];
@@ -120,33 +127,33 @@ interface AnimatedListProps {
   className?: string;
 }
 
-export function AnimatedList({ 
-  children, 
-  staggerDelay = 0.1, 
+export function AnimatedList({
+  children,
+  staggerDelay = 0.1,
   duration = 0.3,
-  className = '' 
+  className = ''
 }: AnimatedListProps) {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
-  
+
   useEffect(() => {
     const childrenArray = React.Children.toArray(children);
     const timers: NodeJS.Timeout[] = [];
-    
+
     childrenArray.forEach((_, index) => {
       const timer = setTimeout(() => {
         setVisibleItems(prev => [...prev, index]);
       }, index * staggerDelay * 1000);
-      
+
       timers.push(timer);
     });
-    
+
     return () => timers.forEach(timer => clearTimeout(timer));
   }, [children, staggerDelay]);
-  
-  const durationClass = duration === 0.3 ? 'duration-300' : 
-                        duration === 0.5 ? 'duration-500' : 
-                        duration === 1 ? 'duration-1000' : 'duration-300';
-  
+
+  const durationClass = duration === 0.3 ? 'duration-300' :
+    duration === 0.5 ? 'duration-500' :
+      duration === 1 ? 'duration-1000' : 'duration-300';
+
   return (
     <div className={className}>
       {React.Children.map(children, (child, index) => (
@@ -187,11 +194,11 @@ interface AnimatedCardProps {
 
 export function AnimatedCard({ children, className = '' }: AnimatedCardProps) {
   const [isVisible, setIsVisible] = useState(false);
-  
+
   useEffect(() => {
     setIsVisible(true);
   }, []);
-  
+
   return (
     <div
       className={`transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} ${className}`}
@@ -200,3 +207,127 @@ export function AnimatedCard({ children, className = '' }: AnimatedCardProps) {
     </div>
   );
 }
+
+// スライドアップアニメーション
+export const SlideUp = ({
+  children,
+  delay = 0,
+  duration = 0.5,
+  className = ""
+}: {
+  children: ReactNode;
+  delay?: number;
+  duration?: number;
+  className?: string;
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// スタッガードアニメーション用のラッパー
+export const StaggerContainer = ({
+  children,
+  staggerDelay = 0.1,
+  className = ""
+}: {
+  children: ReactNode;
+  staggerDelay?: number;
+  className?: string;
+}) => {
+  return (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      variants={{
+        visible: {
+          transition: {
+            staggerChildren: staggerDelay
+          }
+        }
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// スタッガード子要素用
+export const StaggerItem = ({
+  children,
+  duration = 0.5,
+  className = ""
+}: {
+  children: ReactNode;
+  duration?: number;
+  className?: string;
+}) => {
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 }
+      }}
+      transition={{ duration }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// リスト項目のアニメーション
+export const AnimatedListItem = ({
+  children,
+  index,
+  className = ""
+}: {
+  children: ReactNode;
+  index: number;
+  className?: string;
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ delay: index * 0.05 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// ページトランジション用ラッパー
+export const PageTransition = ({
+  children,
+  className = ""
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className={className}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
+};
