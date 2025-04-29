@@ -1,35 +1,28 @@
-import { Geist, Geist_Mono } from "next/font/google"
-import { Toaster } from "@/components/ui/toaster"
-import { ChatProvider } from "@/components/chat/chat-context"
+import { Inter } from 'next/font/google';
+import './globals.css';
+import type { Metadata } from 'next';
 
-import "./globals.css"
+const inter = Inter({ subsets: ['latin'] });
 
-const fontSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
+export const metadata: Metadata = {
+  title: 'Commit Coach',
+  description: 'プロジェクト管理とコミット履歴の可視化ツール',
+  viewport: 'width=device-width, initial-scale=1',
+  themeColor: '#ffffff',
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        suppressHydrationWarning
-        className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
-      >
-        <ChatProvider>
+    <html lang="ja" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
+        <main className="min-h-screen bg-gray-50">
           {children}
-          <Toaster />
-        </ChatProvider>
+        </main>
       </body>
     </html>
-  )
+  );
 }

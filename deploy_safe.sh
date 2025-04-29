@@ -6,7 +6,9 @@
 # find . -type d -not -path "*/node_modules/*" -not -path "*/tmp/*" -not -path "*/.git/*" | sort
 # rails assets:clobber
 
-    safe: frontend開発013: fix(frontend): @radix-ui/react-scroll-areaの依存関係を追加
+    safe: frontend開発013:
+    fix: ハイドレーションエラーの修正とメタデータの最適化
+
 
 # ./deploy_safe.sh
 #!/bin/bash
