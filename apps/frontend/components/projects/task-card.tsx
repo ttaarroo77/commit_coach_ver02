@@ -29,7 +29,7 @@ function TaskCardComponent({ task, onUpdateTask, isDragging: externalIsDragging 
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition || 'transform 200ms cubic-bezier(0.25, 1, 0.5, 1), opacity 200ms ease',
     opacity: isDragging || externalIsDragging ? 0.5 : 1,
     zIndex: isDragging || externalIsDragging ? 10 : 1
   }
@@ -50,8 +50,10 @@ function TaskCardComponent({ task, onUpdateTask, isDragging: externalIsDragging 
         {...listeners}
         data-testid={`task-${task.id}`}
         className={cn(
-          "p-4 hover:shadow-md transition-all",
-          isDragging || externalIsDragging ? "shadow-lg ring-2 ring-primary/20" : ""
+          "p-4 hover:shadow-md transition-all cursor-pointer",
+          isDragging || externalIsDragging 
+            ? "shadow-lg ring-2 ring-primary/20 bg-primary/5" 
+            : "hover:translate-y-[-2px] hover:bg-accent/50"
         )}
         onClick={() => setIsModalOpen(true)}
       >

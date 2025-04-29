@@ -12,6 +12,8 @@ import {
   DragStartEvent,
   DragEndEvent,
   DragOverEvent,
+  defaultDropAnimationSideEffects,
+  DropAnimation,
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { KanbanColumn } from './kanban-column';
@@ -22,6 +24,7 @@ import { Task, TaskStatus } from '../../types/task';
 import TaskFormModal from './task-form-modal';
 import { useProjectTasks } from '../../hooks/useProjectTasks';
 import { useToast } from '../../components/ui/use-toast';
+import { cn } from '../../lib/utils';
 
 interface KanbanBoardProps {
   projectId: string;
@@ -35,6 +38,17 @@ const COLUMNS = [
   { id: 'review', title: 'レビュー中' },
   { id: 'completed', title: '完了' },
 ];
+
+// カスタムドロップアニメーション設定
+const dropAnimation: DropAnimation = {
+  sideEffects: defaultDropAnimationSideEffects({
+    styles: {
+      active: {
+        opacity: '0.5',
+      },
+    },
+  }),
+};
 
 function KanbanBoardComponent({ projectId, initialTasks = [] }: KanbanBoardProps) {
   // タスク管理フックを使用
@@ -207,6 +221,16 @@ function KanbanBoardComponent({ projectId, initialTasks = [] }: KanbanBoardProps
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
+          modifiers={[
+            // ドラッグ中のカーソル位置を調整
+            ({ transform }) => {
+              return {
+                ...transform,
+                // カーソルの少し上にドラッグ要素を配置
+                y: transform.y - 20,
+              };
+            },
+          ]}
         >
           <div className="flex gap-4 h-full pb-4">
             {COLUMNS.map(column => (
@@ -223,8 +247,12 @@ function KanbanBoardComponent({ projectId, initialTasks = [] }: KanbanBoardProps
             ))}
           </div>
 
-          <DragOverlay>
-            {activeTask ? <TaskCard task={activeTask} isDragging /> : null}
+          <DragOverlay dropAnimation={dropAnimation} className="cursor-grabbing">
+            {activeTask ? (
+              <div className="transform scale-105 rotate-1 shadow-xl">
+                <TaskCard task={activeTask} isDragging />
+              </div>
+            ) : null}
           </DragOverlay>
         </DndContext>
       </div>

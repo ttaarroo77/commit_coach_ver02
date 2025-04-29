@@ -16,8 +16,11 @@ function KanbanColumnComponent({ id, title, tasks, children }: KanbanColumnProps
   const { setNodeRef, isOver } = useDroppable({ id })
 
   return (
-    <Card className="flex flex-col h-full min-w-[300px] bg-background">
-      <div className="p-4 border-b">
+    <Card className="flex flex-col h-full min-w-[300px] bg-background transition-all duration-200 ease-in-out">
+      <div className={cn(
+        "p-4 border-b transition-colors duration-200",
+        isOver && "bg-primary/10"
+      )}>
         <h3 className="font-semibold">{title}</h3>
         <p className="text-sm text-muted-foreground">
           {tasks.length} タスク
@@ -27,8 +30,8 @@ function KanbanColumnComponent({ id, title, tasks, children }: KanbanColumnProps
       <div
         ref={setNodeRef}
         className={cn(
-          "flex-1 p-4 space-y-4 overflow-y-auto",
-          isOver && "bg-accent/50"
+          "flex-1 p-4 space-y-4 overflow-y-auto transition-all duration-200 ease-in-out",
+          isOver && "bg-accent/50 ring-2 ring-inset ring-primary/20"
         )}
       >
         <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
