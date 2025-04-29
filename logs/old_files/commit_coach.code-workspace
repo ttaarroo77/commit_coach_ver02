@@ -1,0 +1,74 @@
+{
+  "folders": [
+    {
+      "name": "✨ root",
+      "path": "."
+    },
+    {
+      "name": "📱 frontend",
+      "path": "apps/frontend"
+    },
+    {
+      "name": "🖥️ backend",
+      "path": "apps/backend"
+    },
+    {
+      "name": "📦 shared-types",
+      "path": "packages/shared-types"
+    },
+    {
+      "name": "📝 docs",
+      "path": "docs"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/node_modules": true,
+      "**/.turbo": true,
+      "**/dist": true,
+      "**/.next": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.next": true
+    },
+    "eslint.workingDirectories": [
+      "./apps/frontend",
+      "./apps/backend",
+      "./packages/shared-types"
+    ],
+    "tailwindCSS.includeLanguages": {
+      "typescript": "javascript",
+      "typescriptreact": "javascript"
+    },
+    "tailwindCSS.experimental.classRegex": [
+      [
+        "cva\\(([^)]*)\\)",
+        "[\"'`]([^\"'`]*).*?[\"'`]"
+      ]
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "bradlc.vscode-tailwindcss",
+      "ms-vscode.vscode-typescript-next",
+      "github.vscode-github-actions",
+      "christian-kohler.path-intellisense",
+      "aaron-bond.better-comments",
+      "streetsidesoftware.code-spell-checker",
+      "editorconfig.editorconfig"
+    ]
+  }
+}
