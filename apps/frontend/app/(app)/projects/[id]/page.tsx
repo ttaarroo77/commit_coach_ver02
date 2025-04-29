@@ -2,23 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useProjects } from '@/hooks/useProjects';
-import { ProjectWithStats, ProjectFormValues } from '@/types/project';
-import { Task, TaskStatus } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ProjectForm } from '@/components/projects/project-form';
-import { DraggableTask } from '@/components/dashboard/draggable-task';
-import { AddTaskButton } from '@/components/dashboard/add-task-button';
-import { KanbanBoard } from '@/components/projects/kanban-board';
+import { useProjects } from '../../../../hooks/useProjects';
+import { ProjectWithStats, ProjectFormValues } from '../../../../types/project';
+import { Task, TaskStatus } from '../../../../types/task';
+import { Button } from '../../../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../components/ui/card';
+import { Badge } from '../../../../components/ui/badge';
+import { Progress } from '../../../../components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../components/ui/tabs';
+import { ProjectForm } from '../../../../components/projects/project-form';
+import { DraggableTask } from '../../../../components/dashboard/draggable-task';
+import { AddTaskButton } from '../../../../components/dashboard/add-task-button';
+import { KanbanBoard } from '../../../../components/projects/kanban-board';
 import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users, LayoutGrid, List, Timeline } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Link from 'next/link';
-import { FadeIn, AnimatedList } from '@/components/ui/animations';
+import { FadeIn, AnimatedList } from '../../../../components/ui/animations';
 
 // モックタスクデータ
 const mockTasks: Task[] = [

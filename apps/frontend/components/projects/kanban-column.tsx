@@ -1,8 +1,9 @@
 import { useDroppable } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import { Task } from "@/types"
-import { cn } from "@/lib/utils"
-import { Card } from "@/components/ui/card"
+import { memo } from "react"
+import { Task } from "../../types/task"
+import { cn } from "../../lib/utils"
+import { Card } from "../../components/ui/card"
 
 interface KanbanColumnProps {
   id: string
@@ -11,7 +12,7 @@ interface KanbanColumnProps {
   children: React.ReactNode
 }
 
-export function KanbanColumn({ id, title, tasks, children }: KanbanColumnProps) {
+function KanbanColumnComponent({ id, title, tasks, children }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id })
 
   return (
@@ -36,4 +37,23 @@ export function KanbanColumn({ id, title, tasks, children }: KanbanColumnProps) 
       </div>
     </Card>
   )
-} 
+}
+
+// カンバン列をメモ化して不要な再レンダリングを防止
+export const KanbanColumn = memo(KanbanColumnComponent, (prevProps, nextProps) => {
+  // IDとタイトルが同じで、タスク数が同じ場合は再レンダリングしない
+  if (prevProps.id !== nextProps.id || prevProps.title !== nextProps.title) {
+    return false;
+  }
+  
+  // タスク数が異なる場合は再レンダリング
+  if (prevProps.tasks.length !== nextProps.tasks.length) {
+    return false;
+  }
+  
+  // タスクIDの配列を比較
+  const prevIds = prevProps.tasks.map(t => t.id).sort();
+  const nextIds = nextProps.tasks.map(t => t.id).sort();
+  
+  return prevIds.every((id, index) => id === nextIds[index]);
+});

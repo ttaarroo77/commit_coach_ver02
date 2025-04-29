@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useProjects } from '@/hooks/useProjects';
-import { ProjectCard } from '@/components/projects/project-card';
-import { ProjectFilters } from '@/components/projects/project-filters';
-import { ProjectForm } from '@/components/projects/project-form';
-import { Button } from '@/components/ui/button';
+import { useProjects } from '../../../hooks/useProjects';
+import { ProjectCard } from '../../../components/projects/project-card';
+import { ProjectFilters } from '../../../components/projects/project-filters';
+import { ProjectForm } from '../../../components/projects/project-form';
+import { Button } from '../../../components/ui/button';
 import { Plus, RefreshCw } from 'lucide-react';
-import { ProjectFormValues, ProjectWithStats } from '@/types/project';
-import { AnimatedList, FadeIn } from '@/components/ui/animations';
+import { ProjectFormValues, ProjectWithStats } from '../../../types/project';
+import { AnimatedList, FadeIn } from '../../../components/ui/animations';
 
 export default function ProjectsPage() {
   const { 

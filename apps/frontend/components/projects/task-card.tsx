@@ -1,14 +1,14 @@
-import { useState } from "react"
+import { useState, memo } from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Task } from "@/types"
+import { Card } from "../../components/ui/card"
+import { Badge } from "../../components/ui/badge"
+import { Task, TaskPriority } from "../../types/task"
 import { CalendarIcon, GripVertical, UserIcon } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 import { TaskDetailModal } from "./task-detail-modal"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 
 interface TaskCardProps {
   task: Task
@@ -16,7 +16,7 @@ interface TaskCardProps {
   isDragging?: boolean
 }
 
-export function TaskCard({ task, onUpdateTask, isDragging: externalIsDragging }: TaskCardProps) {
+function TaskCardComponent({ task, onUpdateTask, isDragging: externalIsDragging }: TaskCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {
     attributes,
@@ -34,6 +34,7 @@ export function TaskCard({ task, onUpdateTask, isDragging: externalIsDragging }:
     zIndex: isDragging || externalIsDragging ? 10 : 1
   }
 
+  // 優先度に応じたバッジのスタイルを定義
   const priorityColors = {
     high: "destructive",
     medium: "warning",
@@ -70,11 +71,11 @@ export function TaskCard({ task, onUpdateTask, isDragging: externalIsDragging }:
           )}
 
           <div className="flex items-center gap-4">
-            {task.dueDate && (
+            {task.due_date && (
               <div className="flex items-center gap-1">
                 <CalendarIcon className="w-4 h-4" />
                 <span>
-                  {format(new Date(task.dueDate), "M/d", { locale: ja })}
+                  {format(new Date(task.due_date), "M/d", { locale: ja })}
                 </span>
               </div>
             )}
@@ -90,11 +91,33 @@ export function TaskCard({ task, onUpdateTask, isDragging: externalIsDragging }:
       </Card>
 
       <TaskDetailModal
-        task={task}
+        task={{
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          dueDate: task.due_date || null,
+          completed: task.status === 'completed',
+          subtasks: task.subtasks
+        }}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onUpdate={onUpdateTask || (() => {})}
+        onDelete={() => console.log('Delete task:', task.id)}
       />
     </>
   )
-} 
+}
+
+// タスクカードをメモ化して不要な再レンダリングを防止
+export const TaskCard = memo(TaskCardComponent, (prevProps, nextProps) => {
+  // タスクのIDが同じで、内容が変わっていない場合は再レンダリングしない
+  return (
+    prevProps.task.id === nextProps.task.id &&
+    prevProps.task.title === nextProps.task.title &&
+    prevProps.task.description === nextProps.task.description &&
+    prevProps.task.status === nextProps.task.status &&
+    prevProps.task.priority === nextProps.task.priority &&
+    prevProps.task.due_date === nextProps.task.due_date &&
+    prevProps.isDragging === nextProps.isDragging
+  );
+});

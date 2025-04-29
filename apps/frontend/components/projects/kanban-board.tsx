@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, memo } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -16,12 +16,12 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { KanbanColumn } from './kanban-column';
 import { TaskCard } from './task-card';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../components/ui/button';
 import { Plus } from 'lucide-react';
-import { Task, TaskStatus } from '@/types';
+import { Task, TaskStatus } from '../../types/task';
 import TaskFormModal from './task-form-modal';
-import { useProjectTasks } from '@/hooks/useProjectTasks';
-import { useToast } from '@/components/ui/use-toast';
+import { useProjectTasks } from '../../hooks/useProjectTasks';
+import { useToast } from '../../components/ui/use-toast';
 
 interface KanbanBoardProps {
   projectId: string;
@@ -36,7 +36,7 @@ const COLUMNS = [
   { id: 'completed', title: '完了' },
 ];
 
-export function KanbanBoard({ projectId, initialTasks = [] }: KanbanBoardProps) {
+function KanbanBoardComponent({ projectId, initialTasks = [] }: KanbanBoardProps) {
   // タスク管理フックを使用
   const {
     tasks: projectTasks,
@@ -240,3 +240,9 @@ export function KanbanBoard({ projectId, initialTasks = [] }: KanbanBoardProps) 
     </div>
   );
 }
+
+// カンバンボードをメモ化して不要な再レンダリングを防止
+// プロジェクトIDが変わった場合のみ再レンダリングする
+export const KanbanBoard = memo(KanbanBoardComponent, (prevProps, nextProps) => {
+  return prevProps.projectId === nextProps.projectId;
+});
