@@ -1,239 +1,246 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { TaskList, Task } from '../../../components/projects/task-list';
+import '@testing-library/jest-dom';
+import TaskList, { Task } from '@/components/projects/task-list';
 
-// テスト用モックデータ
+// モックデータ
 const mockTasks: Task[] = [
   {
-    id: '1',
-    title: 'テストタスク1',
-    description: 'テスト用のタスク説明1',
+    id: 'task-1',
+    title: '機能Aの実装',
+    description: 'ログイン機能の実装',
     status: 'todo',
     priority: 'high',
-    dueDate: '2025-05-15',
-    createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-04-01T00:00:00Z',
-    projectId: '1',
-    tags: ['フロントエンド', 'バグ修正']
+    dueDate: new Date('2023-12-31'),
+    createdAt: new Date('2023-01-15'),
+    updatedAt: new Date('2023-01-15'),
+    assigneeId: 'user-1',
+    assigneeName: '山田太郎',
+    projectId: 'project-1',
+    tags: ['フロントエンド', '新機能']
   },
   {
-    id: '2',
-    title: 'テストタスク2',
-    description: 'テスト用のタスク説明2',
-    status: 'in-progress',
+    id: 'task-2',
+    title: 'バグ修正',
+    description: 'ナビゲーションのバグ修正',
+    status: 'in_progress',
     priority: 'medium',
-    dueDate: '2025-05-20',
-    createdAt: '2025-02-01T00:00:00Z',
-    updatedAt: '2025-04-10T00:00:00Z',
-    assigneeId: 'user1',
-    assigneeName: '佐藤太郎',
-    projectId: '1',
-    tags: ['バックエンド']
+    dueDate: new Date('2023-11-20'),
+    createdAt: new Date('2023-01-10'),
+    updatedAt: new Date('2023-01-15'),
+    assigneeId: 'user-2',
+    assigneeName: '佐藤花子',
+    projectId: 'project-1',
+    tags: ['バグ修正']
   },
   {
-    id: '3',
-    title: 'テストタスク3',
-    description: 'テスト用のタスク説明3',
-    status: 'done',
+    id: 'task-3',
+    title: 'デザイン改善',
+    description: 'UIデザインの改善',
+    status: 'review',
     priority: 'low',
-    dueDate: '2025-04-10',
-    createdAt: '2025-03-01T00:00:00Z',
-    updatedAt: '2025-04-05T00:00:00Z',
-    assigneeId: 'user2',
-    assigneeName: '鈴木次郎',
-    projectId: '1',
-    tags: ['テスト']
+    dueDate: new Date('2023-12-10'),
+    createdAt: new Date('2023-01-05'),
+    updatedAt: new Date('2023-01-10'),
+    assigneeId: 'user-3',
+    assigneeName: '鈴木一郎',
+    projectId: 'project-1',
+    tags: ['デザイン', 'UI/UX']
   }
 ];
 
 // モック関数
-const mockOnTaskCreate = jest.fn();
-const mockOnTaskEdit = jest.fn();
-const mockOnTaskDelete = jest.fn();
-const mockOnTaskView = jest.fn();
+const mockOnCreateTask = jest.fn();
+const mockOnEditTask = jest.fn();
+const mockOnDeleteTask = jest.fn();
+const mockOnViewTask = jest.fn();
 const mockOnStatusChange = jest.fn();
 
-describe('TaskListコンポーネント', () => {
+describe('TaskList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('タスクリストが正しく表示される', () => {
+  test('タスク一覧が正しく表示される', () => {
     render(
       <TaskList
         tasks={mockTasks}
-        projectId="1"
-        onTaskCreate={mockOnTaskCreate}
-        onTaskEdit={mockOnTaskEdit}
-        onTaskDelete={mockOnTaskDelete}
-        onTaskView={mockOnTaskView}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
         onStatusChange={mockOnStatusChange}
       />
     );
 
-    // ヘッダーが表示される
-    expect(screen.getByText('タスク一覧')).toBeInTheDocument();
-    expect(screen.getByText('タスク追加')).toBeInTheDocument();
+    // タスクの各タイトルが表示されていることを確認
+    expect(screen.getByText('機能Aの実装')).toBeInTheDocument();
+    expect(screen.getByText('バグ修正')).toBeInTheDocument();
+    expect(screen.getByText('デザイン改善')).toBeInTheDocument();
 
-    // タスクが表示される
-    expect(screen.getByText('テストタスク1')).toBeInTheDocument();
-    expect(screen.getByText('テストタスク2')).toBeInTheDocument();
-    expect(screen.getByText('テストタスク3')).toBeInTheDocument();
-
-    // タスク行が正しく表示される
-    const taskRows = screen.getAllByTestId('task-row');
-    expect(taskRows).toHaveLength(3);
-
-    // ステータスバッジが表示される
-    expect(screen.getByText('未着手')).toBeInTheDocument();
-    expect(screen.getByText('進行中')).toBeInTheDocument();
-    expect(screen.getByText('完了')).toBeInTheDocument();
-
-    // 優先度が表示される
+    // 優先度のラベルが表示されていることを確認
     expect(screen.getByText('高')).toBeInTheDocument();
     expect(screen.getByText('中')).toBeInTheDocument();
     expect(screen.getByText('低')).toBeInTheDocument();
 
-    // タグが表示される
-    expect(screen.getByText('フロントエンド')).toBeInTheDocument();
-    expect(screen.getByText('バグ修正')).toBeInTheDocument();
-    expect(screen.getByText('バックエンド')).toBeInTheDocument();
+    // 担当者の名前が表示されていることを確認
+    expect(screen.getByText('山田太郎')).toBeInTheDocument();
+    expect(screen.getByText('佐藤花子')).toBeInTheDocument();
+    expect(screen.getByText('鈴木一郎')).toBeInTheDocument();
 
-    // 担当者が表示される
-    expect(screen.getByText('佐藤太郎')).toBeInTheDocument();
-    expect(screen.getByText('鈴木次郎')).toBeInTheDocument();
-    expect(screen.getByText('未割り当て')).toBeInTheDocument();
+    // ステータスが表示されていることを確認
+    expect(screen.getByText('未着手')).toBeInTheDocument();
+    expect(screen.getByText('進行中')).toBeInTheDocument();
+    expect(screen.getByText('レビュー中')).toBeInTheDocument();
   });
 
-  test('空のタスクリストの場合、メッセージが表示される', () => {
+  test('タスクがない場合は「タスクがありません」メッセージが表示される', () => {
     render(
       <TaskList
         tasks={[]}
-        projectId="1"
-        onTaskCreate={mockOnTaskCreate}
-        onTaskEdit={mockOnTaskEdit}
-        onTaskDelete={mockOnTaskDelete}
-        onTaskView={mockOnTaskView}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
         onStatusChange={mockOnStatusChange}
       />
     );
 
     expect(screen.getByText('タスクがありません')).toBeInTheDocument();
-    expect(screen.getByText('このプロジェクトにはまだタスクがありません')).toBeInTheDocument();
+    expect(screen.getByText('タスクを追加する')).toBeInTheDocument();
   });
 
-  test('タスク追加ボタンをクリックするとコールバックが呼ばれる', () => {
+  test('タスク作成ボタンをクリックするとonCreateTask関数が呼び出される', () => {
     render(
       <TaskList
         tasks={mockTasks}
-        projectId="1"
-        onTaskCreate={mockOnTaskCreate}
-        onTaskEdit={mockOnTaskEdit}
-        onTaskDelete={mockOnTaskDelete}
-        onTaskView={mockOnTaskView}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
         onStatusChange={mockOnStatusChange}
       />
     );
 
-    const createButton = screen.getByText('タスク追加');
+    const createButton = screen.getByRole('button', { name: 'タスクを追加' });
     fireEvent.click(createButton);
 
-    expect(mockOnTaskCreate).toHaveBeenCalledTimes(1);
+    expect(mockOnCreateTask).toHaveBeenCalledWith('project-1');
   });
 
-  test('タスク行をクリックするとonTaskViewが呼ばれる', () => {
+  test('タスクの編集ボタンをクリックするとonEditTask関数が呼び出される', () => {
     render(
       <TaskList
         tasks={mockTasks}
-        projectId="1"
-        onTaskCreate={mockOnTaskCreate}
-        onTaskEdit={mockOnTaskEdit}
-        onTaskDelete={mockOnTaskDelete}
-        onTaskView={mockOnTaskView}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
         onStatusChange={mockOnStatusChange}
       />
     );
 
-    const taskRows = screen.getAllByTestId('task-row');
-    fireEvent.click(taskRows[0]);
+    // 各タスクの行にマウスオーバーして編集ボタンを表示
+    const taskRow = screen.getByText('機能Aの実装').closest('tr');
+    if (!taskRow) throw new Error('タスク行が見つかりません');
 
-    expect(mockOnTaskView).toHaveBeenCalledTimes(1);
-    expect(mockOnTaskView).toHaveBeenCalledWith('1');
+    fireEvent.mouseEnter(taskRow);
+
+    // 編集ボタンをクリック
+    const editButtons = screen.getAllByRole('button', { name: /編集/i });
+    fireEvent.click(editButtons[0]);
+
+    expect(mockOnEditTask).toHaveBeenCalledWith('task-1');
   });
 
-  test('編集メニューをクリックするとonTaskEditが呼ばれる', () => {
+  test('タスクの削除ボタンをクリックするとonDeleteTask関数が呼び出される', () => {
     render(
       <TaskList
         tasks={mockTasks}
-        projectId="1"
-        onTaskCreate={mockOnTaskCreate}
-        onTaskEdit={mockOnTaskEdit}
-        onTaskDelete={mockOnTaskDelete}
-        onTaskView={mockOnTaskView}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
         onStatusChange={mockOnStatusChange}
       />
     );
 
-    // ドロップダウンメニューを開く
-    const menuButtons = screen.getAllByRole('button', { name: 'メニューを開く' });
-    fireEvent.click(menuButtons[0]);
+    // 各タスクの行にマウスオーバーして削除ボタンを表示
+    const taskRow = screen.getByText('バグ修正').closest('tr');
+    if (!taskRow) throw new Error('タスク行が見つかりません');
 
-    // 編集メニューをクリック
-    const editMenuItem = screen.getByText('編集');
-    fireEvent.click(editMenuItem);
+    fireEvent.mouseEnter(taskRow);
 
-    expect(mockOnTaskEdit).toHaveBeenCalledTimes(1);
-    expect(mockOnTaskEdit).toHaveBeenCalledWith(mockTasks[0]);
+    // 削除ボタンをクリック
+    const deleteButtons = screen.getAllByRole('button', { name: /削除/i });
+    fireEvent.click(deleteButtons[0]);
+
+    expect(mockOnDeleteTask).toHaveBeenCalledWith('task-2');
   });
 
-  test('削除メニューをクリックするとonTaskDeleteが呼ばれる', () => {
+  test('タスク行をクリックするとonViewTask関数が呼び出される', () => {
     render(
       <TaskList
         tasks={mockTasks}
-        projectId="1"
-        onTaskCreate={mockOnTaskCreate}
-        onTaskEdit={mockOnTaskEdit}
-        onTaskDelete={mockOnTaskDelete}
-        onTaskView={mockOnTaskView}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
         onStatusChange={mockOnStatusChange}
       />
     );
 
-    // ドロップダウンメニューを開く
-    const menuButtons = screen.getAllByRole('button', { name: 'メニューを開く' });
-    fireEvent.click(menuButtons[0]);
+    // タスク行をクリック（タイトルをクリック）
+    fireEvent.click(screen.getByText('デザイン改善'));
 
-    // 削除メニューをクリック
-    const deleteMenuItem = screen.getByText('削除');
-    fireEvent.click(deleteMenuItem);
-
-    expect(mockOnTaskDelete).toHaveBeenCalledTimes(1);
-    expect(mockOnTaskDelete).toHaveBeenCalledWith('1');
+    expect(mockOnViewTask).toHaveBeenCalledWith('task-3');
   });
 
-  test('チェックボックスをクリックするとonStatusChangeが呼ばれる', () => {
+  test('タスクのステータスチェックボックスをクリックするとonStatusChange関数が呼び出される', () => {
     render(
       <TaskList
         tasks={mockTasks}
-        projectId="1"
-        onTaskCreate={mockOnTaskCreate}
-        onTaskEdit={mockOnTaskEdit}
-        onTaskDelete={mockOnTaskDelete}
-        onTaskView={mockOnTaskView}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
         onStatusChange={mockOnStatusChange}
       />
     );
 
-    // 最初のタスク（未着手）のチェックボックスをクリック
+    // ステータスのチェックボックスを見つける
     const checkboxes = screen.getAllByRole('checkbox');
+
+    // 未着手タスクのチェックボックスをクリック
     fireEvent.click(checkboxes[0]);
 
-    expect(mockOnStatusChange).toHaveBeenCalledTimes(1);
-    expect(mockOnStatusChange).toHaveBeenCalledWith('1', 'done');
+    // 未着手→完了に変更される
+    expect(mockOnStatusChange).toHaveBeenCalledWith('task-1', 'done');
+  });
 
-    // 3番目のタスク（完了）のチェックボックスをクリック
-    fireEvent.click(checkboxes[2]);
+  test('日付が正しくフォーマットされて表示される', () => {
+    render(
+      <TaskList
+        tasks={mockTasks}
+        projectId="project-1"
+        onCreateTask={mockOnCreateTask}
+        onEditTask={mockOnEditTask}
+        onDeleteTask={mockOnDeleteTask}
+        onViewTask={mockOnViewTask}
+        onStatusChange={mockOnStatusChange}
+      />
+    );
 
-    expect(mockOnStatusChange).toHaveBeenCalledTimes(2);
-    expect(mockOnStatusChange).toHaveBeenCalledWith('3', 'todo');
+    // フォーマットされた日付が表示されていることを確認
+    expect(screen.getByText('2023年12月31日')).toBeInTheDocument();
+    expect(screen.getByText('2023年11月20日')).toBeInTheDocument();
+    expect(screen.getByText('2023年12月10日')).toBeInTheDocument();
   });
 }); 

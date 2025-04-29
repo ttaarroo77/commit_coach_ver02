@@ -1,225 +1,284 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { TaskForm } from '../../../components/projects/task-form';
-import { Task } from '../../../components/projects/task-list';
+import '@testing-library/jest-dom';
+import TaskForm from '@/components/projects/task-form';
+import { format } from 'date-fns';
+
+// モックデータ
+const mockProjects = [
+  { id: 'project-1', name: 'プロジェクトA' },
+  { id: 'project-2', name: 'プロジェクトB' }
+];
+
+const mockMembers = [
+  { id: 'user-1', name: '山田太郎' },
+  { id: 'user-2', name: '佐藤花子' }
+];
+
+const mockTask = {
+  id: 'task-1',
+  title: '機能Aの実装',
+  description: 'ログイン機能の実装に関するタスクです。',
+  status: 'in_progress',
+  priority: 'high',
+  dueDate: new Date('2023-12-31'),
+  assigneeId: 'user-1',
+  projectId: 'project-1',
+  tags: ['フロントエンド', '新機能']
+};
 
 // モック関数
 const mockOnClose = jest.fn();
 const mockOnSubmit = jest.fn();
 
-// テスト用タスクデータ
-const mockTask: Task = {
-  id: '1',
-  title: 'テストタスク',
-  description: 'これはテスト用のタスク説明です',
-  status: 'in-progress',
-  priority: 'medium',
-  dueDate: '2025-05-15',
-  createdAt: '2025-01-01T00:00:00Z',
-  updatedAt: '2025-04-01T00:00:00Z',
-  projectId: '1',
-  assigneeId: 'user1',
-  assigneeName: '佐藤太郎',
-  tags: ['テスト', 'バグ修正']
-};
-
-// テスト用チームメンバーデータ
-const mockTeamMembers = [
-  { id: 'user1', name: '佐藤太郎' },
-  { id: 'user2', name: '鈴木次郎' },
-  { id: 'user3', name: '田中三郎' }
-];
-
-describe('TaskFormコンポーネント', () => {
+describe('TaskForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('新規作成モードでフォームが正しく表示される', () => {
+  test('新規作成モードでフォームが正しくレンダリングされる', () => {
     render(
       <TaskForm
-        isOpen={true}
+        projects={mockProjects}
+        members={mockMembers}
         onClose={mockOnClose}
         onSubmit={mockOnSubmit}
-        projectId="1"
-        teamMembers={mockTeamMembers}
-        title="新規タスク"
       />
     );
 
-    // タイトルが表示される
-    expect(screen.getByText('新規タスク')).toBeInTheDocument();
+    // フォームのタイトルが正しい
+    expect(screen.getByText('新規タスク作成')).toBeInTheDocument();
 
-    // フォーム要素が表示される
-    expect(screen.getByLabelText('タスク名')).toBeInTheDocument();
+    // フォームの各項目が存在する
+    expect(screen.getByLabelText('タイトル')).toBeInTheDocument();
     expect(screen.getByLabelText('説明')).toBeInTheDocument();
     expect(screen.getByLabelText('ステータス')).toBeInTheDocument();
     expect(screen.getByLabelText('優先度')).toBeInTheDocument();
-    expect(screen.getByLabelText('期限日')).toBeInTheDocument();
+    expect(screen.getByLabelText('プロジェクト')).toBeInTheDocument();
     expect(screen.getByLabelText('担当者')).toBeInTheDocument();
-    expect(screen.getByLabelText('タグ')).toBeInTheDocument();
+    expect(screen.getByLabelText('期日')).toBeInTheDocument();
 
-    // ボタンが表示される
+    // ボタンが存在する
     expect(screen.getByRole('button', { name: 'キャンセル' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '保存' })).toBeInTheDocument();
   });
 
-  test('編集モードでフォームが初期値で表示される', () => {
+  test('編集モードでフォームが初期値とともに正しくレンダリングされる', () => {
     render(
       <TaskForm
-        isOpen={true}
+        task={mockTask}
+        projects={mockProjects}
+        members={mockMembers}
         onClose={mockOnClose}
         onSubmit={mockOnSubmit}
-        initialData={mockTask}
-        projectId="1"
-        teamMembers={mockTeamMembers}
-        title="タスクを編集"
       />
     );
 
-    // タイトルが表示される
-    expect(screen.getByText('タスクを編集')).toBeInTheDocument();
+    // フォームのタイトルが正しい
+    expect(screen.getByText('タスクの編集')).toBeInTheDocument();
 
-    // フォーム要素が初期値で表示される
-    expect(screen.getByLabelText('タスク名')).toHaveValue('テストタスク');
-    expect(screen.getByLabelText('説明')).toHaveValue('これはテスト用のタスク説明です');
+    // 初期値が正しく設定されている
+    expect(screen.getByLabelText('タイトル')).toHaveValue('機能Aの実装');
+    expect(screen.getByLabelText('説明')).toHaveValue('ログイン機能の実装に関するタスクです。');
 
-    // タグが表示される
-    expect(screen.getByText('テスト')).toBeInTheDocument();
-    expect(screen.getByText('バグ修正')).toBeInTheDocument();
+    // セレクトボックスの初期値
+    expect(screen.getByDisplayValue('進行中')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('高')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('プロジェクトA')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('山田太郎')).toBeInTheDocument();
+
+    // タグが表示されている
+    expect(screen.getByText('フロントエンド')).toBeInTheDocument();
+    expect(screen.getByText('新機能')).toBeInTheDocument();
   });
 
-  test('キャンセルボタンをクリックするとonCloseが呼ばれる', () => {
+  test('キャンセルボタンをクリックするとonClose関数が呼び出される', () => {
     render(
       <TaskForm
-        isOpen={true}
+        projects={mockProjects}
+        members={mockMembers}
         onClose={mockOnClose}
         onSubmit={mockOnSubmit}
-        projectId="1"
-        teamMembers={mockTeamMembers}
       />
     );
 
     const cancelButton = screen.getByRole('button', { name: 'キャンセル' });
     fireEvent.click(cancelButton);
 
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalled();
   });
 
-  test('有効なデータでフォームを送信するとonSubmitが呼ばれる', async () => {
+  test('有効なデータを入力して送信するとonSubmit関数が呼び出される', async () => {
     render(
       <TaskForm
-        isOpen={true}
+        projects={mockProjects}
+        members={mockMembers}
         onClose={mockOnClose}
         onSubmit={mockOnSubmit}
-        projectId="1"
-        teamMembers={mockTeamMembers}
       />
     );
 
     // フォームに値を入力
-    const titleInput = screen.getByLabelText('タスク名');
-    fireEvent.change(titleInput, { target: { value: '新しいタスク' } });
+    fireEvent.change(screen.getByLabelText('タイトル'), {
+      target: { value: 'テストタスク' }
+    });
 
-    const descriptionInput = screen.getByLabelText('説明');
-    fireEvent.change(descriptionInput, { target: { value: '新しいタスクの説明' } });
+    fireEvent.change(screen.getByLabelText('説明'), {
+      target: { value: 'これはテスト用のタスクです。' }
+    });
 
-    // フォームを送信
+    // セレクトボックスの選択
+    fireEvent.change(screen.getByLabelText('ステータス'), {
+      target: { value: 'todo' }
+    });
+
+    fireEvent.change(screen.getByLabelText('優先度'), {
+      target: { value: 'medium' }
+    });
+
+    fireEvent.change(screen.getByLabelText('プロジェクト'), {
+      target: { value: 'project-1' }
+    });
+
+    fireEvent.change(screen.getByLabelText('担当者'), {
+      target: { value: 'user-2' }
+    });
+
+    // 期日の設定（今日から1週間後）
+    const oneWeekLater = new Date();
+    oneWeekLater.setDate(oneWeekLater.getDate() + 7);
+    const formattedDate = format(oneWeekLater, 'yyyy-MM-dd');
+    fireEvent.change(screen.getByLabelText('期日'), {
+      target: { value: formattedDate }
+    });
+
+    // タグの追加
+    const tagInput = screen.getByPlaceholderText('新しいタグを追加...');
+    fireEvent.change(tagInput, { target: { value: 'テスト' } });
+    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
+
+    // フォームの送信
     const submitButton = screen.getByRole('button', { name: '保存' });
     fireEvent.click(submitButton);
 
-    // onSubmitが正しい値で呼ばれることを確認
+    // onSubmit関数が正しいデータで呼ばれることを確認
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: '新しいタスク',
-          description: '新しいタスクの説明',
-          status: 'todo',
-          priority: 'medium',
-        })
-      );
+      expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'テストタスク',
+        description: 'これはテスト用のタスクです。',
+        status: 'todo',
+        priority: 'medium',
+        projectId: 'project-1',
+        assigneeId: 'user-2',
+        dueDate: expect.any(Date),
+        tags: ['テスト']
+      }));
     });
-
-    // フォームが閉じられることを確認
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  test('タグを追加できる', async () => {
+  test('必須フィールドが空の場合はバリデーションエラーが表示される', async () => {
     render(
       <TaskForm
-        isOpen={true}
+        projects={mockProjects}
+        members={mockMembers}
         onClose={mockOnClose}
         onSubmit={mockOnSubmit}
-        projectId="1"
-        teamMembers={mockTeamMembers}
       />
     );
 
-    // タグ入力欄に値を入力
-    const tagInput = screen.getByPlaceholderText('タグを入力');
-    fireEvent.change(tagInput, { target: { value: '新しいタグ' } });
+    // タイトルを空にする
+    const titleInput = screen.getByLabelText('タイトル');
+    fireEvent.change(titleInput, { target: { value: '' } });
 
-    // 追加ボタンをクリック
-    const addButton = screen.getByRole('button', { name: '' });
-    fireEvent.click(addButton);
-
-    // タグが追加されることを確認
-    expect(screen.getByText('新しいタグ')).toBeInTheDocument();
-  });
-
-  test('タグを削除できる', async () => {
-    render(
-      <TaskForm
-        isOpen={true}
-        onClose={mockOnClose}
-        onSubmit={mockOnSubmit}
-        initialData={mockTask}
-        projectId="1"
-        teamMembers={mockTeamMembers}
-      />
-    );
-
-    // 最初にタグが表示されていることを確認
-    expect(screen.getByText('テスト')).toBeInTheDocument();
-
-    // タグの削除ボタンをクリック
-    const removeButtons = screen.getAllByRole('button', { name: '' });
-    fireEvent.click(removeButtons[0]); // 最初のタグの削除ボタンをクリック
-
-    // タグが削除されることを確認
-    expect(screen.queryByText('テスト')).not.toBeInTheDocument();
-  });
-
-  test('担当者を選択できる', async () => {
-    render(
-      <TaskForm
-        isOpen={true}
-        onClose={mockOnClose}
-        onSubmit={mockOnSubmit}
-        projectId="1"
-        teamMembers={mockTeamMembers}
-      />
-    );
-
-    // 担当者選択のトリガーをクリック
-    const assigneeSelect = screen.getByRole('combobox', { name: '担当者' });
-    fireEvent.click(assigneeSelect);
-
-    // 担当者を選択
-    const assigneeOption = screen.getByRole('option', { name: '田中三郎' });
-    fireEvent.click(assigneeOption);
-
-    // フォームを送信
+    // フォームの送信
     const submitButton = screen.getByRole('button', { name: '保存' });
     fireEvent.click(submitButton);
 
-    // 正しい担当者IDで送信されることを確認
+    // バリデーションエラーが表示される
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          assigneeId: 'user3',
-        })
-      );
+      expect(screen.getByText('タイトルは必須です')).toBeInTheDocument();
     });
+
+    // onSubmit関数は呼ばれない
+    expect(mockOnSubmit).not.toHaveBeenCalled();
+  });
+
+  test('タグの追加と削除が正しく動作する', () => {
+    render(
+      <TaskForm
+        projects={mockProjects}
+        members={mockMembers}
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+      />
+    );
+
+    // タグの追加
+    const tagInput = screen.getByPlaceholderText('新しいタグを追加...');
+
+    // 1つ目のタグを追加
+    fireEvent.change(tagInput, { target: { value: 'タグ1' } });
+    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
+    expect(screen.getByText('タグ1')).toBeInTheDocument();
+
+    // 2つ目のタグを追加
+    fireEvent.change(tagInput, { target: { value: 'タグ2' } });
+    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
+    expect(screen.getByText('タグ2')).toBeInTheDocument();
+
+    // タグの削除
+    const removeButtons = screen.getAllByRole('button', { name: 'タグを削除' });
+    fireEvent.click(removeButtons[0]); // 1つ目のタグを削除
+
+    // 削除されたタグがなくなり、残りのタグは表示されている
+    expect(screen.queryByText('タグ1')).not.toBeInTheDocument();
+    expect(screen.getByText('タグ2')).toBeInTheDocument();
+  });
+
+  test('重複するタグは追加されない', () => {
+    render(
+      <TaskForm
+        projects={mockProjects}
+        members={mockMembers}
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+      />
+    );
+
+    const tagInput = screen.getByPlaceholderText('新しいタグを追加...');
+
+    // タグを追加
+    fireEvent.change(tagInput, { target: { value: '重複タグ' } });
+    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
+    expect(screen.getByText('重複タグ')).toBeInTheDocument();
+
+    // 同じタグを再度追加しようとする
+    fireEvent.change(tagInput, { target: { value: '重複タグ' } });
+    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
+
+    // タグの出現回数は1回のまま
+    const tagElements = screen.getAllByText('重複タグ');
+    expect(tagElements.length).toBe(1);
+  });
+
+  test('空のタグは追加されない', () => {
+    render(
+      <TaskForm
+        projects={mockProjects}
+        members={mockMembers}
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+      />
+    );
+
+    const tagInput = screen.getByPlaceholderText('新しいタグを追加...');
+
+    // 空文字のタグを追加しようとする
+    fireEvent.change(tagInput, { target: { value: '' } });
+    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
+
+    // タグが追加されていないことを確認
+    const tagContainer = screen.getByTestId('tag-container');
+    expect(tagContainer.children.length).toBe(1); // 入力フィールドのみ
   });
 });
