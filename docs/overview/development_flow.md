@@ -108,7 +108,7 @@ stakeholders: ["dev_team", "ai_assistant"]
 - [ ] **56** AI「タスク分解」ボタン(モック)
 - [x] **57** 期限切れスタイル (2025-04-29)
 - [x] **58** API モック → 本 API 切替 (2025-04-29)
-- [ ] **59** commit `feat(frontend): kanban`
+- [x] **59** commit `feat(frontend): kanban` (2025-04-29)
 - [ ] **60** レスポンシブ & ユニットテスト最終
 
 #### 3.3 AIチャット & 設定 (61‑80)
