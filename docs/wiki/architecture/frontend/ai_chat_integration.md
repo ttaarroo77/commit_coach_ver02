@@ -31,6 +31,7 @@ The **AI Chat Integration** provides a conversational interface that enables use
 - Task breakdown suggestions
 
 ---
+    safe: frontend開発013: fix: ハイドレーションエラーの修正とメタデータの最適化
 
 ## Architecture
 
