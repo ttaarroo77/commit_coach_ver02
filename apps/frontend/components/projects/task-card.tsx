@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { Card } from "@/components/ui/card"
@@ -6,12 +7,15 @@ import { Task } from "@/types"
 import { CalendarIcon, UserIcon } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
+import { TaskDetailModal } from "./task-detail-modal"
 
 interface TaskCardProps {
   task: Task
+  onUpdateTask?: (taskId: string, updates: Partial<Task>) => void
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, onUpdateTask }: TaskCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const {
     attributes,
     listeners,
@@ -34,44 +38,54 @@ export function TaskCard({ task }: TaskCardProps) {
   } as const
 
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      data-testid={`task-${task.id}`}
-      className="p-4 cursor-move hover:shadow-md transition-shadow"
-    >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="font-medium">{task.title}</h3>
-        <Badge variant={priorityColors[task.priority]}>
-          {task.priority}
-        </Badge>
-      </div>
-
-      <div className="mt-2 text-sm text-muted-foreground">
-        {task.description && (
-          <p className="line-clamp-2 mb-2">{task.description}</p>
-        )}
-
-        <div className="flex items-center gap-4">
-          {task.dueDate && (
-            <div className="flex items-center gap-1">
-              <CalendarIcon className="w-4 h-4" />
-              <span>
-                {format(new Date(task.dueDate), "M/d", { locale: ja })}
-              </span>
-            </div>
-          )}
-
-          {task.assignee && (
-            <div className="flex items-center gap-1">
-              <UserIcon className="w-4 h-4" />
-              <span>{task.assignee.name}</span>
-            </div>
-          )}
+    <>
+      <Card
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        data-testid={`task-${task.id}`}
+        className="p-4 cursor-move hover:shadow-md transition-shadow"
+        onClick={() => setIsModalOpen(true)}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-medium">{task.title}</h3>
+          <Badge variant={priorityColors[task.priority]}>
+            {task.priority}
+          </Badge>
         </div>
-      </div>
-    </Card>
+
+        <div className="mt-2 text-sm text-muted-foreground">
+          {task.description && (
+            <p className="line-clamp-2 mb-2">{task.description}</p>
+          )}
+
+          <div className="flex items-center gap-4">
+            {task.dueDate && (
+              <div className="flex items-center gap-1">
+                <CalendarIcon className="w-4 h-4" />
+                <span>
+                  {format(new Date(task.dueDate), "M/d", { locale: ja })}
+                </span>
+              </div>
+            )}
+
+            {task.assignee && (
+              <div className="flex items-center gap-1">
+                <UserIcon className="w-4 h-4" />
+                <span>{task.assignee.name}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      <TaskDetailModal
+        task={task}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUpdate={onUpdateTask || (() => {})}
+      />
+    </>
   )
 } 
