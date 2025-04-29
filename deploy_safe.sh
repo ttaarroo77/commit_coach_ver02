@@ -6,7 +6,7 @@
 # find . -type d -not -path "*/node_modules/*" -not -path "*/tmp/*" -not -path "*/.git/*" | sort
 # rails assets:clobber
 
-
+# safe: frontend開発018: fix/recovery_condition
 
 # ./deploy_safe.sh
 #!/bin/bash
@@ -50,17 +50,17 @@ read DEPLOY_TARGET
 if [ "$DEPLOY_TARGET" = "1" ]; then
   echo "Herokuへのデプロイは現在無効化されています。"
   # echo "Heroku にデプロイしています..."
-  
+
   # # Herokuリモートの確認
   # HEROKU_REMOTE=$(git remote -v | grep heroku | head -n 1 | awk '{print $1}')
-  
+
   # # Herokuリモートが存在しない場合
   # if [ -z "$HEROKU_REMOTE" ]; then
   #   echo "Herokuリモートが設定されていません。アプリ名を入力してください："
   #   read HEROKU_APP_NAME
   #   heroku git:remote -a $HEROKU_APP_NAME
   # fi
-  
+
   # if [ "$CURRENT_BRANCH" = "main" ]; then
   #   git push heroku main
   # else
@@ -73,18 +73,18 @@ if [ "$DEPLOY_TARGET" = "1" ]; then
   #     echo "Herokuへのデプロイをキャンセルしました。"
   #   fi
   # fi
-  
+
   # # Herokuアプリを再起動
   # echo "Herokuアプリを再起動しています..."
   # heroku restart
-  
+
   # # マイグレーションの実行確認
   # echo "データベースマイグレーションを実行しますか？ (y/n)"
   # read RUN_MIGRATION
   # if [ "$RUN_MIGRATION" = "y" ]; then
   #   heroku run rails db:migrate
   # fi
-  
+
 elif [ "$DEPLOY_TARGET" = "2" ]; then
   echo "他の環境へのデプロイ方法を入力してください："
   read OTHER_DEPLOY_COMMAND
@@ -94,4 +94,4 @@ else
 fi
 
 # 完了メッセージ
-echo "✅ $SCRIPT_NAME が正常に完了しました！" 
+echo "✅ $SCRIPT_NAME が正常に完了しました！"

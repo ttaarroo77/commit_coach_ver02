@@ -4,17 +4,19 @@ import { CSS } from "@dnd-kit/utilities"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Task } from "@/types"
-import { CalendarIcon, UserIcon } from "lucide-react"
+import { CalendarIcon, GripVertical, UserIcon } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 import { TaskDetailModal } from "./task-detail-modal"
+import { cn } from "@/lib/utils"
 
 interface TaskCardProps {
   task: Task
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => void
+  isDragging?: boolean
 }
 
-export function TaskCard({ task, onUpdateTask }: TaskCardProps) {
+export function TaskCard({ task, onUpdateTask, isDragging: externalIsDragging }: TaskCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {
     attributes,
@@ -28,7 +30,8 @@ export function TaskCard({ task, onUpdateTask }: TaskCardProps) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1
+    opacity: isDragging || externalIsDragging ? 0.5 : 1,
+    zIndex: isDragging || externalIsDragging ? 10 : 1
   }
 
   const priorityColors = {
@@ -45,11 +48,17 @@ export function TaskCard({ task, onUpdateTask }: TaskCardProps) {
         {...attributes}
         {...listeners}
         data-testid={`task-${task.id}`}
-        className="p-4 cursor-move hover:shadow-md transition-shadow"
+        className={cn(
+          "p-4 hover:shadow-md transition-all",
+          isDragging || externalIsDragging ? "shadow-lg ring-2 ring-primary/20" : ""
+        )}
         onClick={() => setIsModalOpen(true)}
       >
         <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
           <h3 className="font-medium">{task.title}</h3>
+          </div>
           <Badge variant={priorityColors[task.priority]}>
             {task.priority}
           </Badge>
