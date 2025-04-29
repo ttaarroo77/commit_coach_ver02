@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// framer-motionの代わりにネイティブのCSSアニメーションを使用する
 
 interface FadeInProps {
   children: ReactNode;
@@ -21,16 +21,26 @@ export const FadeIn = ({
   duration?: number;
   className?: string;
 }) => {
+  // CSSトランジションを使用
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), delay * 1000);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration, delay }}
+    <div
+      data-testid="fade-in"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transition: `opacity ${duration}s ease-in-out`,
+        transitionDelay: `${delay}s`
+      }}
       className={className}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -58,31 +68,33 @@ export function SlideIn({
     return () => clearTimeout(timer);
   }, [delay]);
 
-  const durationClass = duration === 0.3 ? 'duration-300' :
-    duration === 0.5 ? 'duration-500' :
-      duration === 1 ? 'duration-1000' : 'duration-300';
-
-  const getTransformClass = () => {
+  const getTransform = () => {
     if (!isVisible) {
       switch (direction) {
         case 'left':
-          return `transform -translate-x-[${distance}px]`;
+          return `translateX(-${distance}px)`;
         case 'right':
-          return `transform translate-x-[${distance}px]`;
+          return `translateX(${distance}px)`;
         case 'up':
-          return `transform -translate-y-[${distance}px]`;
+          return `translateY(-${distance}px)`;
         case 'down':
-          return `transform translate-y-[${distance}px]`;
+          return `translateY(${distance}px)`;
         default:
-          return `transform translate-x-[${distance}px]`;
+          return `translateX(${distance}px)`;
       }
     }
-    return 'transform translate-x-0 translate-y-0';
+    return 'translateX(0) translateY(0)';
   };
 
   return (
     <div
-      className={`transition-all ${durationClass} ${isVisible ? 'opacity-100' : 'opacity-0'} ${getTransformClass()} ${className}`}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: getTransform(),
+        transition: `all ${duration}s ease-in-out`,
+        transitionDelay: `${delay}s`
+      }}
+      className={className}
     >
       {children}
     </div>
@@ -107,16 +119,26 @@ export const ScaleIn = ({
   duration?: number;
   className?: string;
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), delay * 1000);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration, delay }}
+    <div
+      data-testid="scale-in-mock"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'scale(1)' : 'scale(0.9)',
+        transition: `all ${duration}s ease-in-out`,
+        transitionDelay: `${delay}s`
+      }}
       className={className}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -150,16 +172,17 @@ export function AnimatedList({
     return () => timers.forEach(timer => clearTimeout(timer));
   }, [children, staggerDelay]);
 
-  const durationClass = duration === 0.3 ? 'duration-300' :
-    duration === 0.5 ? 'duration-500' :
-      duration === 1 ? 'duration-1000' : 'duration-300';
-
   return (
     <div className={className}>
       {React.Children.map(children, (child, index) => (
         <div
           key={index}
-          className={`transition-all ${durationClass} ${visibleItems.includes(index) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}
+          style={{
+            opacity: visibleItems.includes(index) ? 1 : 0,
+            transform: visibleItems.includes(index) ? 'translateY(0)' : 'translateY(8px)',
+            transition: `all ${duration}s ease-in-out`,
+            transitionDelay: `${index * staggerDelay}s`
+          }}
         >
           {child}
         </div>
@@ -201,7 +224,12 @@ export function AnimatedCard({ children, className = '' }: AnimatedCardProps) {
 
   return (
     <div
-      className={`transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} ${className}`}
+      className={`transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${className}`}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'all 0.3s ease-in-out'
+      }}
     >
       {children}
     </div>
@@ -220,16 +248,26 @@ export const SlideUp = ({
   duration?: number;
   className?: string;
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), delay * 1000);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration, delay }}
+    <div
+      data-testid="slide-up"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+        transition: `all ${duration}s ease-in-out`,
+        transitionDelay: `${delay}s`
+      }}
       className={className}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -244,25 +282,13 @@ export const StaggerContainer = ({
   className?: string;
 }) => {
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
-      variants={{
-        visible: {
-          transition: {
-            staggerChildren: staggerDelay
-          }
-        }
-      }}
-      className={className}
-    >
+    <div data-testid="stagger-container" className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 };
 
-// スタッガード子要素用
+// スタッガードアニメーション用の子アイテム
 export const StaggerItem = ({
   children,
   duration = 0.5,
@@ -272,21 +298,29 @@ export const StaggerItem = ({
   duration?: number;
   className?: string;
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // マウント後に表示
+    setIsVisible(true);
+  }, []);
+
   return (
-    <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 }
+    <div
+      data-testid="stagger-item"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
+        transition: `all ${duration}s ease-in-out`
       }}
-      transition={{ duration }}
       className={className}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
-// リスト項目のアニメーション
+// アニメーションリストアイテム
 export const AnimatedListItem = ({
   children,
   index,
@@ -296,20 +330,29 @@ export const AnimatedListItem = ({
   index: number;
   className?: string;
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), index * 100);
+    return () => clearTimeout(timer);
+  }, [index]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ delay: index * 0.05 }}
+    <div
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(10px)',
+        transition: 'all 0.3s ease-in-out',
+        transitionDelay: `${index * 0.05}s`
+      }}
       className={className}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
-// ページトランジション用ラッパー
+// ページトランジション
 export const PageTransition = ({
   children,
   className = ""
@@ -317,17 +360,121 @@ export const PageTransition = ({
   children: ReactNode;
   className?: string;
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+    <div
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'all 0.5s ease-in-out'
+      }}
+      className={className}
+    >
+      {children}
+    </div>
+  );
+};
+
+// モーションコンポーネントの代替
+export const motion = {
+  div: ({ children, className, initial, animate, exit, transition, ...props }: any) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+      setIsVisible(true);
+    }, []);
+
+    // CSSスタイルでアニメーションを模倣
+    const getStyle = () => {
+      const style: React.CSSProperties = {};
+
+      if (animate && initial) {
+        // 最も一般的なアニメーションケースを処理
+        if ('opacity' in initial && 'opacity' in animate) {
+          style.opacity = isVisible ? animate.opacity : initial.opacity;
+        }
+
+        if (('x' in initial || 'y' in initial) && ('x' in animate || 'y' in animate)) {
+          const translateX = isVisible ? (animate.x || 0) : (initial.x || 0);
+          const translateY = isVisible ? (animate.y || 0) : (initial.y || 0);
+          style.transform = `translate(${translateX}px, ${translateY}px)`;
+        }
+
+        if ('scale' in initial && 'scale' in animate) {
+          style.transform = isVisible ? `scale(${animate.scale})` : `scale(${initial.scale})`;
+        }
+      }
+
+      style.transition = `all ${transition?.duration || 0.3}s ${transition?.ease || 'ease-in-out'}`;
+      if (transition?.delay) {
+        style.transitionDelay = `${transition.delay}s`;
+      }
+
+      return style;
+    };
+
+    return (
+      <div
+        data-testid="motion-div"
         className={className}
+        style={getStyle()}
+        {...props}
       >
         {children}
-      </motion.div>
-    </AnimatePresence>
-  );
+      </div>
+    );
+  },
+  span: ({ children, className, initial, animate, exit, transition, ...props }: any) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+      setIsVisible(true);
+    }, []);
+
+    // CSSスタイルでアニメーションを模倣
+    const getStyle = () => {
+      const style: React.CSSProperties = {};
+
+      if (animate && initial) {
+        if ('opacity' in initial && 'opacity' in animate) {
+          style.opacity = isVisible ? animate.opacity : initial.opacity;
+        }
+
+        if (('x' in initial || 'y' in initial) && ('x' in animate || 'y' in animate)) {
+          const translateX = isVisible ? (animate.x || 0) : (initial.x || 0);
+          const translateY = isVisible ? (animate.y || 0) : (initial.y || 0);
+          style.transform = `translate(${translateX}px, ${translateY}px)`;
+        }
+      }
+
+      style.transition = `all ${transition?.duration || 0.3}s ${transition?.ease || 'ease-in-out'}`;
+      if (transition?.delay) {
+        style.transitionDelay = `${transition.delay}s`;
+      }
+
+      return style;
+    };
+
+    return (
+      <span
+        data-testid="motion-span"
+        className={className}
+        style={getStyle()}
+        {...props}
+      >
+        {children}
+      </span>
+    );
+  }
+};
+
+// AnimatePresenceの代替
+// eslint-disable-next-line react/display-name
+export const AnimatePresence = ({ children }: { children: ReactNode }) => {
+  return <>{children}</>;
 };
