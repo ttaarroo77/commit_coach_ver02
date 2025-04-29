@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Project, ProjectStatus, ProjectWithStats, ProjectFilterValues } from '@/types/project';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/lib/database.types';
 
 // モックデータ（Supabase連携前の仮実装）
@@ -83,7 +83,10 @@ export function useProjects() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   // プロジェクトデータの取得（将来的にはSupabaseから取得）
   const fetchProjects = useCallback(async () => {

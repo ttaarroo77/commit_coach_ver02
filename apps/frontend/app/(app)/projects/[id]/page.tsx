@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useProjects } from '@/hooks/useProjects';
 import { ProjectWithStats, ProjectFormValues } from '@/types/project';
-import { Task } from '@/components/dashboard/task-group';
+import { Task, TaskStatus } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProjectForm } from '@/components/projects/project-form';
 import { DraggableTask } from '@/components/dashboard/draggable-task';
 import { AddTaskButton } from '@/components/dashboard/add-task-button';
-import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users } from 'lucide-react';
+import { KanbanBoard } from '@/components/projects/kanban-board';
+import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users, LayoutGrid, List, Timeline } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Link from 'next/link';
@@ -265,9 +266,19 @@ export default function ProjectDetailPage() {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList>
-            <TabsTrigger value="overview">概要</TabsTrigger>
-            <TabsTrigger value="tasks">タスク</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="overview">
+              <List className="h-4 w-4 mr-2" />
+              概要
+            </TabsTrigger>
+            <TabsTrigger value="tasks">
+              <List className="h-4 w-4 mr-2" />
+              タスク
+            </TabsTrigger>
+            <TabsTrigger value="kanban">
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              カンバン
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview">
@@ -378,6 +389,26 @@ export default function ProjectDetailPage() {
                 ))}
               </AnimatedList>
             )}
+          </TabsContent>
+          
+          <TabsContent value="kanban" className="h-[calc(100vh-300px)]">
+            <div className="h-full">
+              {tasks.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg h-full flex flex-col items-center justify-center">
+                  <h3 className="text-lg font-medium mb-2">タスクがありません</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    このプロジェクトにはまだタスクが追加されていません。
+                  </p>
+                  <AddTaskButton 
+                    onSubmit={handleTaskSubmit} 
+                    defaultValues={{ project_id: project.id }}
+                    variant="default"
+                  />
+                </div>
+              ) : (
+                <KanbanBoard projectId={project.id} initialTasks={tasks} />
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </FadeIn>

@@ -5,14 +5,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MainNav } from './main-nav';
 import { Button } from '@/components/ui/button';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
 import { Database } from '@/lib/database.types';
 import { Bell, User, LogOut } from 'lucide-react';
 import { FadeIn } from '@/components/ui/animations';
 
 export function Header() {
   const [user, setUser] = useState<{ id: string; email: string; name: string | null } | null>(null);
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   useEffect(() => {
     const fetchUser = async () => {

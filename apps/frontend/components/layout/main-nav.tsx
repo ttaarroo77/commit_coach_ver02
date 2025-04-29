@@ -14,7 +14,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
 import { FadeIn } from '@/components/ui/animations';
 
 const navItems = [
@@ -45,7 +45,10 @@ const navItems = [
 export function MainNav() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   
   // 画面サイズが変更されたときにモバイルメニューを閉じる
   useEffect(() => {

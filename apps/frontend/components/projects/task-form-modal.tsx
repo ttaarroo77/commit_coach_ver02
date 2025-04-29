@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useCallback, memo, useEffect } from "react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 import { Calendar } from "@/components/ui/calendar"
@@ -26,46 +26,69 @@ import {
 } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Task, TaskStatus, TaskPriority } from "@/types"
 
 interface TaskFormModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (task: {
-    title: string
+  onSubmit: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => void
+  defaultValues?: {
+    title?: string
     description?: string
-    status: string
-    priority: string
-    dueDate: string | null
-  }) => void
+    status?: TaskStatus
+    priority?: TaskPriority
+    due_date?: string | undefined
+    project_id: string
+  }
 }
 
-export function TaskFormModal({ isOpen, onClose, onSubmit }: TaskFormModalProps) {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [status, setStatus] = useState("todo")
-  const [priority, setPriority] = useState("medium")
-  const [dueDate, setDueDate] = useState<Date | null>(null)
+function TaskFormModalComponent({ isOpen, onClose, onSubmit, defaultValues }: TaskFormModalProps) {
+  const [title, setTitle] = useState(defaultValues?.title || "")
+  const [description, setDescription] = useState(defaultValues?.description || "")
+  const [status, setStatus] = useState<TaskStatus>(defaultValues?.status || "backlog")
+  const [priority, setPriority] = useState<TaskPriority>(defaultValues?.priority || "medium")
+  const [dueDate, setDueDate] = useState<Date | undefined>(defaultValues?.due_date ? new Date(defaultValues.due_date) : undefined)
+  
+  // defaultValues が変更されたときにフォームをリセット
+  useEffect(() => {
+    if (defaultValues) {
+      setTitle(defaultValues.title || "")
+      setDescription(defaultValues.description || "")
+      setStatus(defaultValues.status || "backlog")
+      setPriority(defaultValues.priority || "medium")
+      setDueDate(defaultValues.due_date ? new Date(defaultValues.due_date) : undefined)
+    }
+  }, [defaultValues])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!defaultValues?.project_id) {
+      console.error('プロジェクトIDが指定されていません')
+      return
+    }
+    
     onSubmit({
       title,
       description: description || undefined,
       status,
       priority,
-      dueDate: dueDate?.toISOString() || null,
+      due_date: dueDate?.toISOString() || undefined,
+      project_id: defaultValues.project_id,
+      subtasks: []
     })
+    
     resetForm()
     onClose()
-  }
+  }, [title, description, status, priority, dueDate, defaultValues?.project_id, onSubmit, onClose])
 
-  const resetForm = () => {
-    setTitle("")
-    setDescription("")
-    setStatus("todo")
-    setPriority("medium")
-    setDueDate(null)
-  }
+  const resetForm = useCallback(() => {
+    setTitle(defaultValues?.title || "")
+    setDescription(defaultValues?.description || "")
+    setStatus(defaultValues?.status || "backlog")
+    setPriority(defaultValues?.priority || "medium")
+    setDueDate(defaultValues?.due_date ? new Date(defaultValues.due_date) : undefined)
+  }, [defaultValues])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -106,14 +129,15 @@ export function TaskFormModal({ isOpen, onClose, onSubmit }: TaskFormModalProps)
               <label htmlFor="status" className="text-sm font-medium">
                 ステータス
               </label>
-              <Select value={status} onValueChange={setStatus}>
+              <Select value={status} onValueChange={(value) => setStatus(value as TaskStatus)}>
                 <SelectTrigger id="status">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todo">未着手</SelectItem>
-                  <SelectItem value="in-progress">進行中</SelectItem>
-                  <SelectItem value="done">完了</SelectItem>
+                  <SelectItem value="backlog">未着手</SelectItem>
+                  <SelectItem value="in_progress">進行中</SelectItem>
+                  <SelectItem value="review">レビュー中</SelectItem>
+                  <SelectItem value="completed">完了</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -122,7 +146,7 @@ export function TaskFormModal({ isOpen, onClose, onSubmit }: TaskFormModalProps)
               <label htmlFor="priority" className="text-sm font-medium">
                 優先度
               </label>
-              <Select value={priority} onValueChange={setPriority}>
+              <Select value={priority} onValueChange={(value) => setPriority(value as TaskPriority)}>
                 <SelectTrigger id="priority">
                   <SelectValue />
                 </SelectTrigger>
@@ -185,4 +209,10 @@ export function TaskFormModal({ isOpen, onClose, onSubmit }: TaskFormModalProps)
       </DialogContent>
     </Dialog>
   )
-} 
+}
+
+// デフォルトエクスポートに変更
+export default memo(TaskFormModalComponent);
+
+// 名前付きエクスポートも提供
+export const TaskFormModal = memo(TaskFormModalComponent); 

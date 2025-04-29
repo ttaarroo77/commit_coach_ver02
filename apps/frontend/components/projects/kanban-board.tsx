@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -18,8 +18,10 @@ import { KanbanColumn } from './kanban-column';
 import { TaskCard } from './task-card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Task } from '@/types';
-import { TaskFormModal } from './task-form-modal';
+import { Task, TaskStatus } from '@/types';
+import TaskFormModal from './task-form-modal';
+import { useProjectTasks } from '@/hooks/useProjectTasks';
+import { useToast } from '@/components/ui/use-toast';
 
 interface KanbanBoardProps {
   projectId: string;
@@ -35,10 +37,28 @@ const COLUMNS = [
 ];
 
 export function KanbanBoard({ projectId, initialTasks = [] }: KanbanBoardProps) {
-  // タスクの状態管理
+  // タスク管理フックを使用
+  const {
+    tasks: projectTasks,
+    isLoading,
+    createTask,
+    updateTask,
+    updateTaskStatus,
+    deleteTask
+  } = useProjectTasks(projectId);
+  
+  // ローカル状態管理
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
+  const { toast } = useToast();
+  
+  // プロジェクトタスクが更新されたら、ローカル状態も更新
+  useEffect(() => {
+    if (projectTasks.length > 0) {
+      setTasks(projectTasks);
+    }
+  }, [projectTasks]);
 
   // センサーの設定
   const sensors = useSensors(
@@ -78,15 +98,27 @@ export function KanbanBoard({ projectId, initialTasks = [] }: KanbanBoardProps) 
     const overColumn = COLUMNS.find(c => c.id === overId);
 
     if (activeTask && overColumn && activeTask.status !== overColumn.id) {
+      // ローカル状態の更新
       setTasks(prev => 
         prev.map(task => 
           task.id === activeId 
-            ? { ...task, status: overColumn.id } 
+            ? { ...task, status: overColumn.id as TaskStatus } 
             : task
         )
       );
+      
+      // バックエンド状態の更新
+      updateTaskStatus(activeId, overColumn.id as TaskStatus)
+        .catch(error => {
+          console.error('タスクステータスの更新に失敗しました', error);
+          toast({
+            title: 'エラー',
+            description: 'タスクの移動中にエラーが発生しました',
+            variant: 'destructive',
+          });
+        });
     }
-  }, [tasks]);
+  }, [tasks, updateTaskStatus, toast]);
 
   // ドラッグ終了時の処理
   const handleDragEnd = useCallback((event: DragEndEvent) => {
@@ -111,18 +143,40 @@ export function KanbanBoard({ projectId, initialTasks = [] }: KanbanBoardProps) 
 
       const newColumnTasks = arrayMove(columnTasks, oldIndex, newIndex);
       
+      // ローカル状態の更新
       setTasks(prev => [
         ...prev.filter(t => t.status !== activeColumnId),
         ...newColumnTasks
       ]);
+      
+      // 注: 並び順の永続化はこの実装では省略
+      // 実際のアプリケーションでは、タスクの順序を保存するフィールドを
+      // 追加して、それを更新する処理が必要
     }
   }, [tasks]);
 
   // 新しいタスクを追加
-  const handleAddTask = useCallback((newTask: Task) => {
-    setTasks(prev => [...prev, newTask]);
-    setIsTaskFormOpen(false);
-  }, []);
+  const handleAddTask = useCallback(async (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      // バックエンドでタスクを作成
+      const createdTask = await createTask(newTask);
+      
+      // ローカル状態は useEffect で自動的に更新されるため不要
+      setIsTaskFormOpen(false);
+      
+      toast({
+        title: '成功',
+        description: 'タスクが追加されました',
+      });
+    } catch (error) {
+      console.error('タスク作成エラー:', error);
+      toast({
+        title: 'エラー',
+        description: 'タスクの作成に失敗しました',
+        variant: 'destructive',
+      });
+    }
+  }, [createTask, toast]);
 
   // アクティブなタスクを取得
   const activeTask = useMemo(() => {
@@ -139,6 +193,12 @@ export function KanbanBoard({ projectId, initialTasks = [] }: KanbanBoardProps) 
           タスク追加
         </Button>
       </div>
+      
+      {isLoading && (
+        <div className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      )}
 
       <div className="flex-1 overflow-x-auto">
         <DndContext
@@ -171,9 +231,10 @@ export function KanbanBoard({ projectId, initialTasks = [] }: KanbanBoardProps) 
 
       {isTaskFormOpen && (
         <TaskFormModal
-          projectId={projectId}
+          isOpen={isTaskFormOpen}
           onClose={() => setIsTaskFormOpen(false)}
           onSubmit={handleAddTask}
+          defaultValues={{ project_id: projectId, status: 'backlog' }}
         />
       )}
     </div>
