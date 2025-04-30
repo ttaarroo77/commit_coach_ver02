@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
 
     // セッション変更の監視
     const { data: { subscription } } = client.auth.onAuthStateChange(
-      (_event, session) => {
+      (_event: string, session: Session | null) => {
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
       setHasError(false);
       setErrorMessage(null);
 
-      const { error } = await client.auth.signInWithPassword({
+      const { data, error } = await client.auth.signInWithPassword({
         email,
         password,
       });
@@ -93,7 +93,12 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
       if (error) {
         throw error;
       }
+      
+      // 成功時のみユーザーを設定
+      setUser(data?.user ?? null);
     } catch (error) {
+      // エラー時はユーザーをnullに設定
+      setUser(null);
       const errorMessage = error instanceof Error ? error.message : 'ログインに失敗しました';
       setHasError(true);
       setErrorMessage(errorMessage);
@@ -110,7 +115,7 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
       setHasError(false);
       setErrorMessage(null);
 
-      const { error } = await client.auth.signUp({
+      const { data, error } = await client.auth.signUp({
         email,
         password,
       });
@@ -118,7 +123,12 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
       if (error) {
         throw error;
       }
+      
+      // 成功時のみユーザーを設定
+      setUser(data?.user ?? null);
     } catch (error) {
+      // エラー時はユーザーをnullに設定
+      setUser(null);
       const errorMessage = error instanceof Error ? error.message : 'アカウント登録に失敗しました';
       setHasError(true);
       setErrorMessage(errorMessage);
@@ -141,9 +151,13 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
         throw error;
       }
 
+      // サインアウト成功時は必ずセッションとユーザーをnullに設定
       setSession(null);
       setUser(null);
     } catch (error) {
+      // エラー時もユーザーとセッションをクリア
+      setSession(null);
+      setUser(null);
       const errorMessage = error instanceof Error ? error.message : 'サインアウトに失敗しました';
       setHasError(true);
       setErrorMessage(errorMessage);
@@ -202,29 +216,47 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
     }
   };
 
+  // トークン更新用のミューテックス参照
+  const refreshMutex = useRef<Promise<void> | null>(null);
+
   // トークン更新関数
   const refreshSession = async () => {
-    try {
-      setIsLoading(true);
-      setHasError(false);
-      setErrorMessage(null);
-
-      const { data: { session }, error } = await client.auth.refreshSession();
-
-      if (error) {
-        throw error;
-      }
-
-      setSession(session);
-      setUser(session?.user ?? null);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'トークンの更新に失敗しました';
-      setHasError(true);
-      setErrorMessage(errorMessage);
-      console.error('トークン更新エラー:', errorMessage);
-    } finally {
-      setIsLoading(false);
+    // 既に更新中の場合は、その処理の完了を待つ
+    if (refreshMutex.current) {
+      return refreshMutex.current;
     }
+
+    // 新しい更新処理を開始し、ミューテックスに設定
+    refreshMutex.current = (async () => {
+      try {
+        setIsLoading(true);
+        setHasError(false);
+        setErrorMessage(null);
+
+        const { data, error } = await client.auth.refreshSession();
+
+        if (error) {
+          throw error;
+        }
+
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+      } catch (error) {
+        // エラーメッセージを固定文言に統一
+        setHasError(true);
+        setErrorMessage('トークンの更新に失敗しました');
+        console.error('トークン更新エラー:', error instanceof Error ? error.message : error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+
+    // 処理完了後にミューテックスをクリア
+    refreshMutex.current.finally(() => {
+      refreshMutex.current = null;
+    });
+
+    return refreshMutex.current;
   };
 
   const value = {
