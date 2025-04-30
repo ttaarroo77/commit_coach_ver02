@@ -6,6 +6,8 @@ import { useProjects } from '../../../../hooks/useProjects';
 import { ProjectWithStats, ProjectFormValues } from '../../../../types/project';
 import { Task, TaskStatus } from '../../../../types/task';
 import { Button } from '../../../../components/ui/button';
+import { Plus } from 'lucide-react';
+import { TaskForm } from '../../../../components/dashboard/task-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../components/ui/card';
 import { Badge } from '../../../../components/ui/badge';
 import { Progress } from '../../../../components/ui/progress';
@@ -14,7 +16,7 @@ import { ProjectForm } from '../../../../components/projects/project-form';
 import { DraggableTask } from '../../../../components/dashboard/draggable-task';
 import { AddTaskButton } from '../../../../components/dashboard/add-task-button';
 import { KanbanBoard } from '../../../../components/projects/kanban-board';
-import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users, LayoutGrid, List, Timeline } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users, LayoutGrid, List, BarChart2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Link from 'next/link';
@@ -58,7 +60,7 @@ const mockTasks: Task[] = [
     id: '3',
     title: 'バックエンド開発',
     description: 'Node.js/Expressを使用したAPI開発',
-    status: 'todo',
+    status: 'backlog',
     priority: 'high',
     due_date: new Date(2025, 4, 20).toISOString(),
     created_at: new Date(2025, 3, 24).toISOString(),
@@ -82,6 +84,7 @@ export default function ProjectDetailPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
   // プロジェクトデータの取得
@@ -266,7 +269,7 @@ export default function ProjectDetailPage() {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">
               <List className="h-4 w-4 mr-2" />
               概要
@@ -278,6 +281,10 @@ export default function ProjectDetailPage() {
             <TabsTrigger value="kanban">
               <LayoutGrid className="h-4 w-4 mr-2" />
               カンバン
+            </TabsTrigger>
+            <TabsTrigger value="timeline">
+              <BarChart2 className="h-4 w-4 mr-2" />
+              タイムライン
             </TabsTrigger>
           </TabsList>
           
@@ -331,17 +338,17 @@ export default function ProjectDetailPage() {
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
                         <p className="text-sm text-gray-500 dark:text-gray-400">未着手</p>
-                        <p className="text-xl font-bold mt-1">{project.taskCount - project.completedTaskCount}</p>
+                        <p className="text-xl font-bold mt-1">{tasks.filter(task => task.status === 'backlog').length}</p>
                       </div>
                       <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md">
                         <p className="text-sm text-blue-500 dark:text-blue-400">進行中</p>
                         <p className="text-xl font-bold mt-1">
-                          {Math.floor((project.taskCount - project.completedTaskCount) / 2)}
+                          {tasks.filter(task => task.status === 'in_progress').length}
                         </p>
                       </div>
                       <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-md">
                         <p className="text-sm text-green-500 dark:text-green-400">完了</p>
-                        <p className="text-xl font-bold mt-1">{project.completedTaskCount}</p>
+                        <p className="text-xl font-bold mt-1">{tasks.filter(task => task.status === 'completed').length}</p>
                       </div>
                     </div>
                   </div>
@@ -353,10 +360,14 @@ export default function ProjectDetailPage() {
           <TabsContent value="tasks">
             <div className="mb-4 flex justify-between items-center">
               <h2 className="text-xl font-bold">プロジェクトタスク</h2>
-              <AddTaskButton 
-                onSubmit={handleTaskSubmit} 
-                defaultValues={{ project_id: project.id }}
-              />
+              <Button 
+                variant="default" 
+                onClick={() => setIsAddTaskModalOpen(true)}
+                className="flex items-center"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                タスク追加
+              </Button>
             </div>
             
             {tasks.length === 0 ? (
@@ -365,11 +376,14 @@ export default function ProjectDetailPage() {
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
                   このプロジェクトにはまだタスクが追加されていません。
                 </p>
-                <AddTaskButton 
-                  onSubmit={handleTaskSubmit} 
-                  defaultValues={{ project_id: project.id }}
-                  variant="default"
-                />
+                <Button 
+                  variant="default" 
+                  onClick={() => setIsAddTaskModalOpen(true)}
+                  className="flex items-center"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  タスク追加
+                </Button>
               </div>
             ) : (
               <AnimatedList className="space-y-4">
@@ -410,6 +424,78 @@ export default function ProjectDetailPage() {
               )}
             </div>
           </TabsContent>
+          
+          <TabsContent value="timeline" className="h-[calc(100vh-300px)]">
+            <div className="h-full">
+              {tasks.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg h-full flex flex-col items-center justify-center">
+                  <h3 className="text-lg font-medium mb-2">タスクがありません</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    このプロジェクトにはまだタスクが追加されていません。
+                  </p>
+                  <AddTaskButton 
+                    onSubmit={handleTaskSubmit} 
+                    defaultValues={{ project_id: project.id }}
+                    variant="default"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold">タイムライン</h2>
+                    <Button 
+                      variant="default" 
+                      onClick={() => setIsAddTaskModalOpen(true)}
+                      className="flex items-center"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      タスク追加
+                    </Button>
+                  </div>
+                  
+                  <div className="relative border-l-2 border-gray-200 dark:border-gray-700 pl-6 ml-4 space-y-8">
+                    {tasks
+                      .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+                      .map((task) => (
+                        <div key={task.id} className="relative">
+                          <div className="absolute -left-[29px] mt-1.5 h-4 w-4 rounded-full bg-primary"></div>
+                          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h3 className="text-lg font-semibold">{task.title}</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {formatDate(task.updated_at)}
+                                </p>
+                              </div>
+                              <Badge variant={task.status === 'completed' ? 'success' : task.status === 'in_progress' ? 'info' : task.status === 'review' ? 'warning' : 'default'}>
+                                {task.status === 'completed' ? '完了' : task.status === 'in_progress' ? '進行中' : task.status === 'review' ? 'レビュー中' : '未着手'}
+                              </Badge>
+                            </div>
+                            {task.description && (
+                              <p className="mt-2 text-gray-600 dark:text-gray-300">{task.description}</p>
+                            )}
+                            {task.subtasks && task.subtasks.length > 0 && (
+                              <div className="mt-3">
+                                <p className="text-sm font-medium mb-1">サブタスク ({task.subtasks.filter(st => st.completed).length}/{task.subtasks.length})</p>
+                                <ul className="text-sm space-y-1">
+                                  {task.subtasks.map((subtask) => (
+                                    <li key={subtask.id} className="flex items-center">
+                                      <span className={`mr-2 ${subtask.completed ? 'text-green-500 line-through' : 'text-gray-600 dark:text-gray-400'}`}>
+                                        {subtask.title}
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </TabsContent>
         </Tabs>
       </FadeIn>
       
@@ -420,6 +506,18 @@ export default function ProjectDetailPage() {
         onSubmit={handleUpdateProject}
         initialValues={project}
         title={`プロジェクト編集: ${project.name}`}
+      />
+      
+      {/* タスク追加モーダル */}
+      <TaskForm
+        open={isAddTaskModalOpen}
+        onOpenChange={setIsAddTaskModalOpen}
+        onSubmit={(values) => {
+          handleTaskSubmit(values as Partial<Task>);
+          setIsAddTaskModalOpen(false);
+        }}
+        isEditing={false}
+        defaultValues={{ project_id: project?.id }}
       />
     </div>
   );

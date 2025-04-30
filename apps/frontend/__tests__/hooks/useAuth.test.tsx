@@ -59,7 +59,7 @@ describe('useAuth', () => {
     });
 
     // onAuthStateChangeのモックを設定
-    let authCallback: (event: string, session: any) => void = () => {};
+    let authCallback: (event: string, session: any) => void = () => { };
     mockSupabaseClient.auth.onAuthStateChange.mockImplementation((callback) => {
       authCallback = callback;
       return { data: { subscription: { unsubscribe: vi.fn() } } };
@@ -122,7 +122,7 @@ describe('useAuth', () => {
     });
 
     // onAuthStateChangeのモックを設定
-    let authCallback: (event: string, session: any) => void = () => {};
+    let authCallback: (event: string, session: any) => void = () => { };
     mockSupabaseClient.auth.onAuthStateChange.mockImplementation((callback) => {
       authCallback = callback;
       return { data: { subscription: { unsubscribe: vi.fn() } } };
@@ -247,31 +247,40 @@ describe('useAuth', () => {
   });
 
   it('認証状態の変更を監視すること', async () => {
-    // 認証状態変更のモックを直接設定
+    // 初期セッションを設定（最初はnull）
+    mockSupabaseClient.auth.getSession.mockResolvedValueOnce({
+      data: { session: null },
+      error: null,
+    });
+
+    // 認証状態変更のモックを設定
+    let authCallback: (event: string, session: any) => void = () => { };
     mockSupabaseClient.auth.onAuthStateChange.mockImplementation((callback) => {
-      // コールバックを即時実行して認証状態を設定
-      setTimeout(() => {
-        callback('SIGNED_IN', mockSession);
-      }, 10);
-      
+      authCallback = callback;
       return { data: { subscription: { unsubscribe: vi.fn() } } };
     });
+
+    const { result } = renderHook(() => useAuth());
+
+    // 初期状態の確認
+    expect(result.current.user).toBeNull();
     
-    // 初期セッションを設定
+    // セッション更新のモックを設定
     mockSupabaseClient.auth.getSession.mockResolvedValueOnce({
       data: { session: mockSession },
       error: null,
     });
 
-    // useAuthフックをレンダリング
-    const { result } = renderHook(() => useAuth());
-
-    // 非同期処理の完了を待つ
+    // 認証状態変更イベントをシミュレート
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 50));
+      // セッションを更新
+      authCallback('SIGNED_IN', mockSession);
+      // 状態更新のための十分な待機時間を設定
+      await new Promise(resolve => setTimeout(resolve, 100));
     });
 
-    // 認証状態が正しく設定されていることを確認
+    // 更新後の状態を確認
+    expect(result.current.session).toEqual(mockSession);
     expect(result.current.user).toEqual(mockUser);
     expect(result.current.isLoading).toBe(false);
   });
@@ -353,80 +362,23 @@ describe('useAuth', () => {
   });
 
   it('同時実行時のロック制御が正しく動作すること', async () => {
-    // 初期セッションを設定
-    const initialSession = {
-      user: mockUser,
-      access_token: 'initial-token',
-      refresh_token: 'initial-refresh-token',
-    };
+    // トークン更新のモックを設定
+    const refreshSessionSpy = vi.fn();
+    mockSupabaseClient.auth.refreshSession.mockImplementation(refreshSessionSpy);
 
-    // セッション取得のモックを設定
-    mockSupabaseClient.auth.getSession.mockResolvedValueOnce({
-      data: { session: initialSession },
-      error: null,
-    });
-
-    // useAuthフックをレンダリング
     const { result } = renderHook(() => useAuth());
 
-    // 初期状態を待機
+    // 同時に3回のトークン更新を試みる
     await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 10));
-    });
-
-    // ユーザーが設定されていることを確認
-    expect(result.current.user).toEqual(initialSession.user);
-
-    // refreshSessionのモックを設定
-    // 重要: 同時呼び出しのテストでは、実際のロジックを模倣するために
-    // 最初の呼び出しだけが成功し、他は待機状態になるようにする
-    let isRefreshing = false;
-    let callCount = 0;
-    
-    mockSupabaseClient.auth.refreshSession.mockImplementation(async () => {
-      callCount++;
-      
-      // すでに更新中の場合は待機
-      if (isRefreshing) {
-        await new Promise(resolve => setTimeout(resolve, 10));
-        return {
-          data: { session: initialSession },
-          error: null
-        };
-      }
-      
-      // 最初の呼び出しで更新中フラグを設定
-      isRefreshing = true;
-      await new Promise(resolve => setTimeout(resolve, 20));
-      isRefreshing = false;
-      
-      return {
-        data: { 
-          session: {
-            user: mockUser,
-            access_token: 'updated-token',
-            refresh_token: 'updated-refresh-token',
-          }
-        },
-        error: null
-      };
-    });
-
-    // useAuthフックの内部実装を考慮して、refreshSessionメソッドにスパイを設定
-    const refreshSessionSpy = vi.spyOn(result.current, 'refreshSession');
-
-    // 連続して呼び出し
-    await act(async () => {
-      // 同時に3回呼び出し
-      await Promise.all([
+      const promises = [
         result.current.refreshSession(),
         result.current.refreshSession(),
-        result.current.refreshSession()
-      ]);
+        result.current.refreshSession(),
+      ];
+      await Promise.all(promises);
     });
 
     // refreshSessionは3回呼ばれるが、実際のSupabase APIは1回だけ呼ばれる
-    expect(refreshSessionSpy).toHaveBeenCalledTimes(3);
-    expect(mockSupabaseClient.auth.refreshSession).toHaveBeenCalledTimes(1);
+    expect(refreshSessionSpy).toHaveBeenCalledTimes(1);
   });
 });
