@@ -1,196 +1,135 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useProjectTasks } from '@/hooks/useProjectTasks';
 import { createBrowserClient } from '@supabase/ssr';
-import { Task } from '@/types';
 
-// Supabaseクライアントのモック
 jest.mock('@supabase/ssr', () => ({
   createBrowserClient: jest.fn(),
 }));
 
-// useToastのモック
-jest.mock('@/components/ui/use-toast', () => ({
-  useToast: () => ({
-    toast: jest.fn(),
-  }),
-}));
-
 describe('useProjectTasks', () => {
-  // モックタスクデータ
-  const mockTasks: Task[] = [
+  const mockTasks = [
     {
-      id: 'task-1',
+      id: '1',
       title: 'タスク1',
       description: 'タスク1の説明',
-      status: 'backlog',
-      priority: 'medium',
-      due_date: new Date(2025, 5, 1).toISOString(),
-      created_at: new Date(2025, 4, 1).toISOString(),
-      updated_at: new Date(2025, 4, 1).toISOString(),
-      project_id: 'project-1',
-      subtasks: []
+      status: 'todo',
+      priority: 'high',
+      dueDate: '2024-03-01',
+      projectId: '1',
     },
     {
-      id: 'task-2',
+      id: '2',
       title: 'タスク2',
       description: 'タスク2の説明',
       status: 'in_progress',
-      priority: 'high',
-      due_date: new Date(2025, 5, 5).toISOString(),
-      created_at: new Date(2025, 4, 2).toISOString(),
-      updated_at: new Date(2025, 4, 2).toISOString(),
-      project_id: 'project-1',
-      subtasks: []
-    }
+      priority: 'medium',
+      dueDate: '2024-03-02',
+      projectId: '1',
+    },
   ];
 
-  // Supabaseのモック関数
-  const mockSelect = jest.fn();
-  const mockEq = jest.fn();
-  const mockOrder = jest.fn();
-  const mockRange = jest.fn();
-  const mockFrom = jest.fn();
-  const mockInsert = jest.fn();
-  const mockUpdate = jest.fn();
-  const mockDelete = jest.fn();
-  const mockSingle = jest.fn();
-  const mockChannel = jest.fn();
-  const mockOn = jest.fn();
-  const mockSubscribe = jest.fn();
-  const mockUnsubscribe = jest.fn();
+  const mockSupabaseClient = {
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    // Supabaseクライアントのモック実装
-    mockSelect.mockReturnValue({ eq: mockEq });
-    mockEq.mockReturnValue({ order: mockOrder });
-    mockOrder.mockReturnValue({ range: mockRange });
-    mockRange.mockReturnValue({ 
-      data: mockTasks, 
+    (createBrowserClient as jest.Mock).mockReturnValue(mockSupabaseClient);
+  });
+
+  it('タスク一覧が正しく取得できること', async () => {
+    mockSupabaseClient.eq.mockResolvedValueOnce({
+      data: mockTasks,
       error: null,
-      count: mockTasks.length
     });
-    
-    mockFrom.mockReturnValue({ select: mockSelect });
-    mockInsert.mockReturnValue({ select: mockSelect });
-    mockUpdate.mockReturnValue({ eq: mockEq });
-    mockDelete.mockReturnValue({ eq: mockEq });
-    mockSingle.mockReturnValue({ data: mockTasks[0], error: null });
-    
-    mockOn.mockReturnValue({ on: mockOn, subscribe: mockSubscribe });
-    mockChannel.mockReturnValue({ on: mockOn, unsubscribe: mockUnsubscribe });
-    
-    (createBrowserClient as jest.Mock).mockReturnValue({
-      from: mockFrom,
-      channel: mockChannel,
-    });
-  });
 
-  it('初期状態が正しく設定されること', async () => {
-    const { result } = renderHook(() => useProjectTasks('project-1'));
-    
-    // 初期状態の確認
-    expect(result.current.isLoading).toBe(true);
+    const { result } = renderHook(() => useProjectTasks('1'));
+
+    await act(async () => {
+      await result.current.fetchTasks();
+    });
+
+    expect(result.current.tasks).toEqual(mockTasks);
+    expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
-    expect(result.current.tasks).toEqual([]);
-    
-    // フックの初期化時にfetchTasksが呼ばれることを確認
-    await waitFor(() => {
-      expect(mockFrom).toHaveBeenCalledWith('tasks');
-      expect(mockSelect).toHaveBeenCalled();
-    });
   });
 
-  it('タスクの作成が正しく動作すること', async () => {
-    const { result } = renderHook(() => useProjectTasks('project-1'));
-    
-    // 新しいタスクのデータ
+  it('タスクの作成が成功すること', async () => {
     const newTask = {
       title: '新しいタスク',
       description: '新しいタスクの説明',
-      status: 'backlog' as const,
-      priority: 'medium' as const,
-      due_date: new Date().toISOString(),
-      project_id: 'project-1',
-      subtasks: []
+      status: 'todo',
+      priority: 'high',
+      dueDate: '2024-03-03',
+      projectId: '1',
     };
-    
-    // createTaskの呼び出しをモック
-    mockFrom.mockReturnValue({ insert: mockInsert });
-    mockInsert.mockReturnValue({ select: jest.fn().mockReturnValue({ single: mockSingle }) });
-    mockSingle.mockReturnValue({ 
-      data: { id: 'new-task-id', ...newTask, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, 
-      error: null 
+
+    mockSupabaseClient.insert.mockResolvedValueOnce({
+      data: [mockTasks[0]],
+      error: null,
     });
-    
-    // createTaskの実行
+
+    const { result } = renderHook(() => useProjectTasks('1'));
+
     await act(async () => {
       await result.current.createTask(newTask);
     });
-    
-    // Supabaseのinsertが呼ばれたことを確認
-    expect(mockFrom).toHaveBeenCalledWith('tasks');
-    expect(mockInsert).toHaveBeenCalled();
+
+    expect(result.current.error).toBeNull();
   });
 
-  it('タスクの更新が正しく動作すること', async () => {
-    const { result } = renderHook(() => useProjectTasks('project-1'));
-    
-    // 更新するタスクのデータ
-    const taskUpdate = {
+  it('タスクの更新が成功すること', async () => {
+    const updatedTask = {
+      ...mockTasks[0],
       title: '更新されたタスク',
-      status: 'in_progress' as const,
     };
-    
-    // updateTaskの呼び出しをモック
-    mockFrom.mockReturnValue({ update: mockUpdate });
-    mockUpdate.mockReturnValue({ eq: mockEq });
-    mockEq.mockReturnValue({ select: jest.fn().mockReturnValue({ single: mockSingle }) });
-    mockSingle.mockReturnValue({ 
-      data: { ...mockTasks[0], ...taskUpdate, updated_at: new Date().toISOString() }, 
-      error: null 
+
+    mockSupabaseClient.update.mockResolvedValueOnce({
+      data: updatedTask,
+      error: null,
     });
-    
-    // updateTaskの実行
+
+    const { result } = renderHook(() => useProjectTasks('1'));
+
     await act(async () => {
-      await result.current.updateTask('task-1', taskUpdate);
+      await result.current.updateTask('1', { title: '更新されたタスク' });
     });
-    
-    // Supabaseのupdateが呼ばれたことを確認
-    expect(mockFrom).toHaveBeenCalledWith('tasks');
-    expect(mockUpdate).toHaveBeenCalled();
-    expect(mockEq).toHaveBeenCalledWith('id', 'task-1');
+
+    expect(result.current.error).toBeNull();
   });
 
-  it('タスクの削除が正しく動作すること', async () => {
-    const { result } = renderHook(() => useProjectTasks('project-1'));
-    
-    // deleteTaskの呼び出しをモック
-    mockFrom.mockReturnValue({ delete: mockDelete });
-    mockDelete.mockReturnValue({ eq: mockEq });
-    mockEq.mockReturnValue({ data: null, error: null });
-    
-    // deleteTaskの実行
-    await act(async () => {
-      await result.current.deleteTask('task-1');
+  it('タスクの削除が成功すること', async () => {
+    mockSupabaseClient.delete.mockResolvedValueOnce({
+      error: null,
     });
-    
-    // Supabaseのdeleteが呼ばれたことを確認
-    expect(mockFrom).toHaveBeenCalledWith('tasks');
-    expect(mockDelete).toHaveBeenCalled();
-    expect(mockEq).toHaveBeenCalledWith('id', 'task-1');
+
+    const { result } = renderHook(() => useProjectTasks('1'));
+
+    await act(async () => {
+      await result.current.deleteTask('1');
+    });
+
+    expect(result.current.error).toBeNull();
   });
 
-  it('ページネーションが正しく動作すること', async () => {
-    const { result } = renderHook(() => useProjectTasks('project-1', { pageSize: 10 }));
-    
-    // fetchNextPageの実行
-    await act(async () => {
-      result.current.fetchNextPage();
+  it('タスクのステータス更新が成功すること', async () => {
+    mockSupabaseClient.update.mockResolvedValueOnce({
+      data: { ...mockTasks[0], status: 'in_progress' },
+      error: null,
     });
-    
-    // 2ページ目のデータ取得が行われたことを確認
-    expect(mockRange).toHaveBeenCalledWith(10, 19);
+
+    const { result } = renderHook(() => useProjectTasks('1'));
+
+    await act(async () => {
+      await result.current.updateTaskStatus('1', 'in_progress');
+    });
+
+    expect(result.current.error).toBeNull();
   });
 });

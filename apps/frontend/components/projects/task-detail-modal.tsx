@@ -115,7 +115,12 @@ export function TaskDetailModal({
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsEditing(true)}
+                    aria-label="編集"
+                  >
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button
@@ -123,6 +128,7 @@ export function TaskDetailModal({
                     size="icon"
                     onClick={() => setIsDeleteDialogOpen(true)}
                     className="text-destructive hover:text-destructive"
+                    aria-label="削除"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

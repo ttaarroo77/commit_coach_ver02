@@ -10,9 +10,11 @@ type AuthContextType = {
   hasError: boolean;
   errorMessage: string | null;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  getSession: () => Promise<void>;
+  refreshSession: () => Promise<void>;
 };
 
 // 認証コンテキストの作成
@@ -21,29 +23,32 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // 認証プロバイダーの型定義
 interface AuthProviderProps {
   children: ReactNode;
+  supabaseClient?: any;
 }
 
 // 認証プロバイダーコンポーネント
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const client = supabaseClient || supabase;
+
   useEffect(() => {
     // 現在のセッション情報を取得
     const fetchSession = async () => {
       try {
         setIsLoading(true);
-        
+
         // セッションの取得
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
+        const { data: { session }, error } = await client.auth.getSession();
+
         if (error) {
           throw error;
         }
-        
+
         setSession(session);
         setUser(session?.user ?? null);
       } catch (error) {
@@ -59,7 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     fetchSession();
 
     // セッション変更の監視
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription } } = client.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
@@ -69,9 +74,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // クリーンアップ関数
     return () => {
-      subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
-  }, []);
+  }, [client]);
 
   // サインイン関数
   const signIn = async (email: string, password: string) => {
@@ -79,12 +84,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       setHasError(false);
       setErrorMessage(null);
-      
-      const { error } = await supabase.auth.signInWithPassword({
+
+      const { error } = await client.auth.signInWithPassword({
         email,
         password,
       });
-      
+
       if (error) {
         throw error;
       }
@@ -99,22 +104,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // サインアップ関数
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       setHasError(false);
       setErrorMessage(null);
-      
-      const { error } = await supabase.auth.signUp({
+
+      const { error } = await client.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            name,
-          },
-        },
       });
-      
+
       if (error) {
         throw error;
       }
@@ -122,7 +122,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const errorMessage = error instanceof Error ? error.message : 'アカウント登録に失敗しました';
       setHasError(true);
       setErrorMessage(errorMessage);
-      console.error('登録エラー:', errorMessage);
+      console.error('サインアップエラー:', errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -134,17 +134,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       setHasError(false);
       setErrorMessage(null);
-      
-      const { error } = await supabase.auth.signOut();
-      
+
+      const { error } = await client.auth.signOut();
+
       if (error) {
         throw error;
       }
+
+      setSession(null);
+      setUser(null);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'ログアウトに失敗しました';
+      const errorMessage = error instanceof Error ? error.message : 'サインアウトに失敗しました';
       setHasError(true);
       setErrorMessage(errorMessage);
-      console.error('ログアウトエラー:', errorMessage);
+      console.error('サインアウトエラー:', errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -156,11 +159,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       setHasError(false);
       setErrorMessage(null);
-      
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/password/update`,
+
+      const { error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
-      
+
       if (error) {
         throw error;
       }
@@ -169,6 +172,56 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setHasError(true);
       setErrorMessage(errorMessage);
       console.error('パスワードリセットエラー:', errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // セッション取得関数
+  const getSession = async () => {
+    try {
+      setIsLoading(true);
+      setHasError(false);
+      setErrorMessage(null);
+
+      const { data: { session }, error } = await client.auth.getSession();
+
+      if (error) {
+        throw error;
+      }
+
+      setSession(session);
+      setUser(session?.user ?? null);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'セッションの取得に失敗しました';
+      setHasError(true);
+      setErrorMessage(errorMessage);
+      console.error('セッション取得エラー:', errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // トークン更新関数
+  const refreshSession = async () => {
+    try {
+      setIsLoading(true);
+      setHasError(false);
+      setErrorMessage(null);
+
+      const { data: { session }, error } = await client.auth.refreshSession();
+
+      if (error) {
+        throw error;
+      }
+
+      setSession(session);
+      setUser(session?.user ?? null);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'トークンの更新に失敗しました';
+      setHasError(true);
+      setErrorMessage(errorMessage);
+      console.error('トークン更新エラー:', errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -184,22 +237,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signUp,
     signOut,
     resetPassword,
+    getSession,
+    refreshSession,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// 認証コンテキストを使用するカスタムフック
+// 認証フック
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
   return context;
 };

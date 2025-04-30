@@ -90,8 +90,9 @@ export function TaskStatus({
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => onUpdateStatus(!completed)}
         className="ml-auto"
+        onClick={() => onUpdateStatus(!completed)}
+        aria-label="タスクの完了状態"
       >
         {completed ? (
           <CheckCircle className="h-5 w-5" />

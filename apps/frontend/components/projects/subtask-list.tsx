@@ -74,6 +74,7 @@ export function SubtaskList({
                 checked={subtask.completed}
                 onChange={() => handleToggleSubtask(subtask.id)}
                 className="rounded border-input"
+                aria-label={`サブタスク「${subtask.title}」の完了状態`}
               />
               <span
                 className={cn(
@@ -106,6 +107,7 @@ export function SubtaskList({
                 onClick={handleAddSubtask}
                 disabled={!newSubtaskTitle.trim()}
                 className="h-8 w-8"
+                aria-label="サブタスクを追加"
               >
                 <Plus className="w-4 h-4" />
               </Button>

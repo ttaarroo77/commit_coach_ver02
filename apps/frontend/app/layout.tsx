@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google"
+import { LinkValidator } from '@/components/LinkValidator';
 
 import "./globals.css"
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
       >
         {children}
+        <LinkValidator />
       </body>
     </html>
   )

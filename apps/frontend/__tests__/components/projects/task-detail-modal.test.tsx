@@ -183,8 +183,8 @@ describe('TaskDetailModal', () => {
       />
     )
 
-    const statusButton = screen.getByRole('button', { name: /完了状態を切り替え/i })
-    fireEvent.click(statusButton)
+    const checkbox = screen.getByRole('checkbox', { name: 'タスクの完了状態' })
+    fireEvent.click(checkbox)
 
     expect(mockOnUpdate).toHaveBeenCalledWith('1', { completed: true })
   })
@@ -200,7 +200,10 @@ describe('TaskDetailModal', () => {
       />
     )
 
-    const addButton = screen.getByRole('button', { name: /サブタスクを追加/i })
+    const input = screen.getByPlaceholderText('新しいサブタスク')
+    fireEvent.change(input, { target: { value: '新しいサブタスク' } })
+
+    const addButton = screen.getByRole('button', { name: 'サブタスクを追加' })
     fireEvent.click(addButton)
 
     expect(mockOnUpdate).toHaveBeenCalled()

@@ -1,7 +1,11 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, cleanup } from '@testing-library/react'
 import { Badge } from '@/components/ui/badge'
 
 describe('Badge', () => {
+  afterEach(() => {
+    cleanup()
+  })
+
   it('デフォルトのバッジが正しくレンダリングされること', () => {
     render(<Badge>テストバッジ</Badge>)
 
@@ -48,6 +52,7 @@ describe('Badge', () => {
           expect(badge).toHaveClass('bg-muted', 'text-muted-foreground')
           break
       }
+      cleanup()
     })
   })
 
@@ -55,8 +60,8 @@ describe('Badge', () => {
     const sizes = ['default', 'sm', 'lg']
 
     sizes.forEach(size => {
-      render(<Badge size={size as any}>テストバッジ</Badge>)
-      const badge = screen.getByText('テストバッジ')
+      render(<Badge size={size as any}>テストバッジ {size}</Badge>)
+      const badge = screen.getByText(`テストバッジ ${size}`)
 
       switch (size) {
         case 'default':
@@ -69,6 +74,7 @@ describe('Badge', () => {
           expect(badge).toHaveClass('px-3', 'py-1', 'text-sm')
           break
       }
+      cleanup()
     })
   })
 
@@ -78,4 +84,4 @@ describe('Badge', () => {
     const badge = screen.getByText('テストバッジ')
     expect(badge).toHaveClass('custom-class')
   })
-}) 
+})
