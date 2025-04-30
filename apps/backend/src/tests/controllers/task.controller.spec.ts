@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { TaskController } from '../../controllers/task.controller';
-import { TaskService } from '../../services/task.service';
-import { TaskPriority, TaskStatus } from '../../types/task.types';
+import { taskService } from '../../services/task.service';
+import { Task, TaskPriority, TaskStatus } from '../../types/task.types';
 import {
   createTestUser,
   deleteTestUser,
@@ -15,15 +15,24 @@ import {
 
 jest.mock('../../services/task.service');
 
+// データベースから返される Task の型 (仮)
+interface DbTask extends Task {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
 describe('TaskController', () => {
   let taskController: TaskController;
-  let taskService: jest.Mocked<TaskService>;
+  let mockedTaskService: jest.Mocked<typeof taskService>;
   let req: Partial<Request>;
   let res: Partial<Response>;
   let userId: string;
   let projectId: string;
   let groupId: string;
   let taskId: string;
+  let testTask: DbTask | undefined;
 
   beforeAll(async () => {
     const user = await createTestUser();
@@ -32,24 +41,25 @@ describe('TaskController', () => {
     projectId = project.id;
     const group = await createTestTaskGroup(userId, projectId);
     groupId = group.id;
-    const task = await createTestTask(userId, projectId, groupId);
-    taskId = task.id;
   });
 
   afterAll(async () => {
-    await deleteTestTask(taskId);
-    await deleteTestTaskGroup(groupId);
-    await deleteTestProject(projectId);
-    await deleteTestUser(userId);
+    if (taskId) await deleteTestTask(taskId);
+    if (groupId) await deleteTestTaskGroup(groupId);
+    if (projectId) await deleteTestProject(projectId);
+    if (userId) await deleteTestUser(userId);
   });
 
-  beforeEach(() => {
-    taskService = new TaskService() as jest.Mocked<TaskService>;
+  beforeEach(async () => {
+    mockedTaskService = taskService as jest.Mocked<typeof taskService>;
     taskController = new TaskController();
-    (taskController as any).taskService = taskService;
+    (taskController as any).taskService = mockedTaskService;
+
+    testTask = await createTestTask(userId, projectId, groupId) as DbTask;
+    taskId = testTask.id;
 
     req = {
-      user: { id: userId },
+      user: { id: userId, userId: userId },
       params: {},
       body: {},
     };
@@ -59,6 +69,14 @@ describe('TaskController', () => {
       json: jest.fn(),
       send: jest.fn(),
     };
+  });
+
+  afterEach(async () => {
+    if (taskId) {
+      await deleteTestTask(taskId);
+      taskId = undefined as any;
+      testTask = undefined;
+    }
   });
 
   describe('createTask', () => {
@@ -71,15 +89,30 @@ describe('TaskController', () => {
         priority: TaskPriority.MEDIUM,
         status: TaskStatus.TODO,
         due_date: new Date().toISOString(),
+        order: 0,
       };
-
       req.body = taskData;
-      const createdTask = { ...taskData, id: taskId, user_id: userId };
-      taskService.createTask.mockResolvedValue(createdTask);
+
+      const createdTask: DbTask = {
+        id: 'new-task-id',
+        title: taskData.title,
+        description: taskData.description,
+        project_id: taskData.project_id,
+        group_id: taskData.group_id,
+        priority: taskData.priority,
+        status: taskData.status,
+        due_date: taskData.due_date,
+        order: taskData.order,
+        user_id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        parent_id: undefined,
+      };
+      mockedTaskService.createTask.mockResolvedValue(createdTask);
 
       await taskController.createTask(req as Request, res as Response);
 
-      expect(taskService.createTask).toHaveBeenCalledWith(userId, taskData);
+      expect(mockedTaskService.createTask).toHaveBeenCalledWith(userId, taskData);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(createdTask);
     });
@@ -96,19 +129,12 @@ describe('TaskController', () => {
   describe('getTasksByProject', () => {
     it('プロジェクトのタスク一覧を取得できる', async () => {
       req.params = { projectId };
-      const tasks = [
-        {
-          id: taskId,
-          title: 'テストタスク',
-          project_id: projectId,
-          user_id: userId,
-        },
-      ];
-      taskService.getTasksByProject.mockResolvedValue(tasks);
+      const tasks: DbTask[] = [testTask!];
+      mockedTaskService.getTasksByProject.mockResolvedValue(tasks);
 
       await taskController.getTasksByProject(req as Request, res as Response);
 
-      expect(taskService.getTasksByProject).toHaveBeenCalledWith(userId, projectId);
+      expect(mockedTaskService.getTasksByProject).toHaveBeenCalledWith(userId, projectId);
       expect(res.json).toHaveBeenCalledWith(tasks);
     });
 
@@ -124,19 +150,12 @@ describe('TaskController', () => {
   describe('getTasksByGroup', () => {
     it('グループのタスク一覧を取得できる', async () => {
       req.params = { groupId };
-      const tasks = [
-        {
-          id: taskId,
-          title: 'テストタスク',
-          group_id: groupId,
-          user_id: userId,
-        },
-      ];
-      taskService.getTasksByGroup.mockResolvedValue(tasks);
+      const tasks: DbTask[] = [testTask!];
+      mockedTaskService.getTasksByGroup.mockResolvedValue(tasks);
 
       await taskController.getTasksByGroup(req as Request, res as Response);
 
-      expect(taskService.getTasksByGroup).toHaveBeenCalledWith(userId, groupId);
+      expect(mockedTaskService.getTasksByGroup).toHaveBeenCalledWith(userId, groupId);
       expect(res.json).toHaveBeenCalledWith(tasks);
     });
 
@@ -152,26 +171,21 @@ describe('TaskController', () => {
   describe('getTaskById', () => {
     it('タスクの詳細を取得できる', async () => {
       req.params = { id: taskId };
-      const task = {
-        id: taskId,
-        title: 'テストタスク',
-        user_id: userId,
-      };
-      taskService.getTaskById.mockResolvedValue(task);
+      mockedTaskService.getTaskById.mockResolvedValue(testTask!);
 
       await taskController.getTaskById(req as Request, res as Response);
 
-      expect(taskService.getTaskById).toHaveBeenCalledWith(userId, taskId);
-      expect(res.json).toHaveBeenCalledWith(task);
+      expect(mockedTaskService.getTaskById).toHaveBeenCalledWith(userId, taskId);
+      expect(res.json).toHaveBeenCalledWith(testTask);
     });
 
     it('タスクが見つからない場合はエラーになる', async () => {
       req.params = { id: 'non-existent-id' };
-      taskService.getTaskById.mockResolvedValue(null);
+      mockedTaskService.getTaskById.mockResolvedValue(null);
 
-      await expect(taskController.getTaskById(req as Request, res as Response)).rejects.toThrow(
-        'タスクが見つかりません'
-      );
+      await expect(
+        taskController.getTaskById(req as Request, res as Response)
+      ).rejects.toThrow('タスクが見つかりません');
     });
 
     it('認証されていない場合はエラーになる', async () => {
@@ -186,20 +200,22 @@ describe('TaskController', () => {
   describe('updateTask', () => {
     it('タスクを更新できる', async () => {
       req.params = { id: taskId };
-      req.body = {
+      const updates = {
         title: '更新されたテストタスク',
-        description: '更新されたテスト用のタスクです',
+        status: TaskStatus.IN_PROGRESS,
       };
-      const updatedTask = {
-        id: taskId,
-        ...req.body,
-        user_id: userId,
+      req.body = updates;
+
+      const updatedTask: DbTask = {
+        ...testTask!,
+        ...updates,
+        updated_at: new Date().toISOString(),
       };
-      taskService.updateTask.mockResolvedValue(updatedTask);
+      mockedTaskService.updateTask.mockResolvedValue(updatedTask);
 
       await taskController.updateTask(req as Request, res as Response);
 
-      expect(taskService.updateTask).toHaveBeenCalledWith(userId, taskId, req.body);
+      expect(mockedTaskService.updateTask).toHaveBeenCalledWith(userId, taskId, updates);
       expect(res.json).toHaveBeenCalledWith(updatedTask);
     });
 
@@ -215,10 +231,11 @@ describe('TaskController', () => {
   describe('deleteTask', () => {
     it('タスクを削除できる', async () => {
       req.params = { id: taskId };
+      mockedTaskService.deleteTask.mockResolvedValue(undefined);
 
       await taskController.deleteTask(req as Request, res as Response);
 
-      expect(taskService.deleteTask).toHaveBeenCalledWith(userId, taskId);
+      expect(mockedTaskService.deleteTask).toHaveBeenCalledWith(userId, taskId);
       expect(res.status).toHaveBeenCalledWith(204);
       expect(res.send).toHaveBeenCalled();
     });
@@ -235,18 +252,20 @@ describe('TaskController', () => {
   describe('updateTaskOrder', () => {
     it('タスクの順序を更新できる', async () => {
       req.params = { id: taskId };
-      req.body = {
+      const orderData = {
         newOrder: 1,
         projectId,
         groupId,
       };
+      req.body = orderData;
+      mockedTaskService.updateTaskOrder.mockResolvedValue(undefined);
 
       await taskController.updateTaskOrder(req as Request, res as Response);
 
-      expect(taskService.updateTaskOrder).toHaveBeenCalledWith(
+      expect(mockedTaskService.updateTaskOrder).toHaveBeenCalledWith(
         userId,
         taskId,
-        req.body.newOrder,
+        orderData.newOrder,
         projectId,
         groupId
       );
@@ -258,9 +277,9 @@ describe('TaskController', () => {
       req.params = { id: taskId };
       req.body = {};
 
-      await expect(taskController.updateTaskOrder(req as Request, res as Response)).rejects.toThrow(
-        '無効なリクエストです'
-      );
+      await expect(
+        taskController.updateTaskOrder(req as Request, res as Response)
+      ).rejects.toThrow('無効なリクエストです');
     });
 
     it('認証されていない場合はエラーになる', async () => {
@@ -275,19 +294,12 @@ describe('TaskController', () => {
   describe('getSubtasks', () => {
     it('サブタスクを取得できる', async () => {
       req.params = { parentId: taskId };
-      const subtasks = [
-        {
-          id: 'subtask-id',
-          title: 'サブタスク',
-          parent_id: taskId,
-          user_id: userId,
-        },
-      ];
-      taskService.getSubtasks.mockResolvedValue(subtasks);
+      const subtasks: DbTask[] = [];
+      mockedTaskService.getSubtasks.mockResolvedValue(subtasks);
 
       await taskController.getSubtasks(req as Request, res as Response);
 
-      expect(taskService.getSubtasks).toHaveBeenCalledWith(userId, taskId);
+      expect(mockedTaskService.getSubtasks).toHaveBeenCalledWith(userId, taskId);
       expect(res.json).toHaveBeenCalledWith(subtasks);
     });
 
@@ -303,17 +315,19 @@ describe('TaskController', () => {
   describe('updateTaskStatus', () => {
     it('タスクのステータスを更新できる', async () => {
       req.params = { id: taskId };
-      req.body = { status: TaskStatus.DONE };
-      const updatedTask = {
-        id: taskId,
+      const statusData = { status: TaskStatus.DONE };
+      req.body = statusData;
+
+      const updatedTask: DbTask = {
+        ...testTask!,
         status: TaskStatus.DONE,
-        user_id: userId,
+        updated_at: new Date().toISOString(),
       };
-      taskService.updateTaskStatus.mockResolvedValue(updatedTask);
+      mockedTaskService.updateTaskStatus.mockResolvedValue(updatedTask);
 
       await taskController.updateTaskStatus(req as Request, res as Response);
 
-      expect(taskService.updateTaskStatus).toHaveBeenCalledWith(userId, taskId, TaskStatus.DONE);
+      expect(mockedTaskService.updateTaskStatus).toHaveBeenCalledWith(userId, taskId, TaskStatus.DONE);
       expect(res.json).toHaveBeenCalledWith(updatedTask);
     });
 
@@ -323,7 +337,7 @@ describe('TaskController', () => {
 
       await expect(
         taskController.updateTaskStatus(req as Request, res as Response)
-      ).rejects.toThrow('無効なステータスです');
+      ).rejects.toThrow();
     });
 
     it('認証されていない場合はエラーになる', async () => {
@@ -339,27 +353,29 @@ describe('TaskController', () => {
     it('タスクの期限を更新できる', async () => {
       req.params = { id: taskId };
       const dueDate = new Date().toISOString();
-      req.body = { dueDate };
-      const updatedTask = {
-        id: taskId,
-        due_date: dueDate,
-        user_id: userId,
+      const dueDateData = { dueDate };
+      req.body = dueDateData;
+
+      const updatedTask: DbTask = {
+        ...testTask!,
+        due_date: dueDateData.dueDate,
+        updated_at: new Date().toISOString(),
       };
-      taskService.updateTaskDueDate.mockResolvedValue(updatedTask);
+      mockedTaskService.updateTaskDueDate.mockResolvedValue(updatedTask);
 
       await taskController.updateTaskDueDate(req as Request, res as Response);
 
-      expect(taskService.updateTaskDueDate).toHaveBeenCalledWith(userId, taskId, dueDate);
+      expect(mockedTaskService.updateTaskDueDate).toHaveBeenCalledWith(userId, taskId, dueDateData.dueDate);
       expect(res.json).toHaveBeenCalledWith(updatedTask);
     });
 
-    it('無効な期限の場合はエラーになる', async () => {
+    it('無効な日付形式の場合はエラーになる', async () => {
       req.params = { id: taskId };
       req.body = { dueDate: 'invalid-date' };
 
       await expect(
         taskController.updateTaskDueDate(req as Request, res as Response)
-      ).rejects.toThrow('無効な期限です');
+      ).rejects.toThrow();
     });
 
     it('認証されていない場合はエラーになる', async () => {

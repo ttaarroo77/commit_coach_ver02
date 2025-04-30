@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { TaskGroupController } from '../../controllers/task-group.controller';
-import { TaskGroupService } from '../../services/task-group.service';
+import { taskGroupService } from '../../services/task-group.service';
+import { TaskGroup } from '../../types/task-group.types';
 import {
   createTestUser,
   deleteTestUser,
@@ -12,37 +13,47 @@ import {
 
 jest.mock('../../services/task-group.service');
 
+// データベースから返される TaskGroup の型 (仮)
+interface DbTaskGroup extends TaskGroup {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
 describe('TaskGroupController', () => {
   let taskGroupController: TaskGroupController;
-  let taskGroupService: jest.Mocked<TaskGroupService>;
+  let mockedTaskGroupService: jest.Mocked<typeof taskGroupService>;
   let req: Partial<Request>;
   let res: Partial<Response>;
   let userId: string;
   let projectId: string;
   let groupId: string;
+  let testGroup: DbTaskGroup | undefined;
 
   beforeAll(async () => {
     const user = await createTestUser();
     userId = user.id;
     const project = await createTestProject(userId);
     projectId = project.id;
-    const group = await createTestTaskGroup(userId, projectId);
-    groupId = group.id;
   });
 
   afterAll(async () => {
-    await deleteTestTaskGroup(groupId);
-    await deleteTestProject(projectId);
-    await deleteTestUser(userId);
+    if (groupId) await deleteTestTaskGroup(groupId);
+    if (projectId) await deleteTestProject(projectId);
+    if (userId) await deleteTestUser(userId);
   });
 
-  beforeEach(() => {
-    taskGroupService = new TaskGroupService() as jest.Mocked<TaskGroupService>;
+  beforeEach(async () => {
+    mockedTaskGroupService = taskGroupService as jest.Mocked<typeof taskGroupService>;
     taskGroupController = new TaskGroupController();
-    (taskGroupController as any).taskGroupService = taskGroupService;
+    (taskGroupController as any).taskGroupService = mockedTaskGroupService;
+
+    testGroup = await createTestTaskGroup(userId, projectId) as DbTaskGroup;
+    groupId = testGroup.id;
 
     req = {
-      user: { id: userId },
+      user: { id: userId, userId: userId },
       params: {},
       body: {},
     };
@@ -54,21 +65,37 @@ describe('TaskGroupController', () => {
     };
   });
 
+  afterEach(async () => {
+    if (groupId) {
+      await deleteTestTaskGroup(groupId);
+      groupId = undefined as any;
+      testGroup = undefined;
+    }
+  });
+
   describe('createTaskGroup', () => {
     it('新しいタスクグループを作成できる', async () => {
       const groupData = {
-        title: 'テストタスクグループ',
-        description: 'テスト用のタスクグループです',
+        name: 'テストグループ',
         project_id: projectId,
+        order: 0,
       };
-
       req.body = groupData;
-      const createdGroup = { ...groupData, id: groupId, user_id: userId, order: 0 };
-      taskGroupService.createTaskGroup.mockResolvedValue(createdGroup);
+
+      const createdGroup: DbTaskGroup = {
+        id: 'new-group-id',
+        name: groupData.name,
+        project_id: groupData.project_id,
+        order: groupData.order,
+        user_id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      mockedTaskGroupService.createTaskGroup.mockResolvedValue(createdGroup);
 
       await taskGroupController.createTaskGroup(req as Request, res as Response);
 
-      expect(taskGroupService.createTaskGroup).toHaveBeenCalledWith(userId, groupData);
+      expect(mockedTaskGroupService.createTaskGroup).toHaveBeenCalledWith(userId, groupData);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(createdGroup);
     });
@@ -85,19 +112,12 @@ describe('TaskGroupController', () => {
   describe('getTaskGroupsByProject', () => {
     it('プロジェクトのタスクグループ一覧を取得できる', async () => {
       req.params = { projectId };
-      const groups = [
-        {
-          id: groupId,
-          title: 'テストタスクグループ',
-          project_id: projectId,
-          user_id: userId,
-        },
-      ];
-      taskGroupService.getTaskGroupsByProject.mockResolvedValue(groups);
+      const groups: DbTaskGroup[] = [testGroup!];
+      mockedTaskGroupService.getTaskGroupsByProject.mockResolvedValue(groups);
 
       await taskGroupController.getTaskGroupsByProject(req as Request, res as Response);
 
-      expect(taskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(userId, projectId);
+      expect(mockedTaskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(userId, projectId);
       expect(res.json).toHaveBeenCalledWith(groups);
     });
 
@@ -113,22 +133,17 @@ describe('TaskGroupController', () => {
   describe('getTaskGroupById', () => {
     it('タスクグループの詳細を取得できる', async () => {
       req.params = { id: groupId };
-      const group = {
-        id: groupId,
-        title: 'テストタスクグループ',
-        user_id: userId,
-      };
-      taskGroupService.getTaskGroupById.mockResolvedValue(group);
+      mockedTaskGroupService.getTaskGroupById.mockResolvedValue(testGroup!);
 
       await taskGroupController.getTaskGroupById(req as Request, res as Response);
 
-      expect(taskGroupService.getTaskGroupById).toHaveBeenCalledWith(userId, groupId);
-      expect(res.json).toHaveBeenCalledWith(group);
+      expect(mockedTaskGroupService.getTaskGroupById).toHaveBeenCalledWith(userId, groupId);
+      expect(res.json).toHaveBeenCalledWith(testGroup);
     });
 
     it('タスクグループが見つからない場合はエラーになる', async () => {
       req.params = { id: 'non-existent-id' };
-      taskGroupService.getTaskGroupById.mockResolvedValue(null);
+      mockedTaskGroupService.getTaskGroupById.mockResolvedValue(null);
 
       await expect(
         taskGroupController.getTaskGroupById(req as Request, res as Response)
@@ -147,20 +162,21 @@ describe('TaskGroupController', () => {
   describe('updateTaskGroup', () => {
     it('タスクグループを更新できる', async () => {
       req.params = { id: groupId };
-      req.body = {
-        title: '更新されたテストタスクグループ',
-        description: '更新されたテスト用のタスクグループです',
+      const updates = {
+        name: '更新されたテストグループ',
       };
-      const updatedGroup = {
-        id: groupId,
-        ...req.body,
-        user_id: userId,
+      req.body = updates;
+
+      const updatedGroup: DbTaskGroup = {
+        ...testGroup!,
+        ...updates,
+        updated_at: new Date().toISOString(),
       };
-      taskGroupService.updateTaskGroup.mockResolvedValue(updatedGroup);
+      mockedTaskGroupService.updateTaskGroup.mockResolvedValue(updatedGroup);
 
       await taskGroupController.updateTaskGroup(req as Request, res as Response);
 
-      expect(taskGroupService.updateTaskGroup).toHaveBeenCalledWith(userId, groupId, req.body);
+      expect(mockedTaskGroupService.updateTaskGroup).toHaveBeenCalledWith(userId, groupId, updates);
       expect(res.json).toHaveBeenCalledWith(updatedGroup);
     });
 
@@ -176,10 +192,11 @@ describe('TaskGroupController', () => {
   describe('deleteTaskGroup', () => {
     it('タスクグループを削除できる', async () => {
       req.params = { id: groupId };
+      mockedTaskGroupService.deleteTaskGroup.mockResolvedValue(undefined);
 
       await taskGroupController.deleteTaskGroup(req as Request, res as Response);
 
-      expect(taskGroupService.deleteTaskGroup).toHaveBeenCalledWith(userId, groupId);
+      expect(mockedTaskGroupService.deleteTaskGroup).toHaveBeenCalledWith(userId, groupId);
       expect(res.status).toHaveBeenCalledWith(204);
       expect(res.send).toHaveBeenCalled();
     });
@@ -195,17 +212,20 @@ describe('TaskGroupController', () => {
 
   describe('updateTaskGroupOrder', () => {
     it('タスクグループの順序を更新できる', async () => {
-      req.body = {
+      req.params = { id: groupId };
+      const orderData = {
         newOrder: 1,
         projectId,
       };
+      req.body = orderData;
+      mockedTaskGroupService.updateTaskGroupOrder.mockResolvedValue(undefined);
 
       await taskGroupController.updateTaskGroupOrder(req as Request, res as Response);
 
-      expect(taskGroupService.updateTaskGroupOrder).toHaveBeenCalledWith(
+      expect(mockedTaskGroupService.updateTaskGroupOrder).toHaveBeenCalledWith(
         userId,
         groupId,
-        req.body.newOrder,
+        orderData.newOrder,
         projectId
       );
       expect(res.status).toHaveBeenCalledWith(204);
@@ -213,6 +233,7 @@ describe('TaskGroupController', () => {
     });
 
     it('無効なリクエストの場合はエラーになる', async () => {
+      req.params = { id: groupId };
       req.body = {};
 
       await expect(

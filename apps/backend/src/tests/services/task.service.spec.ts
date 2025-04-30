@@ -9,8 +9,17 @@ import {
   createTestTask,
   deleteTestTask,
 } from '../utils/test-utils';
-import { TaskPriority, TaskStatus } from '../../types/task.types';
-import { ApiError } from '../../middleware/error.middleware';
+import { Task, TaskPriority, TaskStatus } from '../../types/task.types';
+import { ApiError } from '../../middleware/errorHandler';
+
+// データベースから返される Task の型 (仮)
+// 必要に応じて Prisma の型などを使用する
+interface DbTask extends Task {
+  id: string;
+  user_id: string;
+  created_at: string; // or Date
+  updated_at: string; // or Date
+}
 
 describe('TaskService', () => {
   let taskService: TaskService;
@@ -18,6 +27,7 @@ describe('TaskService', () => {
   let projectId: string;
   let groupId: string;
   let taskId: string;
+  let testTask: DbTask | undefined;
 
   beforeAll(async () => {
     taskService = new TaskService();
@@ -27,15 +37,26 @@ describe('TaskService', () => {
     projectId = project.id;
     const group = await createTestTaskGroup(userId, projectId);
     groupId = group.id;
-    const task = await createTestTask(userId, projectId, groupId);
-    taskId = task.id;
   });
 
   afterAll(async () => {
-    await deleteTestTask(taskId);
-    await deleteTestTaskGroup(groupId);
-    await deleteTestProject(projectId);
-    await deleteTestUser(userId);
+    if (taskId) await deleteTestTask(taskId);
+    if (groupId) await deleteTestTaskGroup(groupId);
+    if (projectId) await deleteTestProject(projectId);
+    if (userId) await deleteTestUser(userId);
+  });
+
+  beforeEach(async () => {
+    testTask = await createTestTask(userId, projectId, groupId) as DbTask;
+    taskId = testTask.id;
+  });
+
+  afterEach(async () => {
+    if (taskId) {
+      await deleteTestTask(taskId);
+      taskId = undefined as any;
+      testTask = undefined;
+    }
   });
 
   describe('createTask', () => {
@@ -48,10 +69,17 @@ describe('TaskService', () => {
         priority: TaskPriority.HIGH,
         status: TaskStatus.IN_PROGRESS,
         due_date: new Date().toISOString(),
+        order: 1,
       };
 
-      const task = await taskService.createTask(userId, taskData);
-      expect(task).toMatchObject(taskData);
+      const task = await taskService.createTask(userId, taskData) as DbTask;
+      expect(task).toHaveProperty('id');
+      expect(task.title).toBe(taskData.title);
+      expect(task.description).toBe(taskData.description);
+      expect(task.priority).toBe(taskData.priority);
+      expect(task.status).toBe(taskData.status);
+      expect(task.user_id).toBe(userId);
+
       await deleteTestTask(task.id);
     });
 
@@ -62,6 +90,7 @@ describe('TaskService', () => {
         project_id: 'non-existent-project-id',
         priority: TaskPriority.MEDIUM,
         status: TaskStatus.TODO,
+        order: 0,
       };
 
       await expect(taskService.createTask(userId, taskData)).rejects.toThrow(ApiError);
@@ -75,6 +104,7 @@ describe('TaskService', () => {
         group_id: 'non-existent-group-id',
         priority: TaskPriority.MEDIUM,
         status: TaskStatus.TODO,
+        order: 0,
       };
 
       await expect(taskService.createTask(userId, taskData)).rejects.toThrow(ApiError);
@@ -83,10 +113,11 @@ describe('TaskService', () => {
 
   describe('getTasksByProject', () => {
     it('プロジェクトのタスク一覧を取得できる', async () => {
-      const tasks = await taskService.getTasksByProject(userId, projectId);
+      const tasks = await taskService.getTasksByProject(userId, projectId) as DbTask[];
       expect(tasks).toBeInstanceOf(Array);
-      expect(tasks[0]).toHaveProperty('id');
-      expect(tasks[0]).toHaveProperty('title');
+      expect(tasks.length).toBeGreaterThan(0);
+      expect(tasks[0].id).toBe(taskId);
+      expect(tasks[0].title).toBe(testTask?.title);
     });
 
     it('存在しないプロジェクトIDでタスク一覧を取得しようとするとエラーになる', async () => {
@@ -98,10 +129,11 @@ describe('TaskService', () => {
 
   describe('getTasksByGroup', () => {
     it('グループのタスク一覧を取得できる', async () => {
-      const tasks = await taskService.getTasksByGroup(userId, groupId);
+      const tasks = await taskService.getTasksByGroup(userId, groupId) as DbTask[];
       expect(tasks).toBeInstanceOf(Array);
-      expect(tasks[0]).toHaveProperty('id');
-      expect(tasks[0]).toHaveProperty('title');
+      expect(tasks.length).toBeGreaterThan(0);
+      expect(tasks[0].id).toBe(taskId);
+      expect(tasks[0].title).toBe(testTask?.title);
     });
 
     it('存在しないグループIDでタスク一覧を取得しようとするとエラーになる', async () => {
@@ -113,9 +145,10 @@ describe('TaskService', () => {
 
   describe('getTaskById', () => {
     it('タスクの詳細を取得できる', async () => {
-      const task = await taskService.getTaskById(userId, taskId);
+      const task = await taskService.getTaskById(userId, taskId) as DbTask;
       expect(task).not.toBeNull();
       expect(task?.id).toBe(taskId);
+      expect(task?.title).toBe(testTask?.title);
     });
 
     it('存在しないタスクIDで詳細を取得しようとするとnullを返す', async () => {
@@ -132,8 +165,9 @@ describe('TaskService', () => {
         priority: TaskPriority.HIGH,
       };
 
-      const task = await taskService.updateTask(userId, taskId, updates);
+      const task = await taskService.updateTask(userId, taskId, updates) as DbTask;
       expect(task).toMatchObject(updates);
+      expect(task.id).toBe(taskId);
     });
 
     it('存在しないタスクIDで更新しようとするとエラーになる', async () => {
@@ -149,9 +183,10 @@ describe('TaskService', () => {
 
   describe('deleteTask', () => {
     it('タスクを削除できる', async () => {
-      const newTask = await createTestTask(userId, projectId, groupId);
-      await taskService.deleteTask(userId, newTask.id);
-      const task = await taskService.getTaskById(userId, newTask.id);
+      const newTask = await createTestTask(userId, projectId, groupId) as DbTask;
+      const newTaskId = newTask.id;
+      await taskService.deleteTask(userId, newTaskId);
+      const task = await taskService.getTaskById(userId, newTaskId);
       expect(task).toBeNull();
     });
 
@@ -167,6 +202,9 @@ describe('TaskService', () => {
       await expect(
         taskService.updateTaskOrder(userId, taskId, 1, projectId, groupId)
       ).resolves.not.toThrow();
+
+      const updatedTask = await taskService.getTaskById(userId, taskId) as DbTask;
+      expect(updatedTask?.order).toBe(1);
     });
 
     it('存在しないタスクIDで順序を更新しようとするとエラーになる', async () => {
@@ -178,12 +216,14 @@ describe('TaskService', () => {
 
   describe('getSubtasks', () => {
     it('サブタスクを取得できる', async () => {
-      const parentTask = await createTestTask(userId, projectId, groupId);
-      const subtask = await createTestTask(userId, projectId, groupId, parentTask.id);
+      const parentTask = await createTestTask(userId, projectId, groupId) as DbTask;
+      const subtask = await createTestTask(userId, projectId, groupId, parentTask.id) as DbTask;
 
-      const subtasks = await taskService.getSubtasks(userId, parentTask.id);
+      const subtasks = await taskService.getSubtasks(userId, parentTask.id) as DbTask[];
       expect(subtasks).toBeInstanceOf(Array);
+      expect(subtasks.length).toBe(1);
       expect(subtasks[0].id).toBe(subtask.id);
+      expect(subtasks[0].parent_id).toBe(parentTask.id);
 
       await deleteTestTask(subtask.id);
       await deleteTestTask(parentTask.id);
@@ -198,8 +238,9 @@ describe('TaskService', () => {
 
   describe('updateTaskStatus', () => {
     it('タスクのステータスを更新できる', async () => {
-      const task = await taskService.updateTaskStatus(userId, taskId, TaskStatus.DONE);
+      const task = await taskService.updateTaskStatus(userId, taskId, TaskStatus.DONE) as DbTask;
       expect(task.status).toBe(TaskStatus.DONE);
+      expect(task.id).toBe(taskId);
     });
 
     it('存在しないタスクIDでステータスを更新しようとするとエラーになる', async () => {
@@ -212,8 +253,9 @@ describe('TaskService', () => {
   describe('updateTaskDueDate', () => {
     it('タスクの期限を更新できる', async () => {
       const newDueDate = new Date().toISOString();
-      const task = await taskService.updateTaskDueDate(userId, taskId, newDueDate);
-      expect(task.due_date).toBe(newDueDate);
+      const task = await taskService.updateTaskDueDate(userId, taskId, newDueDate) as DbTask;
+      expect(new Date(task.due_date as string).toISOString()).toBe(newDueDate);
+      expect(task.id).toBe(taskId);
     });
 
     it('存在しないタスクIDで期限を更新しようとするとエラーになる', async () => {

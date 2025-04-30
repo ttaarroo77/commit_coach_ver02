@@ -1,8 +1,9 @@
 import request from 'supertest';
-import express from 'express';
-import { taskGroupRoutes } from '../../routes/task-group.routes';
-import { TaskGroupService } from '../../services/task-group.service';
+import express, { Request, Response, NextFunction } from 'express';
+import taskGroupRoutes from '../../routes/task-group.routes';
+import { taskGroupService, TaskGroupService } from '../../services/task-group.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
+import { TaskGroup } from '../../types/task-group.types';
 import {
   createTestUser,
   deleteTestUser,
@@ -17,11 +18,13 @@ jest.mock('../../middleware/auth.middleware');
 
 describe('TaskGroup Routes', () => {
   let app: express.Application;
-  let taskGroupService: jest.Mocked<TaskGroupService>;
+  let mockedTaskGroupService: jest.Mocked<TaskGroupService>;
   let userId: string;
   let projectId: string;
   let groupId: string;
   let token: string;
+
+  const mockedAuthMiddleware = authMiddleware as jest.Mock;
 
   beforeAll(async () => {
     const user = await createTestUser();
@@ -42,12 +45,16 @@ describe('TaskGroup Routes', () => {
   beforeEach(() => {
     app = express();
     app.use(express.json());
-    taskGroupService = new TaskGroupService() as jest.Mocked<TaskGroupService>;
-    (authMiddleware as jest.Mock).mockImplementation((req, res, next) => {
-      req.user = { id: userId };
-      next();
-    });
-    app.use('/task-groups', authMiddleware, taskGroupRoutes);
+    mockedTaskGroupService = taskGroupService as jest.Mocked<TaskGroupService>;
+
+    mockedAuthMiddleware.mockImplementation(
+      (req: Request, res: Response, next: NextFunction) => {
+        req.user = { id: userId, userId: userId };
+        next();
+      }
+    );
+
+    app.use('/task-groups', mockedAuthMiddleware, taskGroupRoutes);
   });
 
   describe('POST /task-groups', () => {
@@ -58,8 +65,17 @@ describe('TaskGroup Routes', () => {
         project_id: projectId,
       };
 
-      const createdGroup = { ...groupData, id: groupId, user_id: userId, order: 0 };
-      taskGroupService.createTaskGroup.mockResolvedValue(createdGroup);
+      const createdGroup: TaskGroup & { id: string; user_id: string; created_at: string; updated_at: string } = {
+        title: groupData.title,
+        description: groupData.description,
+        project_id: groupData.project_id,
+        order: 0,
+        id: groupId,
+        user_id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      mockedTaskGroupService.createTaskGroup.mockResolvedValue(createdGroup);
 
       const response = await request(app)
         .post('/task-groups')
@@ -68,11 +84,11 @@ describe('TaskGroup Routes', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toEqual(createdGroup);
-      expect(taskGroupService.createTaskGroup).toHaveBeenCalledWith(userId, groupData);
+      expect(mockedTaskGroupService.createTaskGroup).toHaveBeenCalledWith(userId, groupData);
     });
 
     it('認証されていない場合はエラーになる', async () => {
-      (authMiddleware as jest.Mock).mockImplementationOnce((req, res, next) => {
+      mockedAuthMiddleware.mockImplementationOnce((req, res, next) => {
         res.status(401).json({ message: '認証が必要です' });
       });
 
@@ -85,15 +101,19 @@ describe('TaskGroup Routes', () => {
 
   describe('GET /task-groups/project/:projectId', () => {
     it('プロジェクトのタスクグループ一覧を取得できる', async () => {
-      const groups = [
+      const groups: (TaskGroup & { id: string; user_id: string; created_at: string; updated_at: string })[] = [
         {
-          id: groupId,
           title: 'テストタスクグループ',
+          description: '説明',
           project_id: projectId,
+          order: 0,
+          id: groupId,
           user_id: userId,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         },
       ];
-      taskGroupService.getTaskGroupsByProject.mockResolvedValue(groups);
+      mockedTaskGroupService.getTaskGroupsByProject.mockResolvedValue(groups);
 
       const response = await request(app)
         .get(`/task-groups/project/${projectId}`)
@@ -101,18 +121,23 @@ describe('TaskGroup Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(groups);
-      expect(taskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(userId, projectId);
+      expect(mockedTaskGroupService.getTaskGroupsByProject).toHaveBeenCalledWith(userId, projectId);
     });
   });
 
   describe('GET /task-groups/:id', () => {
     it('タスクグループの詳細を取得できる', async () => {
-      const group = {
-        id: groupId,
+      const group: TaskGroup & { id: string; user_id: string; created_at: string; updated_at: string } = {
         title: 'テストタスクグループ',
+        description: '説明',
+        project_id: projectId,
+        order: 0,
+        id: groupId,
         user_id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
-      taskGroupService.getTaskGroupById.mockResolvedValue(group);
+      mockedTaskGroupService.getTaskGroupById.mockResolvedValue(group);
 
       const response = await request(app)
         .get(`/task-groups/${groupId}`)
@@ -120,11 +145,11 @@ describe('TaskGroup Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(group);
-      expect(taskGroupService.getTaskGroupById).toHaveBeenCalledWith(userId, groupId);
+      expect(mockedTaskGroupService.getTaskGroupById).toHaveBeenCalledWith(userId, groupId);
     });
 
     it('タスクグループが見つからない場合はエラーになる', async () => {
-      taskGroupService.getTaskGroupById.mockResolvedValue(null);
+      mockedTaskGroupService.getTaskGroupById.mockResolvedValue(null);
 
       const response = await request(app)
         .get('/task-groups/non-existent-id')
@@ -141,12 +166,17 @@ describe('TaskGroup Routes', () => {
         title: '更新されたテストタスクグループ',
         description: '更新されたテスト用のタスクグループです',
       };
-      const updatedGroup = {
+      const updatedGroup: TaskGroup & { id: string; user_id: string; created_at: string; updated_at: string } = {
+        title: updates.title,
+        description: updates.description,
+        project_id: projectId,
+        order: 0,
         id: groupId,
-        ...updates,
         user_id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
-      taskGroupService.updateTaskGroup.mockResolvedValue(updatedGroup);
+      mockedTaskGroupService.updateTaskGroup.mockResolvedValue(updatedGroup);
 
       const response = await request(app)
         .put(`/task-groups/${groupId}`)
@@ -155,7 +185,7 @@ describe('TaskGroup Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedGroup);
-      expect(taskGroupService.updateTaskGroup).toHaveBeenCalledWith(userId, groupId, updates);
+      expect(mockedTaskGroupService.updateTaskGroup).toHaveBeenCalledWith(userId, groupId, updates);
     });
   });
 
@@ -166,7 +196,7 @@ describe('TaskGroup Routes', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(204);
-      expect(taskGroupService.deleteTaskGroup).toHaveBeenCalledWith(userId, groupId);
+      expect(mockedTaskGroupService.deleteTaskGroup).toHaveBeenCalledWith(userId, groupId);
     });
   });
 
@@ -183,7 +213,7 @@ describe('TaskGroup Routes', () => {
         .send(orderData);
 
       expect(response.status).toBe(204);
-      expect(taskGroupService.updateTaskGroupOrder).toHaveBeenCalledWith(
+      expect(mockedTaskGroupService.updateTaskGroupOrder).toHaveBeenCalledWith(
         userId,
         groupId,
         orderData.newOrder,

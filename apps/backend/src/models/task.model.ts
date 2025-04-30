@@ -24,14 +24,14 @@ export enum TaskStatus {
  * タスクの基本スキーマ
  */
 export const taskSchema = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().uuid(),
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内にしてください'),
   description: z.string().max(2000, '説明は2000文字以内にしてください').optional(),
   status: z.nativeEnum(TaskStatus).default(TaskStatus.TODO),
   priority: z.nativeEnum(TaskPriority).default(TaskPriority.MEDIUM),
   due_date: z.string().datetime().optional(),
-  created_at: z.string().datetime().optional(),
-  updated_at: z.string().datetime().optional(),
+  created_at: z.string().datetime(),
+  updated_at: z.string().datetime(),
   user_id: z.string().uuid(),
   project_id: z.string().uuid().optional(),
   parent_task_id: z.string().uuid().optional(),

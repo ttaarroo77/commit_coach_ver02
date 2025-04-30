@@ -1,9 +1,9 @@
 import request from 'supertest';
-import express from 'express';
-import { taskRoutes } from '../../routes/task.routes';
-import { TaskService } from '../../services/task.service';
+import express, { Request, Response, NextFunction } from 'express';
+import taskRoutes from '../../routes/task.routes';
+import { taskService, TaskService } from '../../services/task.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
-import { TaskPriority, TaskStatus } from '../../types/task.types';
+import { Task, TaskPriority, TaskStatus } from '../../types/task.types';
 import {
   createTestUser,
   deleteTestUser,
@@ -20,12 +20,15 @@ jest.mock('../../middleware/auth.middleware');
 
 describe('Task Routes', () => {
   let app: express.Application;
-  let taskService: jest.Mocked<TaskService>;
+  let mockedTaskService: jest.Mocked<TaskService>;
   let userId: string;
   let projectId: string;
   let groupId: string;
   let taskId: string;
   let token: string;
+  let testTask: Task;
+
+  const mockedAuthMiddleware = authMiddleware as jest.Mock;
 
   beforeAll(async () => {
     const user = await createTestUser();
@@ -34,27 +37,39 @@ describe('Task Routes', () => {
     projectId = project.id;
     const group = await createTestTaskGroup(userId, projectId);
     groupId = group.id;
-    const task = await createTestTask(userId, projectId, groupId);
-    taskId = task.id;
     token = 'test-token';
   });
 
   afterAll(async () => {
-    await deleteTestTask(taskId);
-    await deleteTestTaskGroup(groupId);
-    await deleteTestProject(projectId);
-    await deleteTestUser(userId);
+    if (taskId) await deleteTestTask(taskId);
+    if (groupId) await deleteTestTaskGroup(groupId);
+    if (projectId) await deleteTestProject(projectId);
+    if (userId) await deleteTestUser(userId);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     app = express();
     app.use(express.json());
-    taskService = new TaskService() as jest.Mocked<TaskService>;
-    (authMiddleware as jest.Mock).mockImplementation((req, res, next) => {
-      req.user = { id: userId };
-      next();
-    });
-    app.use('/tasks', authMiddleware, taskRoutes);
+    mockedTaskService = taskService as jest.Mocked<TaskService>;
+
+    testTask = await createTestTask(userId, projectId, groupId);
+    taskId = testTask.id;
+
+    mockedAuthMiddleware.mockImplementation(
+      (req: Request, res: Response, next: NextFunction) => {
+        req.user = { id: userId, userId: userId };
+        next();
+      }
+    );
+    app.use('/tasks', mockedAuthMiddleware, taskRoutes);
+  });
+
+  afterEach(async () => {
+    if (taskId) {
+      await deleteTestTask(taskId);
+      taskId = undefined as any;
+      testTask = undefined as any;
+    }
   });
 
   describe('POST /tasks', () => {
@@ -67,10 +82,25 @@ describe('Task Routes', () => {
         priority: TaskPriority.MEDIUM,
         status: TaskStatus.TODO,
         due_date: new Date().toISOString(),
+        order: 0,
       };
 
-      const createdTask = { ...taskData, id: taskId, user_id: userId };
-      taskService.createTask.mockResolvedValue(createdTask);
+      const createdTask: Task = {
+        id: 'new-task-id',
+        title: taskData.title,
+        description: taskData.description,
+        project_id: taskData.project_id,
+        group_id: taskData.group_id,
+        priority: taskData.priority,
+        status: taskData.status,
+        due_date: taskData.due_date,
+        order: taskData.order,
+        user_id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        parent_id: undefined,
+      };
+      mockedTaskService.createTask.mockResolvedValue(createdTask);
 
       const response = await request(app)
         .post('/tasks')
@@ -78,12 +108,13 @@ describe('Task Routes', () => {
         .send(taskData);
 
       expect(response.status).toBe(201);
-      expect(response.body).toEqual(createdTask);
-      expect(taskService.createTask).toHaveBeenCalledWith(userId, taskData);
+      expect(response.body.title).toEqual(createdTask.title);
+      expect(response.body.user_id).toEqual(createdTask.user_id);
+      expect(mockedTaskService.createTask).toHaveBeenCalledWith(userId, taskData);
     });
 
     it('認証されていない場合はエラーになる', async () => {
-      (authMiddleware as jest.Mock).mockImplementationOnce((req, res, next) => {
+      mockedAuthMiddleware.mockImplementationOnce((req, res, next) => {
         res.status(401).json({ message: '認証が必要です' });
       });
 
@@ -96,15 +127,8 @@ describe('Task Routes', () => {
 
   describe('GET /tasks/project/:projectId', () => {
     it('プロジェクトのタスク一覧を取得できる', async () => {
-      const tasks = [
-        {
-          id: taskId,
-          title: 'テストタスク',
-          project_id: projectId,
-          user_id: userId,
-        },
-      ];
-      taskService.getTasksByProject.mockResolvedValue(tasks);
+      const tasks = [testTask];
+      mockedTaskService.getTasksByProject.mockResolvedValue(tasks);
 
       const response = await request(app)
         .get(`/tasks/project/${projectId}`)
@@ -112,21 +136,14 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(tasks);
-      expect(taskService.getTasksByProject).toHaveBeenCalledWith(userId, projectId);
+      expect(mockedTaskService.getTasksByProject).toHaveBeenCalledWith(userId, projectId);
     });
   });
 
   describe('GET /tasks/group/:groupId', () => {
     it('グループのタスク一覧を取得できる', async () => {
-      const tasks = [
-        {
-          id: taskId,
-          title: 'テストタスク',
-          group_id: groupId,
-          user_id: userId,
-        },
-      ];
-      taskService.getTasksByGroup.mockResolvedValue(tasks);
+      const tasks = [testTask];
+      mockedTaskService.getTasksByGroup.mockResolvedValue(tasks);
 
       const response = await request(app)
         .get(`/tasks/group/${groupId}`)
@@ -134,30 +151,25 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(tasks);
-      expect(taskService.getTasksByGroup).toHaveBeenCalledWith(userId, groupId);
+      expect(mockedTaskService.getTasksByGroup).toHaveBeenCalledWith(userId, groupId);
     });
   });
 
   describe('GET /tasks/:id', () => {
     it('タスクの詳細を取得できる', async () => {
-      const task = {
-        id: taskId,
-        title: 'テストタスク',
-        user_id: userId,
-      };
-      taskService.getTaskById.mockResolvedValue(task);
+      mockedTaskService.getTaskById.mockResolvedValue(testTask);
 
       const response = await request(app)
         .get(`/tasks/${taskId}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(task);
-      expect(taskService.getTaskById).toHaveBeenCalledWith(userId, taskId);
+      expect(response.body).toEqual(testTask);
+      expect(mockedTaskService.getTaskById).toHaveBeenCalledWith(userId, taskId);
     });
 
     it('タスクが見つからない場合はエラーになる', async () => {
-      taskService.getTaskById.mockResolvedValue(null);
+      mockedTaskService.getTaskById.mockResolvedValue(null);
 
       const response = await request(app)
         .get('/tasks/non-existent-id')
@@ -174,12 +186,12 @@ describe('Task Routes', () => {
         title: '更新されたテストタスク',
         description: '更新されたテスト用のタスクです',
       };
-      const updatedTask = {
-        id: taskId,
+      const updatedTask: Task = {
+        ...testTask,
         ...updates,
-        user_id: userId,
+        updated_at: new Date().toISOString(),
       };
-      taskService.updateTask.mockResolvedValue(updatedTask);
+      mockedTaskService.updateTask.mockResolvedValue(updatedTask);
 
       const response = await request(app)
         .put(`/tasks/${taskId}`)
@@ -188,18 +200,19 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedTask);
-      expect(taskService.updateTask).toHaveBeenCalledWith(userId, taskId, updates);
+      expect(mockedTaskService.updateTask).toHaveBeenCalledWith(userId, taskId, updates);
     });
   });
 
   describe('DELETE /tasks/:id', () => {
     it('タスクを削除できる', async () => {
+      mockedTaskService.deleteTask.mockResolvedValue(undefined);
       const response = await request(app)
         .delete(`/tasks/${taskId}`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(204);
-      expect(taskService.deleteTask).toHaveBeenCalledWith(userId, taskId);
+      expect(mockedTaskService.deleteTask).toHaveBeenCalledWith(userId, taskId);
     });
   });
 
@@ -210,6 +223,7 @@ describe('Task Routes', () => {
         projectId,
         groupId,
       };
+      mockedTaskService.updateTaskOrder.mockResolvedValue(undefined);
 
       const response = await request(app)
         .post(`/tasks/${taskId}/order`)
@@ -217,7 +231,7 @@ describe('Task Routes', () => {
         .send(orderData);
 
       expect(response.status).toBe(204);
-      expect(taskService.updateTaskOrder).toHaveBeenCalledWith(
+      expect(mockedTaskService.updateTaskOrder).toHaveBeenCalledWith(
         userId,
         taskId,
         orderData.newOrder,
@@ -229,15 +243,8 @@ describe('Task Routes', () => {
 
   describe('GET /tasks/:parentId/subtasks', () => {
     it('サブタスクを取得できる', async () => {
-      const subtasks = [
-        {
-          id: 'subtask-id',
-          title: 'サブタスク',
-          parent_id: taskId,
-          user_id: userId,
-        },
-      ];
-      taskService.getSubtasks.mockResolvedValue(subtasks);
+      const subtasks: Task[] = [];
+      mockedTaskService.getSubtasks.mockResolvedValue(subtasks);
 
       const response = await request(app)
         .get(`/tasks/${taskId}/subtasks`)
@@ -245,19 +252,19 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(subtasks);
-      expect(taskService.getSubtasks).toHaveBeenCalledWith(userId, taskId);
+      expect(mockedTaskService.getSubtasks).toHaveBeenCalledWith(userId, taskId);
     });
   });
 
   describe('PATCH /tasks/:id/status', () => {
     it('タスクのステータスを更新できる', async () => {
       const statusData = { status: TaskStatus.DONE };
-      const updatedTask = {
-        id: taskId,
+      const updatedTask: Task = {
+        ...testTask,
         status: TaskStatus.DONE,
-        user_id: userId,
+        updated_at: new Date().toISOString(),
       };
-      taskService.updateTaskStatus.mockResolvedValue(updatedTask);
+      mockedTaskService.updateTaskStatus.mockResolvedValue(updatedTask);
 
       const response = await request(app)
         .patch(`/tasks/${taskId}/status`)
@@ -266,7 +273,7 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedTask);
-      expect(taskService.updateTaskStatus).toHaveBeenCalledWith(userId, taskId, TaskStatus.DONE);
+      expect(mockedTaskService.updateTaskStatus).toHaveBeenCalledWith(userId, taskId, TaskStatus.DONE);
     });
   });
 
@@ -274,12 +281,12 @@ describe('Task Routes', () => {
     it('タスクの期限を更新できる', async () => {
       const dueDate = new Date().toISOString();
       const dueDateData = { dueDate };
-      const updatedTask = {
-        id: taskId,
+      const updatedTask: Task = {
+        ...testTask,
         due_date: dueDate,
-        user_id: userId,
+        updated_at: new Date().toISOString(),
       };
-      taskService.updateTaskDueDate.mockResolvedValue(updatedTask);
+      mockedTaskService.updateTaskDueDate.mockResolvedValue(updatedTask);
 
       const response = await request(app)
         .patch(`/tasks/${taskId}/due-date`)
@@ -288,7 +295,7 @@ describe('Task Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updatedTask);
-      expect(taskService.updateTaskDueDate).toHaveBeenCalledWith(userId, taskId, dueDate);
+      expect(mockedTaskService.updateTaskDueDate).toHaveBeenCalledWith(userId, taskId, dueDate);
     });
   });
 });

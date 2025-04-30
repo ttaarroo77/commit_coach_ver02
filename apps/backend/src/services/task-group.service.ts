@@ -125,3 +125,5 @@ export class TaskGroupService {
     }
   }
 }
+
+export const taskGroupService = new TaskGroupService();

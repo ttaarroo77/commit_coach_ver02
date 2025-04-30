@@ -1,6 +1,13 @@
 import request from 'supertest';
-import { app } from '../app';
+import createServer from '../app';
 import { supabaseAdmin } from '../config/supabase';
+import type { Express } from 'express';
+
+let app: Express;
+
+beforeAll(async () => {
+  app = await createServer();
+});
 
 describe('認証E2Eテスト', () => {
   // テスト用のユーザー情報
