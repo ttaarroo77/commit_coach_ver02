@@ -3,6 +3,18 @@
 # スクリプト名
 SCRIPT_NAME="Deploy Unsafe Analysis"
 
+# エラー処理用の関数
+handle_error() {
+  echo "❌ エラーが発生しました: $1"
+  exit 1
+}
+
+# インターネット接続確認
+echo "インターネット接続を確認しています..."
+if ! ping -c 1 github.com &> /dev/null; then
+  handle_error "GitHubに接続できません。インターネット接続を確認してください。"
+fi
+
 # 現在のブランチを取得
 CURRENT_BRANCH=$(git branch --show-current)
 
@@ -31,7 +43,7 @@ git add .
 
 # コミット
 echo "コミットを実行しています..."
-git commit -m "$COMMIT_MESSAGE"
+git commit -m "$COMMIT_MESSAGE" || handle_error "コミットに失敗しました。"
 
 # コミットログの表示
 echo "直近のコミットログを表示します..."
@@ -39,7 +51,14 @@ git log -1
 
 # リモートリポジトリにプッシュ
 echo "リモートリポジトリにプッシュしています..."
-git push origin $CURRENT_BRANCH
+if ! git push origin $CURRENT_BRANCH; then
+  echo "⚠️ GitHubへのプッシュに失敗しました。以下の点を確認してください："
+  echo "1. GitHubの認証情報が正しいか"
+  echo "2. リモートリポジトリのURLが正しいか"
+  echo "3. インターネット接続が安定しているか"
+  echo "4. リモートリポジトリへのアクセス権限があるか"
+  exit 1
+fi
 
 # o3の分析用URLの生成
 REPO_URL=$(git config --get remote.origin.url)
