@@ -1,5 +1,4 @@
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 interface TaskStatusProps {
@@ -23,10 +22,13 @@ const statusConfig = {
 };
 
 export function TaskStatus({ status, className }: TaskStatusProps) {
-  const config = statusConfig[status];
+  const config = statusConfig[status] || statusConfig.backlog;
 
   return (
-    <Badge
+    <div
+      role="status"
+      data-testid="task-status"
+      aria-label={config.label}
       className={cn(
         'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
         config.className,
@@ -34,6 +36,6 @@ export function TaskStatus({ status, className }: TaskStatusProps) {
       )}
     >
       {config.label}
-    </Badge>
+    </div>
   );
-} 
+}

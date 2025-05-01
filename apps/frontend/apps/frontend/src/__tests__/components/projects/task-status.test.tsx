@@ -1,46 +1,50 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { TaskStatus } from '../../../components/projects/task-status'
+import { render, screen } from '@testing-library/react'
+import { TaskStatus } from '@/components/projects/task-status'
 
 describe('TaskStatus', () => {
-  const mockOnUpdateStatus = jest.fn()
-
-  it('完了状態を切り替えることができる', () => {
-    render(
-      <TaskStatus
-        completed={false}
-        dueDate={new Date('2025-04-30')}
-        onUpdateStatus={mockOnUpdateStatus}
-      />
-    )
-
-    fireEvent.click(screen.getByRole('button', { name: 'タスクの完了状態' }))
-    expect(mockOnUpdateStatus).toHaveBeenCalledWith(true)
+  it('バックログステータスを正しく表示する', () => {
+    render(<TaskStatus status="backlog" />)
+    const status = screen.getByTestId('task-status')
+    expect(status).toHaveTextContent('バックログ')
+    expect(status.className).toContain('bg-gray-100')
+    expect(status.className).toContain('text-gray-800')
   })
 
-  it('期限が近いタスクに対して適切なステータスを表示する', () => {
-    const nearFutureDate = new Date()
-    nearFutureDate.setDate(nearFutureDate.getDate() + 2)
-
-    render(
-      <TaskStatus
-        completed={false}
-        dueDate={nearFutureDate}
-        onUpdateStatus={mockOnUpdateStatus}
-      />
-    )
-
-    expect(screen.getByText(/期限間近/)).toBeInTheDocument()
+  it('進行中ステータスを正しく表示する', () => {
+    render(<TaskStatus status="in_progress" />)
+    const status = screen.getByTestId('task-status')
+    expect(status).toHaveTextContent('進行中')
+    expect(status.className).toContain('bg-blue-100')
+    expect(status.className).toContain('text-blue-800')
   })
 
-  it('完了したタスクに対して適切なステータスを表示する', () => {
-    render(
-      <TaskStatus
-        completed={true}
-        dueDate={new Date('2025-04-30')}
-        onUpdateStatus={mockOnUpdateStatus}
-      />
-    )
-
-    expect(screen.getByText('完了')).toBeInTheDocument()
+  it('完了ステータスを正しく表示する', () => {
+    render(<TaskStatus status="done" />)
+    const status = screen.getByTestId('task-status')
+    expect(status).toHaveTextContent('完了')
+    expect(status.className).toContain('bg-green-100')
+    expect(status.className).toContain('text-green-800')
   })
-}) 
+
+  it('カスタムクラス名を正しく適用する', () => {
+    render(<TaskStatus status="backlog" className="custom-class" />)
+    const status = screen.getByTestId('task-status')
+    expect(status.className).toContain('custom-class')
+    expect(status.className).toContain('bg-gray-100')
+  })
+
+  it('アクセシビリティ属性が正しく設定されている', () => {
+    render(<TaskStatus status="backlog" />)
+    const status = screen.getByTestId('task-status')
+    expect(status).toHaveAttribute('role', 'status')
+    expect(status).toHaveAttribute('aria-label', 'バックログ')
+  })
+
+  it('無効なステータス値に対してデフォルトのバックログを表示する', () => {
+    // @ts-expect-error 無効なステータス値をテストするため
+    render(<TaskStatus status="invalid" />)
+    const status = screen.getByTestId('task-status')
+    expect(status).toHaveTextContent('バックログ')
+    expect(status.className).toContain('bg-gray-100')
+  })
+})

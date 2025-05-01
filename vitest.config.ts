@@ -5,15 +5,15 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: 'happy-dom',
+    environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/tests/setup.ts'],
+    setupFiles: ['./src/__tests__/test-utils.tsx'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
-        'src/tests/',
+        'src/__tests__/',
         '**/*.d.ts',
         '**/*.test.tsx',
         '**/*.spec.tsx',

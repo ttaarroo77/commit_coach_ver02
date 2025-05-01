@@ -25,20 +25,55 @@ vi.mock('../../components/ui/card', () => ({
   Card: UIComponents.Card
 }));
 
+vi.mock('../../components/ui/dialog', () => ({
+  Dialog: UIComponents.Dialog,
+  DialogContent: UIComponents.DialogContent,
+  DialogHeader: UIComponents.DialogHeader,
+  DialogTitle: UIComponents.DialogTitle,
+  DialogFooter: UIComponents.DialogFooter,
+  DialogDescription: UIComponents.DialogDescription
+}));
+
+vi.mock('../../components/ui/alert-dialog', () => ({
+  AlertDialog: UIComponents.AlertDialog,
+  AlertDialogContent: UIComponents.AlertDialogContent,
+  AlertDialogHeader: UIComponents.AlertDialogHeader,
+  AlertDialogTitle: UIComponents.AlertDialogTitle,
+  AlertDialogDescription: UIComponents.AlertDialogDescription,
+  AlertDialogFooter: UIComponents.AlertDialogFooter,
+  AlertDialogAction: UIComponents.AlertDialogAction,
+  AlertDialogCancel: UIComponents.AlertDialogCancel
+}));
+
+vi.mock('../../components/ui/textarea', () => ({
+  Textarea: UIComponents.Textarea
+}));
+
+vi.mock('../../components/ui/input', () => ({
+  Input: UIComponents.Input
+}));
+
 vi.mock('../../lib/utils', () => ({
   cn: UIComponents.cn
 }));
 
 // Lucide Reactアイコンのモック
-vi.mock('lucide-react', () => ({
-  Plus: UIComponents.Plus,
-  CalendarIcon: UIComponents.CalendarIcon,
-  GripVertical: UIComponents.GripVertical,
-  UserIcon: UIComponents.UserIcon,
-  ChevronLeft: UIComponents.ChevronLeft,
-  ChevronRight: UIComponents.ChevronRight,
-  X: UIComponents.X
-}));
+vi.mock('lucide-react', async () => {
+  const actual = await vi.importActual('lucide-react');
+  return {
+    ...actual,
+    Plus: UIComponents.Plus,
+    CalendarIcon: UIComponents.CalendarIcon,
+    GripVertical: UIComponents.GripVertical,
+    UserIcon: UIComponents.UserIcon,
+    ChevronLeft: UIComponents.ChevronLeft,
+    ChevronRight: UIComponents.ChevronRight,
+    X: UIComponents.X,
+    Pencil: UIComponents.Plus, // Pencilの代わりにPlusを使用
+    Check: UIComponents.Plus, // Checkの代わりにPlusを使用
+    Trash: UIComponents.X, // Trashの代わりにXを使用
+  };
+});
 
 // react-day-pickerのモック
 vi.mock('react-day-picker', () => ({
@@ -59,22 +94,21 @@ vi.mock('date-fns/locale', () => ({
 }));
 
 // DnD関連のモック
-vi.mock('@dnd-kit/core', async () => {
-  const actual = await vi.importActual('@dnd-kit/core');
-  return {
-    ...actual,
-    DndContext: ({ children }: { children: React.ReactNode }) => {
-      return React.createElement('div', { 'data-testid': 'dnd-context' }, children);
-    },
-    DragOverlay: ({ children }: { children: React.ReactNode }) => {
-      return React.createElement('div', { 'data-testid': 'drag-overlay' }, children);
-    },
-    useSensors: vi.fn(() => ({})),
-    useSensor: vi.fn(),
-    PointerSensor: vi.fn(),
-    KeyboardSensor: vi.fn(),
-  };
-});
+vi.mock('@dnd-kit/core', () => ({
+  DndContext: ({ children }: { children: React.ReactNode }) => {
+    return React.createElement('div', { 'data-testid': 'dnd-context' }, children);
+  },
+  DragOverlay: ({ children }: { children: React.ReactNode }) => {
+    return React.createElement('div', { 'data-testid': 'drag-overlay' }, children);
+  },
+  useSensors: vi.fn(() => ({})),
+  useSensor: vi.fn(),
+  PointerSensor: vi.fn(),
+  KeyboardSensor: vi.fn(),
+  closestCenter: vi.fn(),
+  pointerWithin: vi.fn(),
+  rectIntersection: vi.fn(),
+}));
 
 vi.mock('@dnd-kit/sortable', () => ({
   SortableContext: ({ children }: { children: React.ReactNode }) => {
@@ -87,5 +121,9 @@ vi.mock('@dnd-kit/sortable', () => ({
     transform: null,
     transition: null,
     isDragging: false
-  })
+  }),
+  sortableKeyboardCoordinates: vi.fn(() => ({ x: 0, y: 0 })),
+  arrayMove: vi.fn((array) => array),
+  horizontalListSortingStrategy: {},
+  verticalListSortingStrategy: {}
 }));

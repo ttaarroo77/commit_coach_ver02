@@ -89,18 +89,20 @@ describe('KanbanBoard 統合テスト', () => {
     );
 
     // カンバンボードのタイトルが表示されていることを確認
-    expect(screen.getByText('カンバンボード')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'カンバンボード' })).toBeInTheDocument();
 
-    // 各列が表示されていることを確認
-    expect(screen.getByText('未着手')).toBeInTheDocument();
-    expect(screen.getByText('進行中')).toBeInTheDocument();
-    expect(screen.getByText('レビュー中')).toBeInTheDocument();
-    expect(screen.getByText('完了')).toBeInTheDocument();
+    // 各列のヘッダーが表示されていることを確認
+    const columnHeaders = screen.getAllByRole('heading', { level: 3 });
+    const columnTitles = columnHeaders.map(header => header.textContent);
+    expect(columnTitles).toContain('未着手');
+    expect(columnTitles).toContain('進行中');
+    expect(columnTitles).toContain('レビュー中');
+    expect(columnTitles).toContain('完了');
 
-    // タスクが正しい列に表示されていることを確認
-    expect(screen.getByText('タスク1')).toBeInTheDocument();
-    expect(screen.getByText('タスク2')).toBeInTheDocument();
-    expect(screen.getByText('タスク3')).toBeInTheDocument();
+    // タスクが正しく表示されていることを確認
+    expect(screen.getByTestId('task-task-1')).toHaveTextContent('タスク1');
+    expect(screen.getByTestId('task-task-2')).toHaveTextContent('タスク2');
+    expect(screen.getByTestId('task-task-3')).toHaveTextContent('タスク3');
   });
 
   it('タスクのドラッグ＆ドロップ', async () => {
@@ -109,16 +111,19 @@ describe('KanbanBoard 統合テスト', () => {
     );
 
     // タスク1を取得
-    const task1 = screen.getByText('タスク1').closest('[data-testid^="task-"]');
+    const task1 = screen.getByTestId('task-task-1');
     expect(task1).toBeInTheDocument();
 
     // ドラッグ＆ドロップをシミュレート
     // 注: 実際のDnDは複雑なため、内部関数を直接呼び出してテスト
-    const kanbanBoard = screen.getByText('カンバンボード').closest('div');
+    const kanbanBoard = screen.getByRole('heading', { name: 'カンバンボード' }).closest('div');
     expect(kanbanBoard).toBeInTheDocument();
 
     // 進行中の列を取得
-    const inProgressColumn = screen.getByText('進行中').closest('div');
+    const columnHeaders = screen.getAllByRole('heading', { level: 3 });
+    const inProgressHeader = columnHeaders.find(header => header.textContent === '進行中');
+    expect(inProgressHeader).toBeTruthy();
+    const inProgressColumn = inProgressHeader?.closest('div');
     expect(inProgressColumn).toBeInTheDocument();
 
     // DnDのイベントをシミュレート
@@ -138,15 +143,42 @@ describe('KanbanBoard 統合テスト', () => {
       <Wrapper children={<KanbanBoard projectId="project-1" />} />
     );
 
+    // タスクをクリックして編集モードを開始
+    fireEvent.click(screen.getByTestId('task-task-1'));
+    
+    // モーダルの表示を確認
+    await waitFor(() => {
+      // ダイアログコンテントが表示されることを確認
+      // タイトルが「タスク1」のダイアログを探す
+      const dialogTitle = screen.getAllByTestId('mock-dialog-title').find(
+        title => title.textContent === 'タスク1'
+      );
+      expect(dialogTitle).toBeTruthy();
+      // ダイアログが表示されていることを確認
+      expect(dialogTitle?.closest('[data-testid="mock-dialog-content"]')).toBeInTheDocument();
+    });
+  });
+
+  it('新しいタスクの作成', async () => {
+    render(
+      <Wrapper children={<KanbanBoard projectId="project-1" />} />
+    );
+
     // タスク追加ボタンをクリック
     const addButton = screen.getByText('タスク追加');
     fireEvent.click(addButton);
 
     // タスクフォームモーダルが表示されることを確認
     await waitFor(() => {
-      // モーダルの表示を確認（実際の実装に合わせて調整が必要）
-      // ここではモーダルがDOMに追加されることを想定
-      expect(document.body.innerHTML).toContain('task-form-modal');
+      // ダイアログが表示されていることを確認
+      // タスク追加ボタンをクリックした後に表示されるダイアログを探す
+      const dialogs = screen.getAllByTestId('mock-dialog');
+      // ダイアログが少なくとも一つは表示されていることを確認
+      expect(dialogs.length).toBeGreaterThan(0);
+      // 最後に追加されたダイアログのコンテンツが表示されていることを確認
+      const lastDialog = dialogs[dialogs.length - 1];
+      const dialogContent = lastDialog.querySelector('[data-testid="mock-dialog-content"]');
+      expect(dialogContent).toBeInTheDocument();
     });
 
     // 新しいタスクの作成をシミュレート

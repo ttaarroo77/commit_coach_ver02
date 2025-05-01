@@ -79,3 +79,114 @@ export const DayPicker = ({ selected, onSelect, locale }: any) => (
     <button onClick={() => onSelect && onSelect(new Date())}>日付を選択</button>
   </div>
 );
+
+// Dialogコンポーネントのモック
+export const Dialog = ({ children, open, onOpenChange }: { children: React.ReactNode, open?: boolean, onOpenChange?: (open: boolean) => void }) => (
+  <div data-testid="mock-dialog" data-open={open}>
+    {children}
+  </div>
+);
+
+export const DialogContent = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-dialog-content" className={className}>
+    {children}
+  </div>
+);
+
+export const DialogHeader = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-dialog-header" className={className}>
+    {children}
+  </div>
+);
+
+export const DialogTitle = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-dialog-title" className={className}>
+    {children}
+  </div>
+);
+
+export const DialogFooter = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-dialog-footer" className={className}>
+    {children}
+  </div>
+);
+
+export const DialogDescription = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-dialog-description" className={className}>
+    {children}
+  </div>
+);
+
+// AlertDialogコンポーネントのモック
+export const AlertDialog = ({ children, open, onOpenChange }: { children: React.ReactNode, open?: boolean, onOpenChange?: (open: boolean) => void }) => (
+  <div data-testid="mock-alert-dialog" data-open={open}>
+    {children}
+  </div>
+);
+
+export const AlertDialogContent = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-alert-dialog-content" className={className}>
+    {children}
+  </div>
+);
+
+export const AlertDialogHeader = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-alert-dialog-header" className={className}>
+    {children}
+  </div>
+);
+
+export const AlertDialogTitle = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-alert-dialog-title" className={className}>
+    {children}
+  </div>
+);
+
+export const AlertDialogDescription = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-alert-dialog-description" className={className}>
+    {children}
+  </div>
+);
+
+export const AlertDialogFooter = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-alert-dialog-footer" className={className}>
+    {children}
+  </div>
+);
+
+export const AlertDialogAction = ({ children, className, onClick }: { children: React.ReactNode, className?: string, onClick?: () => void }) => (
+  <button data-testid="mock-alert-dialog-action" className={className} onClick={onClick}>
+    {children}
+  </button>
+);
+
+export const AlertDialogCancel = ({ children, className, onClick }: { children: React.ReactNode, className?: string, onClick?: () => void }) => (
+  <button data-testid="mock-alert-dialog-cancel" className={className} onClick={onClick}>
+    {children}
+  </button>
+);
+
+// Textareaコンポーネントのモック
+export const Textarea = forwardRef<HTMLTextAreaElement, any>(({ className, value, onChange, placeholder, rows }, ref) => (
+  <textarea
+    ref={ref}
+    className={className}
+    value={value}
+    onChange={onChange}
+    placeholder={placeholder}
+    rows={rows}
+    data-testid="mock-textarea"
+  />
+));
+
+// Inputコンポーネントのモック
+export const Input = forwardRef<HTMLInputElement, any>(({ className, value, onChange, placeholder }, ref) => (
+  <input
+    ref={ref}
+    className={className}
+    value={value}
+    onChange={onChange}
+    placeholder={placeholder}
+    data-testid="mock-input"
+  />
+));
