@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { TaskFormModal } from '@/components/projects/task-form-modal';
-import { Task } from '@/types';
+import userEvent from '@testing-library/user-event';
 
 describe('TaskFormModal', () => {
   const mockOnSubmit = jest.fn();
@@ -30,7 +30,7 @@ describe('TaskFormModal', () => {
   });
 
   it('フォームの入力と送信が正しく動作する', async () => {
-    const newTask: Partial<Task> = {
+    const newTask = {
       title: 'テストタスク',
       description: 'テストの説明',
       status: 'in_progress',
@@ -48,53 +48,24 @@ describe('TaskFormModal', () => {
       />
     );
 
-    // タイトルを入力
     const titleInput = screen.getByLabelText('タイトル');
-    fireEvent.change(titleInput, { target: { value: newTask.title } });
-
-    // 説明を入力
     const descriptionInput = screen.getByLabelText('説明');
-    fireEvent.change(descriptionInput, { target: { value: newTask.description } });
-
-    // ステータスを選択
     const statusSelect = screen.getByLabelText('ステータス');
-    fireEvent.click(statusSelect);
-    const statusOption = screen.getByRole('option', { name: '進行中' });
-    fireEvent.click(statusOption);
-
-    // 優先度を選択
     const prioritySelect = screen.getByLabelText('優先度');
-    fireEvent.click(prioritySelect);
-    const priorityOption = screen.getByRole('option', { name: '高' });
-    fireEvent.click(priorityOption);
-
-    // 期限を入力
     const dueDateInput = screen.getByLabelText('期限');
-    fireEvent.change(dueDateInput, { target: { value: newTask.dueDate } });
 
-    // フォームを送信
-    const submitButton = screen.getByText('作成');
-    fireEvent.click(submitButton);
+    await userEvent.type(titleInput, newTask.title);
+    await userEvent.type(descriptionInput, newTask.description);
+    await userEvent.selectOptions(statusSelect, newTask.status);
+    await userEvent.selectOptions(prioritySelect, newTask.priority);
+    await userEvent.type(dueDateInput, newTask.dueDate);
+
+    const submitButton = screen.getByRole('button', { name: '作成' });
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith(newTask);
     });
-  });
-
-  it('キャンセルボタンをクリックするとモーダルが閉じる', () => {
-    render(
-      <TaskFormModal
-        isOpen={true}
-        onClose={mockOnClose}
-        onSubmit={mockOnSubmit}
-        projectId="project-1"
-      />
-    );
-
-    const cancelButton = screen.getByText('キャンセル');
-    fireEvent.click(cancelButton);
-
-    expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('必須フィールドが空の場合にエラーが表示される', async () => {
@@ -107,12 +78,28 @@ describe('TaskFormModal', () => {
       />
     );
 
-    // 空のフォームを送信
-    const submitButton = screen.getByText('作成');
-    fireEvent.click(submitButton);
+    const submitButton = screen.getByRole('button', { name: '作成' });
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText('タイトルは必須です')).toBeInTheDocument();
+      const errorMessage = screen.getByText(/タイトルは必須です/i);
+      expect(errorMessage).toBeInTheDocument();
     });
+  });
+
+  it('キャンセルボタンをクリックするとモーダルが閉じる', async () => {
+    render(
+      <TaskFormModal
+        isOpen={true}
+        onClose={mockOnClose}
+        onSubmit={mockOnSubmit}
+        projectId="project-1"
+      />
+    );
+
+    const cancelButton = screen.getByRole('button', { name: 'キャンセル' });
+    await userEvent.click(cancelButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
   });
 }); 

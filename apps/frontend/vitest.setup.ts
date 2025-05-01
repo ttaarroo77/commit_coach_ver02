@@ -13,3 +13,28 @@ global.vi = vi;
 afterEach(() => {
   cleanup();
 });
+
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+  usePathname: () => '/',
+}));
+
+// Mock @supabase/ssr
+vi.mock('@supabase/ssr', () => ({
+  createBrowserClient: () => ({
+    auth: {
+      signInWithPassword: vi.fn(),
+      signOut: vi.fn(),
+      onAuthStateChange: vi.fn(),
+    },
+    from: () => ({
+      select: vi.fn(),
+      insert: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    }),
+  }),
+}));

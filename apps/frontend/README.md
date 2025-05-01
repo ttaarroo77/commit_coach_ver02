@@ -1,33 +1,80 @@
-# `/apps/frontend` ディレクトリについて
+# Commit Coach Frontend
 
-## 役割
+プロジェクト管理アプリケーションのフロントエンドです。
 
-`/apps/frontend` ディレクトリは、以下の役割を果たします：
+## 技術スタック
 
-- **実装ベース**：実際のフロントエンドアプリケーションの実装場所
-- **作業ディレクトリ**：開発作業が行われる主要な場所
-- **デプロイ対象**：Vercelにデプロイされる実際のコード
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Supabase
+- shadcn/ui
 
-## 現在の構成
+## 開発環境のセットアップ
 
-- **Next.js 14+**：App Routerを使用したモダンなReactアプリケーション
-- **TypeScript**：型安全性を確保
-- **Tailwind CSS + shadcn/ui**：UIコンポーネントとスタイリング
-- **基本構造**：app/, components/, hooks/, lib/などの基本ディレクトリ構造
+1. リポジトリをクローンします：
 
-## 他のディレクトリとの関係
+```bash
+git clone https://github.com/your-username/commit-coach.git
+cd commit-coach/apps/frontend
+```
 
-- **`/docs/overview/architecture.spec.md`**：理想的な最終形を定義した青写真。段階的に近づけていく目標
-- **`/zips`**：参考コードやコンポーネントの保管場所。必要に応じてここから実装を移植
+2. 依存関係をインストールします：
 
-## 開発アプローチ
+```bash
+npm install
+```
 
-- 段階的に機能を実装し、architecture.spec.mdで定義された理想形に近づける
-- `/zips`ディレクトリから必要なコードを参考にしつつ、最適化して実装
-- 型安全性とパフォーマンスを重視した実装を行う
+3. 環境変数を設定します：
 
-## 注意点
+`.env.example`ファイルを`.env`にコピーし、必要な値を設定します：
 
-- `pnpm frontend`コマンドで個別に起動し、バックエンドとは同時に起動しない
-- 最適化モード`pnpm dev:optimized`を使用する
-- メモリ使用量に注意し、大きなファイルの編集は小さな単位で行う
+```bash
+cp .env.example .env
+```
+
+4. 開発サーバーを起動します：
+
+```bash
+npm run dev
+```
+
+アプリケーションは`http://localhost:3000`で利用できます。
+
+## 機能
+
+- ユーザー認証
+- プロジェクト管理
+  - プロジェクトの作成、編集、削除
+  - タスクの作成、編集、削除
+  - タスクのステータス管理
+
+## テスト
+
+テストを実行するには：
+
+```bash
+npm run test        # 単体テストの実行
+npm run test:watch  # ウォッチモードでテストを実行
+```
+
+## ビルド
+
+本番用のビルドを作成するには：
+
+```bash
+npm run build
+```
+
+## デプロイ
+
+本番環境にデプロイするには：
+
+```bash
+npm run build
+npm run start
+```
+
+## ライセンス
+
+MIT

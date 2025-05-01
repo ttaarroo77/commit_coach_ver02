@@ -6,9 +6,9 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
-    globals: true,
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
+    globals: true,
     include: ['__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}'],
     coverage: {
       include: ['app/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'hooks/**/*.{ts,tsx}'],
@@ -17,9 +17,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './'),
-      '@/components': path.resolve(__dirname, './components'),
-      '@/lib': path.resolve(__dirname, './lib'),
+      '@': path.resolve(__dirname, './src'),
     },
   },
 });

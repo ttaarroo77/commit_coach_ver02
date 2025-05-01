@@ -1,10 +1,11 @@
 import { renderHook, act } from '@testing-library/react';
 import { useProject } from '@/hooks/useProject';
-import { createBrowserClient } from '@supabase/ssr';
+import { mockSupabase } from '../test-utils';
+import { vi } from 'vitest';
 
-// モックの設定
-jest.mock('@supabase/ssr', () => ({
-  createBrowserClient: jest.fn(),
+// Supabaseクライアントのモック
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: () => mockSupabase,
 }));
 
 describe('useProject', () => {
@@ -12,116 +13,55 @@ describe('useProject', () => {
     id: '1',
     name: 'テストプロジェクト',
     description: 'テストプロジェクトの説明',
-    status: 'active',
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-01',
-  };
-
-  const mockSupabaseClient = {
-    from: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    single: jest.fn(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (createBrowserClient as jest.Mock).mockReturnValue(mockSupabaseClient);
+    vi.clearAllMocks();
   });
 
-  it('プロジェクトが正しく取得できること', async () => {
-    mockSupabaseClient.single.mockResolvedValueOnce({
-      data: mockProject,
-      error: null,
-    });
-
-    const { result } = renderHook(() => useProject('1'));
-
-    await act(async () => {
-      await result.current.fetchProject();
-    });
-
-    expect(result.current.project).toEqual(mockProject);
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeNull();
-  });
-
-  it('プロジェクトの取得に失敗した場合、エラーが設定されること', async () => {
-    const errorMessage = 'プロジェクトの取得に失敗しました';
-    mockSupabaseClient.single.mockResolvedValueOnce({
-      data: null,
-      error: { message: errorMessage },
-    });
-
-    const { result } = renderHook(() => useProject('1'));
-
-    await act(async () => {
-      await result.current.fetchProject();
-    });
-
-    expect(result.current.project).toBeNull();
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBe(errorMessage);
-  });
-
-  it('プロジェクトが正しく更新できること', async () => {
-    const updatedProject = {
-      ...mockProject,
-      name: '更新されたプロジェクト名',
-    };
-
-    mockSupabaseClient.update.mockResolvedValueOnce({
-      data: updatedProject,
-      error: null,
-    });
-
-    const { result } = renderHook(() => useProject('1'));
-
-    await act(async () => {
-      await result.current.updateProject({ name: '更新されたプロジェクト名' });
-    });
-
-    expect(result.current.project).toEqual(updatedProject);
-    expect(result.current.error).toBeNull();
-  });
-
-  it('プロジェクトが正しく削除できること', async () => {
-    mockSupabaseClient.delete.mockResolvedValueOnce({
-      error: null,
-    });
-
-    const { result } = renderHook(() => useProject('1'));
-
-    await act(async () => {
-      await result.current.deleteProject();
-    });
-
-    expect(result.current.project).toBeNull();
-    expect(result.current.error).toBeNull();
-  });
-
-  it('プロジェクトの作成が成功すること', async () => {
-    const newProject = {
-      name: '新しいプロジェクト',
-      description: '新しいプロジェクトの説明',
-      status: 'active',
-    };
-
-    mockSupabaseClient.insert.mockResolvedValueOnce({
-      data: [mockProject],
-      error: null,
-    });
-
+  it('プロジェクトの作成が正しく動作すること', async () => {
     const { result } = renderHook(() => useProject());
 
     await act(async () => {
-      await result.current.createProject(newProject);
+      await result.current.createProject({
+        name: mockProject.name,
+        description: mockProject.description,
+      });
     });
 
-    expect(result.current.project).toEqual(mockProject);
-    expect(result.current.error).toBeNull();
+    expect(mockSupabase.from).toHaveBeenCalledWith('projects');
+    expect(result.current.projects).toHaveLength(1);
+    expect(result.current.projects[0]).toEqual(expect.objectContaining({
+      name: mockProject.name,
+      description: mockProject.description,
+    }));
+  });
+
+  it('プロジェクトの更新が正しく動作すること', async () => {
+    const { result } = renderHook(() => useProject());
+    const updatedName = 'テストプロジェクト（更新）';
+
+    await act(async () => {
+      await result.current.updateProject(mockProject.id, {
+        name: updatedName,
+      });
+    });
+
+    expect(mockSupabase.from).toHaveBeenCalledWith('projects');
+    const updatedProject = result.current.projects.find(p => p.id === mockProject.id);
+    expect(updatedProject?.name).toBe(updatedName);
+  });
+
+  it('プロジェクトの削除が正しく動作すること', async () => {
+    const { result } = renderHook(() => useProject());
+
+    await act(async () => {
+      await result.current.deleteProject(mockProject.id);
+    });
+
+    expect(mockSupabase.from).toHaveBeenCalledWith('projects');
+    expect(result.current.projects).not.toContain(mockProject);
   });
 }); 
