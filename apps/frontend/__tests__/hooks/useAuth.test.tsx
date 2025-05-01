@@ -1,7 +1,30 @@
-import { renderHook, act, setupAuthTest, mockSupabase, mockUser, mockSession, waitFor } from '../test-utils';
+import { renderHook as rtlRenderHook, act, setupAuthTest, mockSupabase, mockUser, mockSession, waitFor } from '../test-utils';
 import { useAuth } from '../../hooks/useAuth';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import React from 'react';
+import { AuthProvider } from '../../contexts/AuthContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// カスタムrenderHook関数（AuthProviderを含む）
+function renderHook(callback: any) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider supabaseClient={mockSupabase}>
+        {children}
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+
+  return rtlRenderHook(callback, { wrapper });
+}
 
 describe('useAuth', () => {
   beforeEach(() => {

@@ -21,7 +21,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, supabaseCl
   if (!clientToUse) {
     try {
       // 環境変数が設定されている場合のみ新しいクライアントを作成
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      if (typeof process !== 'undefined' && 
+          process.env && 
+          process.env.NEXT_PUBLIC_SUPABASE_URL && 
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
         clientToUse = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -29,12 +32,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, supabaseCl
       } else {
         console.warn('Supabase環境変数が設定されていません。テスト環境では問題ありません。');
         // テスト環境用のダミークライアント
-        clientToUse = { auth: {} } as any;
+        clientToUse = { 
+          auth: {
+            getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+            onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+          } 
+        } as any;
       }
     } catch (error) {
       console.error('Supabaseクライアントの作成に失敗しました:', error);
       // エラーが発生した場合もダミークライアントを使用
-      clientToUse = { auth: {} } as any;
+      clientToUse = { 
+        auth: {
+          getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+          onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+        } 
+      } as any;
     }
   }
 

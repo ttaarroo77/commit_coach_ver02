@@ -93,7 +93,18 @@ export function renderHook<TResult, TProps>(
   hook: (props: TProps) => TResult,
   options: any = {}
 ) {
-  return rtlRenderHook(hook, { wrapper: Wrapper, ...options });
+  const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+    const queryClient = createTestQueryClient();
+    return (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider supabaseClient={mockSupabase}>
+          {children}
+        </AuthProvider>
+      </QueryClientProvider>
+    );
+  };
+  
+  return rtlRenderHook(hook, { wrapper: TestWrapper, ...options });
 }
 
 // テストのセットアップヘルパー
