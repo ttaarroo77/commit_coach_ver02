@@ -248,7 +248,7 @@ describe('useAuth', () => {
 
   describe('認証状態の変更を監視すること', () => {
     it('認証状態の変更を正しく監視できること', async () => {
-      const { result } = renderHook(() => useAuth(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useAuth())
 
       // モックセッションの準備
       const mockSession = {
@@ -262,7 +262,8 @@ describe('useAuth', () => {
 
       // 認証状態変更のトリガー
       await act(async () => {
-        mockSupabaseClient.auth.__triggerAuthState('SIGNED_IN', mockSession)
+        const client = createClient()
+        client.auth.__triggerAuthState('SIGNED_IN', mockSession)
       })
 
       // 状態の更新を待機
@@ -276,18 +277,21 @@ describe('useAuth', () => {
 
   describe('同時実行時のロック制御が正しく動作すること', () => {
     it('同時に複数のrefreshSession呼び出しがあった場合、1回だけ実行されること', async () => {
-      const { result } = renderHook(() => useAuth(), { wrapper: Wrapper })
+      const { result } = renderHook(() => useAuth())
 
       // refreshSessionのモックを設定
       const refreshSessionSpy = vi.fn().mockResolvedValue({ data: { session: null }, error: null })
-      mockSupabaseClient.auth.refreshSession = refreshSessionSpy
+      const client = createClient()
+      client.auth.refreshSession = refreshSessionSpy
 
       // 3つの同時呼び出しをシミュレート
-      await Promise.all([
-        result.current.refreshSession(),
-        result.current.refreshSession(),
-        result.current.refreshSession(),
-      ])
+      await act(async () => {
+        await Promise.all([
+          result.current.refreshSession(),
+          result.current.refreshSession(),
+          result.current.refreshSession(),
+        ])
+      })
 
       // refreshSessionが1回だけ呼び出されたことを確認
       expect(refreshSessionSpy).toHaveBeenCalledTimes(1)
