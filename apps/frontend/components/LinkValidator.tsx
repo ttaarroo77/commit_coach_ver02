@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { validateAllLinks, Link } from '@/lib/utils/linkValidation';
 

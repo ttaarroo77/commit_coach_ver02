@@ -2,59 +2,27 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { TaskFilters } from '@/components/projects/task-filters'
 
 describe('TaskFilters', () => {
-  const mockOnSearchChange = jest.fn()
-  const mockOnSearch = jest.fn()
+  const mockOnFilterChange = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('検索フィールドに入力すると、onSearchChangeが呼ばれる', () => {
-    render(
-      <TaskFilters
-        searchQuery=""
-        onSearchChange={mockOnSearchChange}
-        onSearch={mockOnSearch}
-      />
-    )
+  it('検索フィールドに入力すると、フィルターが更新される', () => {
+    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
 
     const searchInput = screen.getByPlaceholderText('タスクを検索...')
     fireEvent.change(searchInput, { target: { value: 'テスト' } })
 
-    expect(mockOnSearchChange).toHaveBeenCalledWith('テスト')
-  })
-
-  it('検索ボタンをクリックすると、onSearchが呼ばれる', () => {
-    render(
-      <TaskFilters
-        searchQuery=""
-        onSearchChange={mockOnSearchChange}
-        onSearch={mockOnSearch}
-      />
-    )
-
-    const searchButton = screen.getByRole('button')
-    fireEvent.click(searchButton)
-
-    expect(mockOnSearch).toHaveBeenCalled()
-  })
-
-  it('searchQueryの値が正しく表示される', () => {
-    const searchQuery = 'テスト'
-    render(
-      <TaskFilters
-        searchQuery={searchQuery}
-        onSearchChange={mockOnSearchChange}
-        onSearch={mockOnSearch}
-      />
-    )
-
-    const searchInput = screen.getByPlaceholderText('タスクを検索...')
-    expect(searchInput).toHaveValue(searchQuery)
+    expect(mockOnFilterChange).toHaveBeenCalledWith({
+      search: 'テスト',
+      status: 'all',
+      priority: 'all'
+    })
   })
 
   it('ステータスを選択すると、フィルターが更新される', () => {
-    render(<TaskFilters onFilterChange={mockOnSearchChange} />)
+    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
 
     // ステータスのドロップダウンを開く
     const statusButton = screen.getByRole('combobox', { name: /すべて/i })
@@ -64,7 +32,7 @@ describe('TaskFilters', () => {
     const inProgressOption = screen.getByRole('option', { name: /進行中/i })
     fireEvent.click(inProgressOption)
 
-    expect(mockOnSearchChange).toHaveBeenCalledWith({
+    expect(mockOnFilterChange).toHaveBeenCalledWith({
       search: '',
       status: 'in-progress',
       priority: 'all'
@@ -75,7 +43,7 @@ describe('TaskFilters', () => {
   })
 
   it('優先度を選択すると、フィルターが更新される', () => {
-    render(<TaskFilters onFilterChange={mockOnSearchChange} />)
+    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
 
     // 優先度のドロップダウンを開く
     const priorityButton = screen.getByRole('combobox', { name: /すべて/i })
@@ -85,7 +53,7 @@ describe('TaskFilters', () => {
     const highPriorityOption = screen.getByRole('option', { name: /高/i })
     fireEvent.click(highPriorityOption)
 
-    expect(mockOnSearchChange).toHaveBeenCalledWith({
+    expect(mockOnFilterChange).toHaveBeenCalledWith({
       search: '',
       status: 'all',
       priority: 'high'
@@ -96,7 +64,7 @@ describe('TaskFilters', () => {
   })
 
   it('複数のフィルターを組み合わせることができる', () => {
-    render(<TaskFilters onFilterChange={mockOnSearchChange} />)
+    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
 
     // 検索ワードを入力
     const searchInput = screen.getByPlaceholderText('タスクを検索...')
@@ -115,7 +83,7 @@ describe('TaskFilters', () => {
     fireEvent.click(mediumPriorityOption)
 
     // 最後の呼び出しで全てのフィルターが適用されていることを確認
-    expect(mockOnSearchChange).toHaveBeenLastCalledWith({
+    expect(mockOnFilterChange).toHaveBeenLastCalledWith({
       search: 'テスト',
       status: 'todo',
       priority: 'medium'

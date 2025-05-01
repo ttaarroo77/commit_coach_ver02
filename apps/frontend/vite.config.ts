@@ -9,23 +9,16 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
-    alias: {
-      '@': path.resolve(__dirname, '.'),
-      '@/components': path.resolve(__dirname, './components'),
-      '@/lib': path.resolve(__dirname, './lib'),
-      '@/hooks': path.resolve(__dirname, './hooks'),
-      '@/contexts': path.resolve(__dirname, './contexts'),
-      '@/types': path.resolve(__dirname, './types'),
-    },
+    alias: [
+      {
+        find: /^@\/(.*)/,
+        replacement: path.resolve(__dirname, '$1'),
+      },
+    ],
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
-      '@/components': path.resolve(__dirname, './components'),
-      '@/lib': path.resolve(__dirname, './lib'),
-      '@/hooks': path.resolve(__dirname, './hooks'),
-      '@/contexts': path.resolve(__dirname, './contexts'),
-      '@/types': path.resolve(__dirname, './types'),
     },
   },
-});
+}); 

@@ -1,14 +1,14 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import { Inter, Roboto_Mono } from "next/font/google"
 import { LinkValidator } from '@/components/LinkValidator';
 
 import "./globals.css"
 
-const fontSans = Geist({
+const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 })
 
-const fontMono = Geist_Mono({
+const fontMono = Roboto_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })

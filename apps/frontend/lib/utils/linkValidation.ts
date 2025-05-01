@@ -1,4 +1,3 @@
-import { NextRouter } from 'next/router';
 
 export interface Link {
   href: string;

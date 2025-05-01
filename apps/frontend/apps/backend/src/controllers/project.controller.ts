@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { supabaseAdmin } from '../config/supabase';
+import { supabaseAdmin, supabaseAnon } from '../config/supabase';
 import { ApiError } from '../middleware/errorHandler';
 import { ProjectService } from '../services/project.service';
 import { projectSchema, updateProjectSchema } from '../types/project.types';
-import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
 const projectService = new ProjectService();
 
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+// config/supabase.tsから初期化済みのクライアントを使用
+const supabase = supabaseAnon;
 
 // プロジェクト作成のバリデーションスキーマ
 const createProjectSchema = z.object({

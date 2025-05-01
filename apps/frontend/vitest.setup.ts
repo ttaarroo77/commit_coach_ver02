@@ -16,6 +16,3 @@ vi.mock('next/navigation', () => ({
 vi.mock('@supabase/ssr', () => ({
   createBrowserClient: vi.fn(),
 }));
-
-// UIコンポーネントとその他のモックを読み込む
-import './__tests__/mocks/setup-mocks';
