@@ -1,14 +1,28 @@
 import { ReactNode } from 'react';
 import { render, renderHook, RenderOptions, waitFor } from '@testing-library/react';
 import { AuthProvider } from '../hooks/useAuth';
-import { supabase as mockSupabaseClient } from '../__mocks__/lib/supabase';
-import { resetSupabaseMock } from '../__mocks__/lib/supabase';
 import { vi } from 'vitest';
+
+// テスト用の共有モック
+export const mockSupabase = {
+  auth: {
+    onAuthStateChange: vi.fn(() => ({
+      data: { subscription: { unsubscribe: vi.fn() } }
+    })),
+    signInWithPassword: vi.fn(),
+    signUp: vi.fn(),
+    signOut: vi.fn(),
+    resetPasswordForEmail: vi.fn(),
+    refreshSession: vi.fn(),
+    getSession: vi.fn(),
+    __triggerAuthState: vi.fn(),
+  }
+};
 
 // テスト用のプロバイダーラッパー
 export const AllProviders = ({ children }: { children: ReactNode }) => {
   return (
-    <AuthProvider supabaseClient={mockSupabaseClient}>{children}</AuthProvider>
+    <AuthProvider supabaseClient={mockSupabase}>{children}</AuthProvider>
   );
 };
 
@@ -22,17 +36,13 @@ export const mockSession = {
 
 // テスト前に実行する初期化関数
 export const setupAuthTest = () => {
-  resetSupabaseMock();
-  
+  // すべてのモックをリセット
+  vi.clearAllMocks();
+
   // 初期状態ではセッションはnull
-  mockSupabaseClient.auth.getSession.mockResolvedValue({
+  mockSupabase.auth.getSession.mockResolvedValue({
     data: { session: null },
     error: null,
-  });
-  
-  // 認証状態変更のコールバックは何もしない
-  mockSupabaseClient.auth.onAuthStateChange.mockImplementation(() => {
-    return { data: { subscription: { unsubscribe: vi.fn() } } };
   });
 };
 
