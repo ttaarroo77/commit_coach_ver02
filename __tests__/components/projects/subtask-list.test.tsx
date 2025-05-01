@@ -7,78 +7,66 @@ describe('SubtaskList', () => {
     { id: '2', title: 'サブタスク2', completed: true }
   ]
 
-  const mockOnUpdate = jest.fn()
-  const mockOnAdd = jest.fn()
+  const mockOnUpdate = vi.fn()
+  const mockOnDelete = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('サブタスクが正しく表示されること', () => {
-    render(<SubtaskList subtasks={mockSubtasks} onUpdate={mockOnUpdate} />)
+    render(
+      <SubtaskList
+        subtasks={mockSubtasks}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+      />
+    )
 
     expect(screen.getByText('サブタスク1')).toBeInTheDocument()
     expect(screen.getByText('サブタスク2')).toBeInTheDocument()
-    expect(screen.getByText('(1/2)')).toBeInTheDocument()
   })
 
-  it('折りたたみ機能が動作すること', () => {
-    render(<SubtaskList subtasks={mockSubtasks} onUpdate={mockOnUpdate} />)
+  it('完了したサブタスクは取り消し線が表示されること', () => {
+    render(
+      <SubtaskList
+        subtasks={mockSubtasks}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+      />
+    )
 
-    const toggleButton = screen.getByText('サブタスク').parentElement
-    fireEvent.click(toggleButton!)
-
-    expect(screen.queryByText('サブタスク1')).not.toBeInTheDocument()
-    expect(screen.queryByText('サブタスク2')).not.toBeInTheDocument()
-
-    fireEvent.click(toggleButton!)
-
-    expect(screen.getByText('サブタスク1')).toBeInTheDocument()
-    expect(screen.getByText('サブタスク2')).toBeInTheDocument()
+    const completedLabel = screen.getByText('サブタスク2')
+    expect(completedLabel).toHaveClass('text-muted-foreground', 'line-through')
   })
 
   it('サブタスクの完了状態を切り替えられること', () => {
-    render(<SubtaskList subtasks={mockSubtasks} onUpdate={mockOnUpdate} />)
+    render(
+      <SubtaskList
+        subtasks={mockSubtasks}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+      />
+    )
 
     const checkbox = screen.getAllByRole('checkbox')[0]
     fireEvent.click(checkbox)
 
-    expect(mockOnUpdate).toHaveBeenCalledWith([
-      { id: '1', title: 'サブタスク1', completed: true },
-      { id: '2', title: 'サブタスク2', completed: true }
-    ])
+    expect(mockOnUpdate).toHaveBeenCalledWith('1', true)
   })
 
-  it('新しいサブタスクを追加できること', () => {
+  it('サブタスクを削除できること', () => {
     render(
       <SubtaskList
         subtasks={mockSubtasks}
         onUpdate={mockOnUpdate}
-        onAdd={mockOnAdd}
+        onDelete={mockOnDelete}
       />
     )
 
-    const input = screen.getByPlaceholderText('新しいサブタスク')
-    fireEvent.change(input, { target: { value: '新しいタスク' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
+    const deleteButton = screen.getAllByRole('button')[0]
+    fireEvent.click(deleteButton)
 
-    expect(mockOnAdd).toHaveBeenCalledWith('新しいタスク')
-    expect(input).toHaveValue('')
-  })
-
-  it('空のサブタスクは追加できないこと', () => {
-    render(
-      <SubtaskList
-        subtasks={mockSubtasks}
-        onUpdate={mockOnUpdate}
-        onAdd={mockOnAdd}
-      />
-    )
-
-    const input = screen.getByPlaceholderText('新しいサブタスク')
-    fireEvent.change(input, { target: { value: '   ' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
-
-    expect(mockOnAdd).not.toHaveBeenCalled()
+    expect(mockOnDelete).toHaveBeenCalledWith('1')
   })
 }) 

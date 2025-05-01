@@ -1,15 +1,57 @@
+import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { TaskFilters } from '@/components/projects/task-filters'
+import { TaskFilters } from '../../../components/projects/task-filters'
+import { Wrapper } from '../../../__tests__/test-utils'
+
+import { vi } from 'vitest'
+
+// UIコンポーネントのモックをインポート
+jest.mock('../../../__tests__/mocks/ui-components', () => ({
+  ...jest.requireActual('../../../__tests__/mocks/ui-components'),
+}), { virtual: true })
+
+// パスエイリアスのモック
+jest.mock('@/components/ui/command', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components')
+}, { virtual: true })
+
+jest.mock('@/components/ui/button', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components')
+}, { virtual: true })
+
+jest.mock('@/components/ui/input', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components')
+}, { virtual: true })
+
+jest.mock('@/components/ui/popover', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components')
+}, { virtual: true })
+
+jest.mock('@/components/ui/badge', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components')
+}, { virtual: true })
+
+jest.mock('@/lib/utils', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components')
+}, { virtual: true })
+
+jest.mock('lucide-react', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components')
+}, { virtual: true })
 
 describe('TaskFilters', () => {
-  const mockOnFilterChange = jest.fn()
+  const mockOnFilterChange = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('検索フィールドに入力すると、フィルターが更新される', () => {
-    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
+    render(
+      <Wrapper>
+        <TaskFilters onFilterChange={mockOnFilterChange} />
+      </Wrapper>
+    )
 
     const searchInput = screen.getByPlaceholderText('タスクを検索...')
     fireEvent.change(searchInput, { target: { value: 'テスト' } })
@@ -22,7 +64,11 @@ describe('TaskFilters', () => {
   })
 
   it('ステータスを選択すると、フィルターが更新される', () => {
-    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
+    render(
+      <Wrapper>
+        <TaskFilters onFilterChange={mockOnFilterChange} />
+      </Wrapper>
+    )
 
     // ステータスのドロップダウンを開く
     const statusButton = screen.getByRole('combobox', { name: /すべて/i })
@@ -43,7 +89,11 @@ describe('TaskFilters', () => {
   })
 
   it('優先度を選択すると、フィルターが更新される', () => {
-    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
+    render(
+      <Wrapper>
+        <TaskFilters onFilterChange={mockOnFilterChange} />
+      </Wrapper>
+    )
 
     // 優先度のドロップダウンを開く
     const priorityButton = screen.getByRole('combobox', { name: /すべて/i })
@@ -64,7 +114,11 @@ describe('TaskFilters', () => {
   })
 
   it('複数のフィルターを組み合わせることができる', () => {
-    render(<TaskFilters onFilterChange={mockOnFilterChange} />)
+    render(
+      <Wrapper>
+        <TaskFilters onFilterChange={mockOnFilterChange} />
+      </Wrapper>
+    )
 
     // 検索ワードを入力
     const searchInput = screen.getByPlaceholderText('タスクを検索...')

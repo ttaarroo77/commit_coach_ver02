@@ -32,6 +32,9 @@ export function TaskFormModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!title) {
+      return;
+    }
     onSubmit({
       title,
       description,
@@ -79,7 +82,10 @@ export function TaskFormModal({
               <option value="done">完了</option>
             </select>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              閉じる
+            </Button>
             <Button type="submit">
               {initialData ? '更新' : '作成'}
             </Button>
@@ -90,4 +96,4 @@ export function TaskFormModal({
   );
 }
 
-export default TaskFormModal; 
+export default TaskFormModal;

@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render } from '../test-utils';
+import { screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { ProjectList } from '../../components/projects/project-list';
 import { KanbanBoard } from '../../components/projects/kanban-board';
 import { useProjects } from '../../hooks/useProjects';
@@ -7,7 +8,7 @@ import { useProjectTasks } from '../../hooks/useProjectTasks';
 import { ProjectWithStats } from '../../types/project';
 import { Task } from '../../types/task';
 import { vi } from 'vitest';
-import { TestWrapper } from '../test-utils';
+import { Wrapper } from '../test-utils';
 
 // useProjectsフックをモック
 vi.mock('../../hooks/useProjects', () => ({
@@ -46,26 +47,24 @@ const mockProjects: ProjectWithStats[] = [
     name: 'プロジェクト1',
     description: 'プロジェクト1の説明',
     status: 'active',
+    user_id: 'user-1',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    stats: {
-      total_tasks: 3,
-      completed_tasks: 1,
-      progress_percentage: 33
-    }
+    taskCount: 3,
+    completedTaskCount: 1,
+    progress: 33
   },
   {
     id: 'project-2',
     name: 'プロジェクト2',
     description: 'プロジェクト2の説明',
     status: 'active',
+    user_id: 'user-1',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    stats: {
-      total_tasks: 5,
-      completed_tasks: 2,
-      progress_percentage: 40
-    }
+    taskCount: 5,
+    completedTaskCount: 2,
+    progress: 40
   }
 ];
 
@@ -138,12 +137,12 @@ describe('ProjectList 統合テスト', () => {
   it('プロジェクトリストとカンバンボードの連携', async () => {
     // 統合コンポーネントをレンダリング
     const { rerender } = render(
-      <TestWrapper>
+      <Wrapper>
         <div>
           <ProjectList />
           <KanbanBoard projectId="project-1" />
         </div>
-      </TestWrapper>
+      </Wrapper>
     );
 
     // プロジェクトリストが表示されていることを確認
@@ -187,12 +186,12 @@ describe('ProjectList 統合テスト', () => {
     
     // プロジェクト2のカンバンボードを表示するために再レンダリング
     rerender(
-      <TestWrapper>
+      <Wrapper>
         <div>
           <ProjectList />
           <KanbanBoard projectId="project-2" />
         </div>
-      </TestWrapper>
+      </Wrapper>
     );
     
     // プロジェクト2のタスクがカンバンボードに表示されていることを確認
@@ -201,9 +200,9 @@ describe('ProjectList 統合テスト', () => {
 
   it('プロジェクトの検索機能', async () => {
     render(
-      <TestWrapper>
+      <Wrapper>
         <ProjectList />
-      </TestWrapper>
+      </Wrapper>
     );
 
     // 検索フィルターを取得
@@ -234,9 +233,9 @@ describe('ProjectList 統合テスト', () => {
     
     // 再レンダリングして検索結果を反映
     render(
-      <TestWrapper>
+      <Wrapper>
         <ProjectList />
-      </TestWrapper>
+      </Wrapper>
     );
     
     // プロジェクト1のみが表示されていることを確認
@@ -246,9 +245,9 @@ describe('ProjectList 統合テスト', () => {
 
   it('プロジェクトの削除機能', async () => {
     render(
-      <TestWrapper>
+      <Wrapper>
         <ProjectList />
-      </TestWrapper>
+      </Wrapper>
     );
 
     // 削除ボタンのクリックをシミュレート
@@ -284,9 +283,9 @@ describe('ProjectList 統合テスト', () => {
     
     // 再レンダリングして削除結果を反映
     render(
-      <TestWrapper>
+      <Wrapper>
         <ProjectList />
-      </TestWrapper>
+      </Wrapper>
     );
     
     // プロジェクト1が削除されていることを確認

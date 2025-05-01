@@ -1,6 +1,38 @@
 import React, { forwardRef } from 'react';
 
 // UIコンポーネントのモック
+// Commandコンポーネントのモック
+export const Command = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div data-testid="mock-command" className={className}>
+    {children}
+  </div>
+);
+
+export const CommandInput = ({ placeholder, className }: { placeholder?: string, className?: string }) => (
+  <input data-testid="mock-command-input" placeholder={placeholder} className={className} />
+);
+
+export const CommandEmpty = ({ children }: { children: React.ReactNode }) => (
+  <div data-testid="mock-command-empty">{children}</div>
+);
+
+export const CommandGroup = ({ children }: { children: React.ReactNode }) => (
+  <div data-testid="mock-command-group">{children}</div>
+);
+
+export const CommandItem = ({ children, value, onSelect }: { children: React.ReactNode, value?: string, onSelect?: () => void }) => (
+  <div data-testid="mock-command-item" data-value={value} onClick={onSelect}>
+    {children}
+  </div>
+);
+
+export const Check = ({ className }: { className?: string }) => (
+  <span data-testid="icon-check" className={className}>✓</span>
+);
+
+export const ChevronsUpDown = ({ className }: { className?: string }) => (
+  <span data-testid="icon-chevrons-updown" className={className}>⇅</span>
+);
 export const Calendar = forwardRef<HTMLDivElement, any>(({ onSelect, selected }, ref) => (
   <div data-testid="mock-calendar" ref={ref}>
     <button onClick={() => onSelect && onSelect(new Date())}>日付を選択</button>

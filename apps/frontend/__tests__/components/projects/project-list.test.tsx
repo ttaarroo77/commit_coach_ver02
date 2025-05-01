@@ -1,13 +1,32 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ProjectList } from '@/components/projects/project-list';
-import { useProjects } from '@/hooks/useProjects';
-import { Project } from '@/types';
+import { ProjectList } from '../../../components/projects/project-list';
+import { useProjects } from '../../../hooks/useProjects';
+import { Project } from '../../../types';
+import { Wrapper } from '../../../__tests__/test-utils';
 
 // モックの作成
-jest.mock('@/hooks/useProjects', () => ({
+jest.mock('../../../hooks/useProjects', () => ({
   useProjects: jest.fn(),
 }));
+
+// UIコンポーネントのモックをインポート
+jest.mock('../../../__tests__/mocks/ui-components', () => ({
+  ...jest.requireActual('../../../__tests__/mocks/ui-components'),
+}), { virtual: true });
+
+// パスエイリアスのモック
+jest.mock('@/components/ui/button', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components');
+}, { virtual: true });
+
+jest.mock('@/components/ui/input', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components');
+}, { virtual: true });
+
+jest.mock('@/lib/utils', () => {
+  return jest.requireActual('../../../__tests__/mocks/ui-components');
+}, { virtual: true });
 
 // @dnd-kit/coreのモック
 jest.mock('@dnd-kit/core', () => ({
@@ -72,7 +91,11 @@ describe('ProjectList', () => {
   });
 
   it('初期表示時に正しくレンダリングされること', () => {
-    render(<ProjectList />);
+    render(
+      <Wrapper>
+        <ProjectList />
+      </Wrapper>
+    );
 
     expect(screen.getByText('プロジェクト一覧')).toBeInTheDocument();
     expect(screen.getByText('新規プロジェクト')).toBeInTheDocument();
@@ -94,13 +117,21 @@ describe('ProjectList', () => {
       refreshProjects: jest.fn(),
     });
 
-    render(<ProjectList />);
+    render(
+      <Wrapper>
+        <ProjectList />
+      </Wrapper>
+    );
 
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('新規プロジェクト作成ボタンをクリックするとモーダルが表示されること', async () => {
-    render(<ProjectList />);
+    render(
+      <Wrapper>
+        <ProjectList />
+      </Wrapper>
+    );
 
     fireEvent.click(screen.getByText('新規プロジェクト'));
 
@@ -115,7 +146,11 @@ describe('ProjectList', () => {
       description: '新しいプロジェクトの説明',
     };
 
-    render(<ProjectList />);
+    render(
+      <Wrapper>
+        <ProjectList />
+      </Wrapper>
+    );
 
     fireEvent.click(screen.getByText('新規プロジェクト'));
 

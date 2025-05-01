@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { TaskCard } from '../../components/projects/task-card';
 import { useProjectTasks } from '../../hooks/useProjectTasks';
-import { Task } from '../../types/task';
+import { Task, TaskStatus, TaskPriority } from '../../types/task';
 import { vi } from 'vitest';
 import { Wrapper } from '../test-utils';
 
@@ -98,14 +98,15 @@ describe('TaskCard 統合テスト', () => {
 
   it('タスクカードの表示', async () => {
     // タスクデータを直接渡してテスト
-    const task1 = {
+    const task1: Task = {
       id: 'task-1',
       title: 'タスク1',
       description: 'タスク1の説明',
-      status: 'todo',
-      priority: 'medium',
-      projectId: 'project-1',
-      dueDate: null,
+      status: 'todo' as TaskStatus,
+      priority: 'medium' as TaskPriority,
+      project_id: 'project-1',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       subtasks: []
     };
 
@@ -125,10 +126,23 @@ describe('TaskCard 統合テスト', () => {
     expect(badgeTexts).toContain('medium');
   });
 
-  it('タスクカードの編集とカンバンボードの状態更新', async () => {
+  it('タスクカードの編集', async () => {
+    const onUpdateTask = vi.fn();
+    const task1: Task = {
+      id: 'task-1',
+      title: 'タスク1',
+      description: 'タスク1の説明',
+      status: 'todo' as TaskStatus,
+      priority: 'medium' as TaskPriority,
+      project_id: 'project-1',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      subtasks: []
+    };
+    
     render(
       <Wrapper>
-        <KanbanBoard projectId="project-1" />
+        <TaskCard task={task1} onUpdateTask={onUpdateTask} />
       </Wrapper>
     );
 
@@ -170,10 +184,23 @@ describe('TaskCard 統合テスト', () => {
     }));
   });
 
-  it('タスクカードの削除とカンバンボードの状態更新', async () => {
+  it('タスクカードの削除', async () => {
+    const onUpdateTask = vi.fn();
+    const task1: Task = {
+      id: 'task-1',
+      title: 'タスク1',
+      description: 'タスク1の説明',
+      status: 'todo' as TaskStatus,
+      priority: 'medium' as TaskPriority,
+      project_id: 'project-1',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      subtasks: []
+    };
+    
     render(
       <Wrapper>
-        <KanbanBoard projectId="project-1" />
+        <TaskCard task={task1} onUpdateTask={onUpdateTask} />
       </Wrapper>
     );
 

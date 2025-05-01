@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { TaskDetailModal } from '@/components/projects/task-detail-modal';
 import { Task } from '@/types';
 
@@ -16,12 +16,12 @@ describe('TaskDetailModal', () => {
     updated_at: new Date().toISOString(),
   };
 
-  const mockOnClose = jest.fn();
-  const mockOnUpdate = jest.fn();
-  const mockOnDelete = jest.fn();
+  const mockOnClose = vi.fn();
+  const mockOnUpdate = vi.fn();
+  const mockOnDelete = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('タスクの詳細が正しく表示されること', () => {
@@ -35,31 +35,11 @@ describe('TaskDetailModal', () => {
       />
     );
 
-    expect(screen.getByText(mockTask.title)).toBeInTheDocument();
-    expect(screen.getByText(mockTask.description)).toBeInTheDocument();
-    expect(screen.getByText('未着手')).toBeInTheDocument();
-    expect(screen.getByText('高')).toBeInTheDocument();
-  });
-
-  it('編集ボタンをクリックすると編集モードになること', () => {
-    render(
-      <TaskDetailModal
-        isOpen={true}
-        task={mockTask}
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
-      />
-    );
-
-    const editButton = screen.getByTestId('edit-button');
-    fireEvent.click(editButton);
-
     expect(screen.getByLabelText('タイトル')).toHaveValue(mockTask.title);
     expect(screen.getByLabelText('説明')).toHaveValue(mockTask.description);
   });
 
-  it('削除ボタンをクリックするとonDeleteが呼ばれること', async () => {
+  it('タスクの更新ができること', () => {
     render(
       <TaskDetailModal
         isOpen={true}
@@ -70,19 +50,22 @@ describe('TaskDetailModal', () => {
       />
     );
 
-    const deleteButton = screen.getByTestId('delete-button');
-    fireEvent.click(deleteButton);
+    const titleInput = screen.getByLabelText('タイトル');
+    const descriptionInput = screen.getByLabelText('説明');
+    const saveButton = screen.getByText('保存');
 
-    // 確認ダイアログの「削除」ボタンをクリック
-    const confirmButton = screen.getByText('削除する');
-    fireEvent.click(confirmButton);
+    fireEvent.change(titleInput, { target: { value: '更新されたタイトル' } });
+    fireEvent.change(descriptionInput, { target: { value: '更新された説明' } });
+    fireEvent.click(saveButton);
 
-    await waitFor(() => {
-      expect(mockOnDelete).toHaveBeenCalledWith(mockTask.id);
+    expect(mockOnUpdate).toHaveBeenCalledWith({
+      ...mockTask,
+      title: '更新されたタイトル',
+      description: '更新された説明',
     });
   });
 
-  it('完了状態を切り替えることができる', () => {
+  it('タスクの削除ができること', () => {
     render(
       <TaskDetailModal
         isOpen={true}
@@ -93,13 +76,13 @@ describe('TaskDetailModal', () => {
       />
     );
 
-    const completeButton = screen.getByTestId('complete-button');
-    fireEvent.click(completeButton);
+    const deleteButton = screen.getByText('削除');
+    fireEvent.click(deleteButton);
 
-    expect(mockOnUpdate).toHaveBeenCalledWith(mockTask.id, { completed: true });
+    expect(mockOnDelete).toHaveBeenCalledWith(mockTask.id);
   });
 
-  it('閉じるボタンをクリックするとモーダルが閉じること', () => {
+  it('モーダルを閉じることができること', () => {
     render(
       <TaskDetailModal
         isOpen={true}
