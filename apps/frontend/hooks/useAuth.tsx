@@ -33,50 +33,72 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const client = supabaseClient || supabase;
 
+  // 認証状態の変更を監視
   useEffect(() => {
-    // 現在のセッション情報を取得
-    const fetchSession = async () => {
-      try {
-        setIsLoading(true);
-
-        // セッションの取得
-        const { data: { session }, error } = await client.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        setSession(session);
-        setUser(session?.user ?? null);
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '認証情報の取得に失敗しました';
-        setHasError(true);
-        setErrorMessage(errorMessage);
-        console.error('認証エラー:', errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSession();
-
-    // セッション変更の監視
     const { data: { subscription } } = client.auth.onAuthStateChange(
-      (_event: string, session: Session | null) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setIsLoading(false);
+      async (event, session) => {
+        switch (event) {
+          case 'SIGNED_IN':
+          case 'TOKEN_REFRESHED':
+          case 'INITIAL_SESSION':
+            setSession(session);
+            setUser(session?.user ?? null);
+            setHasError(false);
+            break;
+          case 'SIGNED_OUT':
+            setSession(null);
+            setUser(null);
+            break;
+          default:
+          // no-op
+        }
       }
     );
 
-    // クリーンアップ関数
     return () => {
-      subscription?.unsubscribe();
+      subscription.unsubscribe();
     };
   }, [client]);
+
+  // セッションの初期取得
+  useEffect(() => {
+    client.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+    });
+  }, [client]);
+
+  // トークンの自動更新
+  useEffect(() => {
+    const refreshToken = async () => {
+      if (!session?.refresh_token) return;
+
+      try {
+        if (isRefreshing) return;
+        setIsRefreshing(true);
+
+        const { data, error } = await client.auth.refreshSession();
+        if (error) throw error;
+
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+        setHasError(false);
+      } catch (error) {
+        setHasError(true);
+        setErrorMessage('トークンの更新に失敗しました');
+      } finally {
+        setIsRefreshing(false);
+      }
+    };
+
+    const interval = setInterval(refreshToken, 1000 * 60 * 4); // 4分ごとに更新
+    return () => clearInterval(interval);
+  }, [session?.refresh_token, isRefreshing, client]);
 
   // サインイン関数
   const signIn = async (email: string, password: string) => {
@@ -93,7 +115,7 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
       if (error) {
         throw error;
       }
-      
+
       // 成功時のみユーザーを設定
       setUser(data?.user ?? null);
     } catch (error) {
@@ -123,7 +145,7 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
       if (error) {
         throw error;
       }
-      
+
       // 成功時のみユーザーを設定
       setUser(data?.user ?? null);
     } catch (error) {

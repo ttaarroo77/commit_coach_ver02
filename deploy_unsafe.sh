@@ -1,4 +1,7 @@
 #!/bin/bash
+# ./deploy_unsafe.sh
+
+
 
 # スクリプト名
 SCRIPT_NAME="Deploy Unsafe Analysis"
@@ -11,7 +14,8 @@ handle_error() {
 
 # インターネット接続確認
 echo "インターネット接続を確認しています..."
-if ! ping -c 1 github.com &> /dev/null; then
+# pingの代わりにcurlを使用してGitHubへの接続を確認
+if ! curl --silent --head --fail https://github.com &>/dev/null; then
   handle_error "GitHubに接続できません。インターネット接続を確認してください。"
 fi
 
@@ -67,4 +71,4 @@ ANALYSIS_URL="https://o3.analyze.com/analyze?repo=$REPO_NAME&branch=$CURRENT_BRA
 
 echo "✅ $SCRIPT_NAME が正常に完了しました！"
 echo "📊 分析用URL: $ANALYSIS_URL"
-echo "🔍 o3で分析を開始するには、上記のURLにアクセスしてください。" 
+echo "🔍 o3で分析を開始するには、上記のURLにアクセスしてください。"

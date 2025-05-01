@@ -246,44 +246,53 @@ describe('useAuth', () => {
     expect(result.current.errorMessage).toBe('パスワードリセットに失敗しました');
   });
 
-  it('認証状態の変更を監視すること', async () => {
-    // 初期セッションを設定（最初はnull）
-    mockSupabaseClient.auth.getSession.mockResolvedValueOnce({
-      data: { session: null },
-      error: null,
-    });
+  describe('認証状態の変更を監視すること', () => {
+    it('認証状態の変更を正しく監視できること', async () => {
+      const { result } = renderHook(() => useAuth(), { wrapper: Wrapper })
 
-    // 認証状態変更のモックを設定
-    let authCallback: (event: string, session: any) => void = () => { };
-    mockSupabaseClient.auth.onAuthStateChange.mockImplementation((callback) => {
-      authCallback = callback;
-      return { data: { subscription: { unsubscribe: vi.fn() } } };
-    });
+      // モックセッションの準備
+      const mockSession = {
+        access_token: 'mock-token',
+        refresh_token: 'mock-refresh-token',
+        user: {
+          id: '123',
+          email: 'test@example.com',
+        },
+      }
 
-    const { result } = renderHook(() => useAuth());
+      // 認証状態変更のトリガー
+      await act(async () => {
+        mockSupabaseClient.auth.__triggerAuthState('SIGNED_IN', mockSession)
+      })
 
-    // 初期状態の確認
-    expect(result.current.user).toBeNull();
-    
-    // セッション更新のモックを設定
-    mockSupabaseClient.auth.getSession.mockResolvedValueOnce({
-      data: { session: mockSession },
-      error: null,
-    });
+      // 状態の更新を待機
+      await waitFor(() => {
+        expect(result.current.session).toEqual(mockSession)
+        expect(result.current.user).toEqual(mockSession.user)
+        expect(result.current.isLoading).toBe(false)
+      })
+    })
+  })
 
-    // 認証状態変更イベントをシミュレート
-    await act(async () => {
-      // セッションを更新
-      authCallback('SIGNED_IN', mockSession);
-      // 状態更新のための十分な待機時間を設定
-      await new Promise(resolve => setTimeout(resolve, 100));
-    });
+  describe('同時実行時のロック制御が正しく動作すること', () => {
+    it('同時に複数のrefreshSession呼び出しがあった場合、1回だけ実行されること', async () => {
+      const { result } = renderHook(() => useAuth(), { wrapper: Wrapper })
 
-    // 更新後の状態を確認
-    expect(result.current.session).toEqual(mockSession);
-    expect(result.current.user).toEqual(mockUser);
-    expect(result.current.isLoading).toBe(false);
-  });
+      // refreshSessionのモックを設定
+      const refreshSessionSpy = vi.fn().mockResolvedValue({ data: { session: null }, error: null })
+      mockSupabaseClient.auth.refreshSession = refreshSessionSpy
+
+      // 3つの同時呼び出しをシミュレート
+      await Promise.all([
+        result.current.refreshSession(),
+        result.current.refreshSession(),
+        result.current.refreshSession(),
+      ])
+
+      // refreshSessionが1回だけ呼び出されたことを確認
+      expect(refreshSessionSpy).toHaveBeenCalledTimes(1)
+    })
+  })
 
   it('トークンの自動更新が正しく動作すること', async () => {
     const initialSession = {
@@ -359,26 +368,5 @@ describe('useAuth', () => {
     // エラーが正しく設定されていることを確認
     expect(result.current.hasError).toBe(true);
     expect(result.current.errorMessage).toBe('トークンの更新に失敗しました');
-  });
-
-  it('同時実行時のロック制御が正しく動作すること', async () => {
-    // トークン更新のモックを設定
-    const refreshSessionSpy = vi.fn();
-    mockSupabaseClient.auth.refreshSession.mockImplementation(refreshSessionSpy);
-
-    const { result } = renderHook(() => useAuth());
-
-    // 同時に3回のトークン更新を試みる
-    await act(async () => {
-      const promises = [
-        result.current.refreshSession(),
-        result.current.refreshSession(),
-        result.current.refreshSession(),
-      ];
-      await Promise.all(promises);
-    });
-
-    // refreshSessionは3回呼ばれるが、実際のSupabase APIは1回だけ呼ばれる
-    expect(refreshSessionSpy).toHaveBeenCalledTimes(1);
   });
 });
