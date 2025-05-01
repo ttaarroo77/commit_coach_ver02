@@ -1,79 +1,47 @@
-# Commit Coach Frontend
+# Commit Coach
 
-プロジェクト管理アプリケーションのフロントエンドです。
+AIを活用したタスク管理アプリケーション
 
-## 技術スタック
+## ドキュメント
 
-- Next.js 14
-- TypeScript
-- Tailwind CSS
-- Supabase
-- shadcn/ui
+- [開発フロー](docs/overview/development_flow.md)
+- [プロジェクト構造](docs/overview/project-structure.md)
+- [型定義](docs/overview/types.md)
+- [コンポーネント](docs/overview/components.md)
+- [データベース設計](docs/overview/database.md)
+- [APIルート](docs/overview/api-routes.md)
+- [製品概要](docs/overview/product-brief.md)
 
 ## 開発環境のセットアップ
 
-1. リポジトリをクローンします：
-
+1. リポジトリのクローン
 ```bash
 git clone https://github.com/your-username/commit-coach.git
-cd commit-coach/apps/frontend
+cd commit-coach
 ```
 
-2. 依存関係をインストールします：
-
+2. 依存関係のインストール
 ```bash
-npm install
+pnpm install
 ```
 
-3. 環境変数を設定します：
-
-`.env.example`ファイルを`.env`にコピーし、必要な値を設定します：
-
+3. 環境変数の設定
 ```bash
 cp .env.example .env
+# .envファイルを編集
 ```
 
-4. 開発サーバーを起動します：
-
+4. 開発サーバーの起動
 ```bash
-npm run dev
+pnpm dev
 ```
 
-アプリケーションは`http://localhost:3000`で利用できます。
+## 技術スタック
 
-## 機能
-
-- ユーザー認証
-- プロジェクト管理
-  - プロジェクトの作成、編集、削除
-  - タスクの作成、編集、削除
-  - タスクのステータス管理
-
-## テスト
-
-テストを実行するには：
-
-```bash
-npm run test        # 単体テストの実行
-npm run test:watch  # ウォッチモードでテストを実行
-```
-
-## ビルド
-
-本番用のビルドを作成するには：
-
-```bash
-npm run build
-```
-
-## デプロイ
-
-本番環境にデプロイするには：
-
-```bash
-npm run build
-npm run start
-```
+- フロントエンド: Next.js, React, TypeScript, Tailwind CSS, dnd-kit
+- バックエンド: Express.js, TypeScript, Supabase
+- データベース: PostgreSQL
+- 開発ツール: pnpm, ESLint, Prettier, Husky, GitHub Actions
 
 ## ライセンス
 

@@ -1,47 +1,61 @@
 # Commit Coach
 
-AIを活用したタスク管理アプリケーション
+カンバンボードを中心としたタスク管理アプリケーション
 
-## ドキュメント
+## 機能
 
-- [開発フロー](docs/overview/development_flow.md)
-- [プロジェクト構造](docs/overview/project-structure.md)
-- [型定義](docs/overview/types.md)
-- [コンポーネント](docs/overview/components.md)
-- [データベース設計](docs/overview/database.md)
-- [APIルート](docs/overview/api-routes.md)
-- [製品概要](docs/overview/product-brief.md)
-
-## 開発環境のセットアップ
-
-1. リポジトリのクローン
-```bash
-git clone https://github.com/your-username/commit-coach.git
-cd commit-coach
-```
-
-2. 依存関係のインストール
-```bash
-pnpm install
-```
-
-3. 環境変数の設定
-```bash
-cp .env.example .env
-# .envファイルを編集
-```
-
-4. 開発サーバーの起動
-```bash
-pnpm dev
-```
+- プロジェクト管理
+- タスク管理（カンバンボード形式）
+- ドラッグ&ドロップによるタスクの移動
+- アクセシビリティ対応
+- レスポンシブデザイン
 
 ## 技術スタック
 
-- フロントエンド: Next.js, React, TypeScript, Tailwind CSS, dnd-kit
-- バックエンド: Express.js, TypeScript, Supabase
-- データベース: PostgreSQL
-- 開発ツール: pnpm, ESLint, Prettier, Husky, GitHub Actions
+- React
+- TypeScript
+- Vite
+- Vitest
+- Testing Library
+- Tailwind CSS
+
+## セットアップ
+
+```bash
+# リポジトリのクローン
+git clone https://github.com/your-username/commit-coach.git
+cd commit-coach
+
+# 依存関係のインストール
+pnpm install
+
+# 開発サーバーの起動
+pnpm dev
+```
+
+## テスト
+
+```bash
+# すべてのテストを実行
+pnpm test
+
+# 特定のテストを実行
+pnpm test:unit      # 単体テスト
+pnpm test:integration  # 統合テスト
+pnpm test:performance  # パフォーマンステスト
+pnpm test:accessibility  # アクセシビリティテスト
+
+# カバレッジレポートの生成
+pnpm test:coverage
+```
+
+## コントリビューション
+
+1. このリポジトリをフォーク
+2. 新しいブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add some amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
 
 ## ライセンス
 

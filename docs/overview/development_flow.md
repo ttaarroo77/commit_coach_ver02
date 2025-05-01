@@ -12,6 +12,11 @@ stakeholders: ["dev_team", "ai_assistant"]
 
 このドキュメントは **モノレポ構成 (Next.js + Express)** の開発フローを定義します。AIアシスタントとの協業を前提とした効率的な開発プロセスを採用しています。
 
+> **関連ドキュメント**
+> - [AIアクターの役割とロードマップ](./roles_and_roadmap.md) - AIアシスタント（o3, cursor, windsurf）の役割分担と協業ルール
+> - [アーキテクチャ仕様](./architecture.spec.md) - システムの技術設計と実装方針
+> - [作業メモ帳](../../skratchpad.md) - 短期の作業記録と進捗管理
+
 ---
 
 ## 1. 進捗サマリ（毎週更新）

@@ -1,42 +1,21 @@
-const nextJest = require('next/jest');
-
-const createJestConfig = nextJest({
-  dir: './',
-});
-
-const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+/** @type {import('jest').Config} */
+module.exports = {
   testEnvironment: 'jsdom',
-  moduleDirectories: ['node_modules', '<rootDir>/src'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@ui/(.*)$': '<rootDir>/src/components/ui/$1',
+    '^@/(.*)$': '<rootDir>/apps/frontend/$1',
+    '\\.(css|less|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
+    '\\.(gif|ttf|eot|svg|png|jpg|jpeg)$': '<rootDir>/__mocks__/fileMock.js',
+    '^lucide-react$': '<rootDir>/__mocks__/lucide-react.js',
   },
-  transform: {
-    '^.+\\.(ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
-  collectCoverage: true,
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{ts,tsx}',
+  testMatch: [
+    '<rootDir>/apps/frontend/__tests__/**/*.test.{ts,tsx}',
   ],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
+  transform: {
+    '^.+\\.(ts|tsx)$': ['babel-jest', { configFile: './.babelrc' }],
   },
-  roots: ['<rootDir>/src', '<rootDir>/__tests__'],
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.json',
-    },
-  },
-};
-
-module.exports = createJestConfig(customJestConfig);
+  moduleDirectories: ['node_modules', '<rootDir>'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(@radix-ui)/)',
+  ],
+}

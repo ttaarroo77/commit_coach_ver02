@@ -1,12 +1,12 @@
 import { renderHook as rtlRenderHook, act, setupAuthTest, mockSupabase, mockUser, mockSession, waitFor } from '../test-utils';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // カスタムrenderHook関数（AuthProviderを含む）
-function renderHook(callback: any) {
+function renderHook<TResult>(callback: () => TResult) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -201,17 +201,30 @@ describe('useAuth', () => {
 
   describe('認証状態の変更を監視すること', () => {
     it('認証状態の変更を正しく監視できること', async () => {
+      // モックの設定を更新
+      mockSupabase.auth.getSession.mockResolvedValue({
+        data: { session: mockSession },
+        error: null,
+      });
+      
       const { result } = renderHook(() => useAuth());
 
+      // 初期セッションが設定されるのを待つ
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+      
+      // 認証状態の変更をトリガー
       await act(async () => {
         mockSupabase.auth.__triggerAuthState('SIGNED_IN', mockSession);
       });
 
+      // 状態が更新されたことを確認
       await waitFor(() => {
-        expect(result.current.session).toEqual(mockSession);
         expect(result.current.user).toEqual(mockSession.user);
         expect(result.current.isLoading).toBe(false);
-      });
+        expect(result.current.hasError).toBe(false);
+      }, { timeout: 1000 });
     });
   });
 

@@ -12,6 +12,15 @@ export const mockSupabase = {
       data: { session: null },
       error: null,
     }),
+    // 認証状態変更をトリガーするためのヘルパーメソッド
+    __triggerAuthState: vi.fn((event, session) => {
+      // onAuthStateChangeに登録されたコールバックを呼び出す
+      if (mockSupabase.auth.onAuthStateChange.mock.calls.length > 0) {
+        const callback = mockSupabase.auth.onAuthStateChange.mock.calls[0][0];
+        if (callback) callback(event, session);
+      }
+      return { success: true };
+    }),
     signInWithPassword: vi.fn().mockResolvedValue({
       data: { session: null, user: null },
       error: null,
@@ -76,12 +85,13 @@ export const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = createTestQueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider supabaseClient={mockSupabase}>
-        {children}
-      </AuthProvider>
+      <AuthProvider supabaseClient={mockSupabase} children={children} />
     </QueryClientProvider>
   );
 };
+
+// TestWrapperをWrapperのエイリアスとしてエクスポート
+export const TestWrapper = Wrapper;
 
 // カスタムレンダー関数
 export function render(ui: React.ReactElement, options = {}) {
@@ -97,9 +107,7 @@ export function renderHook<TResult, TProps>(
     const queryClient = createTestQueryClient();
     return (
       <QueryClientProvider client={queryClient}>
-        <AuthProvider supabaseClient={mockSupabase}>
-          {children}
-        </AuthProvider>
+        <AuthProvider supabaseClient={mockSupabase} children={children} />
       </QueryClientProvider>
     );
   };
