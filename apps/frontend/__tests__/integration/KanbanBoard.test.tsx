@@ -4,8 +4,10 @@ import { KanbanBoard } from '../../components/projects/kanban-board';
 import { useProjectTasks } from '../../hooks/useProjectTasks';
 import { Task, TaskStatus } from '../../types/task';
 import { vi } from 'vitest';
-// DndProviderはDndContextに置き換えられています
 import { Wrapper } from '../test-utils';
+
+// モックの設定をインポート
+import '../mocks/setup-mocks';
 
 // useProjectTasksフックをモック
 vi.mock('../../hooks/useProjectTasks', () => ({
