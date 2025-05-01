@@ -48,10 +48,12 @@ export const AuthProvider = ({ children, supabaseClient }: AuthProviderProps) =>
             setSession(session);
             setUser(session?.user ?? null);
             setHasError(false);
+            setIsLoading(false);
             break;
           case 'SIGNED_OUT':
             setSession(null);
             setUser(null);
+            setIsLoading(false);
             break;
           default:
           // no-op

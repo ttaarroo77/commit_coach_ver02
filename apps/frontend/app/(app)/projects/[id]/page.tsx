@@ -16,6 +16,7 @@ import { ProjectForm } from '../../../../components/projects/project-form';
 import { DraggableTask } from '../../../../components/dashboard/draggable-task';
 import { AddTaskButton } from '../../../../components/dashboard/add-task-button';
 import { KanbanBoard } from '../../../../components/projects/kanban-board';
+import { Timeline } from '../../../../components/projects/timeline';
 import { ArrowLeft, Calendar, Clock, Edit, Trash2, Users, LayoutGrid, List, BarChart2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -150,7 +151,13 @@ export default function ProjectDetailPage() {
 
   // タスク関連の仮実装（実際にはダッシュボードと同様の実装が必要）
   const handleToggleTask = (taskId: string) => {
-    console.log('タスク切り替え:', taskId);
+    console.log('Toggle task', taskId);
+  };
+  
+  // タスク追加処理
+  const handleAddTask = (groupId: string, taskData: any) => {
+    console.log('Add task to group', groupId, taskData);
+    handleTaskSubmit(taskData);
   };
   
   const handleUpdateTaskTitle = (taskId: string, title: string) => {
@@ -413,11 +420,14 @@ export default function ProjectDetailPage() {
                   <p className="text-gray-600 dark:text-gray-400 mb-6">
                     このプロジェクトにはまだタスクが追加されていません。
                   </p>
-                  <AddTaskButton 
-                    onSubmit={handleTaskSubmit} 
-                    defaultValues={{ project_id: project.id }}
-                    variant="default"
-                  />
+                  <Button 
+                    variant="default" 
+                    onClick={() => setIsAddTaskModalOpen(true)}
+                    className="flex items-center"
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    タスク追加
+                  </Button>
                 </div>
               ) : (
                 <KanbanBoard projectId={project.id} initialTasks={tasks} />
@@ -427,73 +437,10 @@ export default function ProjectDetailPage() {
           
           <TabsContent value="timeline" className="h-[calc(100vh-300px)]">
             <div className="h-full">
-              {tasks.length === 0 ? (
-                <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg h-full flex flex-col items-center justify-center">
-                  <h3 className="text-lg font-medium mb-2">タスクがありません</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6">
-                    このプロジェクトにはまだタスクが追加されていません。
-                  </p>
-                  <AddTaskButton 
-                    onSubmit={handleTaskSubmit} 
-                    defaultValues={{ project_id: project.id }}
-                    variant="default"
-                  />
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold">タイムライン</h2>
-                    <Button 
-                      variant="default" 
-                      onClick={() => setIsAddTaskModalOpen(true)}
-                      className="flex items-center"
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      タスク追加
-                    </Button>
-                  </div>
-                  
-                  <div className="relative border-l-2 border-gray-200 dark:border-gray-700 pl-6 ml-4 space-y-8">
-                    {tasks
-                      .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
-                      .map((task) => (
-                        <div key={task.id} className="relative">
-                          <div className="absolute -left-[29px] mt-1.5 h-4 w-4 rounded-full bg-primary"></div>
-                          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h3 className="text-lg font-semibold">{task.title}</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                  {formatDate(task.updated_at)}
-                                </p>
-                              </div>
-                              <Badge variant={task.status === 'completed' ? 'success' : task.status === 'in_progress' ? 'info' : task.status === 'review' ? 'warning' : 'default'}>
-                                {task.status === 'completed' ? '完了' : task.status === 'in_progress' ? '進行中' : task.status === 'review' ? 'レビュー中' : '未着手'}
-                              </Badge>
-                            </div>
-                            {task.description && (
-                              <p className="mt-2 text-gray-600 dark:text-gray-300">{task.description}</p>
-                            )}
-                            {task.subtasks && task.subtasks.length > 0 && (
-                              <div className="mt-3">
-                                <p className="text-sm font-medium mb-1">サブタスク ({task.subtasks.filter(st => st.completed).length}/{task.subtasks.length})</p>
-                                <ul className="text-sm space-y-1">
-                                  {task.subtasks.map((subtask) => (
-                                    <li key={subtask.id} className="flex items-center">
-                                      <span className={`mr-2 ${subtask.completed ? 'text-green-500 line-through' : 'text-gray-600 dark:text-gray-400'}`}>
-                                        {subtask.title}
-                                      </span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              )}
+              <Timeline 
+                tasks={tasks} 
+                onAddTask={() => setIsAddTaskModalOpen(true)} 
+              />
             </div>
           </TabsContent>
         </Tabs>

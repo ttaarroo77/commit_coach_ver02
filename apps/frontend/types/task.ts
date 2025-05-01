@@ -28,6 +28,7 @@ export interface Task {
   user_id?: string;
   assignee?: TaskAssignee;
   subtasks?: Subtask[];
+  progress?: number; // タスクの進捗率（0-100）
 }
 
 export type TaskFormValues = {

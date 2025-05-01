@@ -1,4 +1,4 @@
-import { renderHook, act, setupAuthTest, mockSupabase, mockUser, mockSession } from '../test-utils';
+import { renderHook, act, setupAuthTest, mockSupabase, mockUser, mockSession, waitFor } from '../test-utils';
 import { useAuth } from '../../hooks/useAuth';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import React from 'react';

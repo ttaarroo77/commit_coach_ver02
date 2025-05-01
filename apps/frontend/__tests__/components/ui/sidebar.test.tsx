@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react'
 import { Sidebar } from '@/components/ui/sidebar'
 import { usePathname } from 'next/navigation'
@@ -37,27 +38,49 @@ describe('Sidebar', () => {
     render(<Sidebar />)
 
     // メニューボタンをクリック
-    const menuButton = screen.getByRole('button')
+    const menuButton = screen.getByRole('button', { name: 'メニュー' })
     fireEvent.click(menuButton)
 
     // サイドバーが表示されることを確認
-    const sidebar = screen.getByText('Commit Coach').closest('div')
+    const sidebar = screen.getByTestId('sidebar')
     expect(sidebar).toHaveClass('translate-x-0')
   })
 
   it('モバイルでオーバーレイをクリックするとサイドバーが閉じること', () => {
     render(<Sidebar />)
 
-    // メニューを開く
-    const menuButton = screen.getByRole('button')
+    // メニューボタンをクリック
+    const menuButton = screen.getByRole('button', { name: 'メニュー' })
     fireEvent.click(menuButton)
 
     // オーバーレイをクリック
-    const overlay = screen.getByRole('presentation')
+    const overlay = screen.getByTestId('sidebar-overlay')
     fireEvent.click(overlay)
 
     // サイドバーが非表示になることを確認
-    const sidebar = screen.getByText('Commit Coach').closest('div')
+    const sidebar = screen.getByTestId('sidebar')
     expect(sidebar).toHaveClass('-translate-x-full')
+  })
+
+  it('デスクトップでは常にサイドバーが表示されること', () => {
+    // ビューポートをデスクトップサイズに設定
+    global.innerWidth = 1024
+    global.dispatchEvent(new Event('resize'))
+
+    render(<Sidebar />)
+
+    const sidebar = screen.getByTestId('sidebar')
+    expect(sidebar).toHaveClass('lg:translate-x-0')
+  })
+
+  it('ナビゲーションリンクが正しく表示されること', () => {
+    render(<Sidebar />)
+
+    expect(screen.getByText('ダッシュボード')).toBeInTheDocument()
+    expect(screen.getByText('プロジェクト')).toBeInTheDocument()
+    expect(screen.getByText('カレンダー')).toBeInTheDocument()
+    expect(screen.getByText('タイムトラッキング')).toBeInTheDocument()
+    expect(screen.getByText('レポート')).toBeInTheDocument()
+    expect(screen.getByText('設定')).toBeInTheDocument()
   })
 }) 

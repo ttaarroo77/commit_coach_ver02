@@ -1,62 +1,64 @@
+import { render, screen, waitFor } from '@testing-library/react';
+import Dashboard from '@/components/dashboard/Dashboard';
 import { vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from 'next-themes';
-import { TaskGroup as DashboardMain } from '../../../components/dashboard/task-group';
+import { mockSupabase, setupAuthTest } from '../../test-utils';
 
-// モックの設定
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-    back: vi.fn(),
-    forward: vi.fn()
-  }),
-  usePathname: () => '/dashboard',
-  useSearchParams: () => new URLSearchParams()
-}));
-
-// テストラッパー
-const renderWithProviders = (ui: React.ReactElement) => {
-  return render(
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      {ui}
-    </ThemeProvider>
-  );
-};
-
-describe('DashboardMain (ダッシュボード画面)', () => {
+describe('Dashboard', () => {
   beforeEach(() => {
-    // DOMをクリーンアップ
-    document.body.innerHTML = '';
+    setupAuthTest();
   });
 
-  it('主要なUI要素が表示される', async () => {
-    renderWithProviders(
-      <DashboardMain
-        id="test-group"
-        title="タスクグループ"
-        expanded={true}
-        tasks={[]}
-        completed={false}
-        onToggleExpand={() => {}}
-        onToggleTask={() => {}}
-        onUpdateTaskTitle={() => {}}
-        onUpdateSubtaskTitle={() => {}}
-        onToggleTaskStatus={() => {}}
-        onToggleSubtaskCompleted={() => {}}
-        onAddTask={() => {}}
-        onAddSubtask={() => {}}
-        onDeleteTask={() => {}}
-        onDeleteSubtask={() => {}}
-      />
-    );
-
-    // タスクグループのヘッダー
-    expect(await screen.findByText(/タスク/i)).toBeInTheDocument();
-
-    // タスク追加ボタン
-    expect(await screen.findByRole('button', { name: /追加|Add/i })).toBeInTheDocument();
+  it('初期表示時にローディング状態が表示されること', () => {
+    render(<Dashboard />);
+    expect(screen.getByText('読み込み中...')).toBeInTheDocument();
   });
 
-  // 必要に応じて追加テスト
-  // it('タスク追加ボタンを押すとフォームが開く', async () => {...})
+  it('認証済みユーザーで表示されること', async () => {
+    // 認証状態を設定
+    mockSupabase.auth.__triggerAuthState('SIGNED_IN', {
+      user: { id: '123', email: 'test@example.com' },
+      access_token: 'mock-token',
+      refresh_token: 'mock-refresh-token',
+    });
+
+    render(<Dashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('今日のタスク')).toBeInTheDocument();
+      expect(screen.getByText('期限間近')).toBeInTheDocument();
+      expect(screen.getByText('AIコーチ')).toBeInTheDocument();
+    });
+  });
+
+  it('タスクグループが表示されること', async () => {
+    render(<Dashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByText('To Do')).toBeInTheDocument();
+      expect(screen.getByText('In Progress')).toBeInTheDocument();
+      expect(screen.getByText('Done')).toBeInTheDocument();
+    });
+  });
+
+  it('レスポンシブデザインが正しく適用されること', async () => {
+    render(<Dashboard />);
+
+    // モバイルビュー
+    global.innerWidth = 375;
+    global.dispatchEvent(new Event('resize'));
+
+    await waitFor(() => {
+      const mobileElements = screen.getAllByTestId('mobile-view');
+      expect(mobileElements.length).toBeGreaterThan(0);
+    });
+
+    // デスクトップビュー
+    global.innerWidth = 1024;
+    global.dispatchEvent(new Event('resize'));
+
+    await waitFor(() => {
+      const desktopElements = screen.getAllByTestId('desktop-view');
+      expect(desktopElements.length).toBeGreaterThan(0);
+    });
+  });
 });
