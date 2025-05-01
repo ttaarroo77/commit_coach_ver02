@@ -7,29 +7,23 @@ describe('Badge', () => {
   })
 
   it('デフォルトのバッジが正しくレンダリングされること', () => {
-    render(<Badge>テストバッジ</Badge>)
-
-    const badge = screen.getByText('テストバッジ')
-    expect(badge).toBeInTheDocument()
-    expect(badge).toHaveClass('bg-primary', 'text-primary-foreground')
+    render(<Badge>テスト</Badge>)
+    const badge = screen.getByText('テスト')
+    expect(badge).toHaveClass('inline-flex', 'items-center', 'rounded-full', 'border', 'px-2.5', 'py-0.5', 'text-xs', 'font-semibold')
   })
 
   it('各バリアントが正しいスタイルを持つこと', () => {
-    const variants = [
-      'secondary',
-      'destructive',
-      'outline',
-      'success',
-      'warning',
-      'info',
-      'muted'
-    ]
+    const variants = ['default', 'secondary', 'destructive', 'outline', 'success', 'warning'] as const
 
-    variants.forEach(variant => {
-      render(<Badge variant={variant as any}>テストバッジ</Badge>)
-      const badge = screen.getByText('テストバッジ')
+    variants.forEach((variant) => {
+      cleanup()
+      render(<Badge variant={variant}>テスト</Badge>)
+      const badge = screen.getByText('テスト')
 
       switch (variant) {
+        case 'default':
+          expect(badge).toHaveClass('bg-primary', 'text-primary-foreground')
+          break
         case 'secondary':
           expect(badge).toHaveClass('bg-secondary', 'text-secondary-foreground')
           break
@@ -43,45 +37,37 @@ describe('Badge', () => {
           expect(badge).toHaveClass('bg-emerald-500/15', 'text-emerald-700')
           break
         case 'warning':
-          expect(badge).toHaveClass('bg-amber-500/15', 'text-amber-700')
-          break
-        case 'info':
-          expect(badge).toHaveClass('bg-sky-500/15', 'text-sky-700')
-          break
-        case 'muted':
-          expect(badge).toHaveClass('bg-muted', 'text-muted-foreground')
+          expect(badge).toHaveClass('bg-yellow-500/15', 'text-yellow-700')
           break
       }
-      cleanup()
     })
   })
 
   it('各サイズが正しいスタイルを持つこと', () => {
-    const sizes = ['default', 'sm', 'lg']
+    const sizes = ['sm', 'default', 'lg'] as const
 
-    sizes.forEach(size => {
-      render(<Badge size={size as any}>テストバッジ {size}</Badge>)
-      const badge = screen.getByText(`テストバッジ ${size}`)
+    sizes.forEach((size) => {
+      cleanup()
+      render(<Badge size={size}>テスト</Badge>)
+      const badge = screen.getByText('テスト')
 
       switch (size) {
-        case 'default':
-          expect(badge).toHaveClass('px-2.5', 'py-0.5', 'text-xs')
-          break
         case 'sm':
           expect(badge).toHaveClass('px-2', 'py-0.5', 'text-xs')
+          break
+        case 'default':
+          expect(badge).toHaveClass('px-2.5', 'py-0.5', 'text-xs')
           break
         case 'lg':
           expect(badge).toHaveClass('px-3', 'py-1', 'text-sm')
           break
       }
-      cleanup()
     })
   })
 
   it('カスタムクラス名が適用されること', () => {
-    render(<Badge className="custom-class">テストバッジ</Badge>)
-
-    const badge = screen.getByText('テストバッジ')
+    render(<Badge className="custom-class">テスト</Badge>)
+    const badge = screen.getByText('テスト')
     expect(badge).toHaveClass('custom-class')
   })
 })

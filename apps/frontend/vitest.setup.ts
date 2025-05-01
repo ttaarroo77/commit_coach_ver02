@@ -1,40 +1,18 @@
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
-import { expect, afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import * as matchers from '@testing-library/jest-dom/matchers';
 
-// Vitestのexpectにjest-domのmatchersを追加
-expect.extend(matchers);
+// Jest → Vitest 互換
+globalThis.jest = vi as unknown as typeof jest;
 
-// viをグローバルに設定
-global.vi = vi;
-
-// 各テストの後にクリーンアップ
-afterEach(() => {
-  cleanup();
-});
-
-// Mock next/navigation
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-  }),
-  usePathname: () => '/',
+// モックの設定
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: vi.fn(),
 }));
 
-// Mock @supabase/ssr
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+}));
+
 vi.mock('@supabase/ssr', () => ({
-  createBrowserClient: () => ({
-    auth: {
-      signInWithPassword: vi.fn(),
-      signOut: vi.fn(),
-      onAuthStateChange: vi.fn(),
-    },
-    from: () => ({
-      select: vi.fn(),
-      insert: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-    }),
-  }),
+  createBrowserClient: vi.fn(),
 }));

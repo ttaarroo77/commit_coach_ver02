@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../lib/supabase';
 
 // 認証コンテキストの型定義
 type AuthContextType = {

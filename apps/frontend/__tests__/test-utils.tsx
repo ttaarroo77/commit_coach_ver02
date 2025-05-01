@@ -88,7 +88,48 @@ export function render(ui: React.ReactElement, options = {}) {
   return rtlRender(ui, { wrapper: Wrapper, ...options });
 }
 
+// カスタムrenderHook関数
+export function renderHook<TResult, TProps>(
+  hook: (props: TProps) => TResult,
+  options: any = {}
+) {
+  return rtlRenderHook(hook, { wrapper: Wrapper, ...options });
+}
+
 // テストのセットアップヘルパー
 export function setupAuthTest() {
   vi.clearAllMocks();
+  
+  // モックの動作を設定
+  mockSupabase.auth.getSession.mockResolvedValue({
+    data: { session: null },
+    error: null,
+  });
+
+  mockSupabase.auth.signInWithPassword.mockResolvedValue({
+    data: { session: mockSession, user: mockUser },
+    error: null,
+  });
+
+  mockSupabase.auth.signUp.mockResolvedValue({
+    data: { session: mockSession, user: mockUser },
+    error: null,
+  });
+
+  mockSupabase.auth.signOut.mockResolvedValue({ error: null });
+  
+  mockSupabase.auth.resetPasswordForEmail.mockResolvedValue({
+    data: {},
+    error: null,
+  });
+  
+  mockSupabase.auth.refreshSession.mockResolvedValue({
+    data: { session: mockSession, user: mockUser },
+    error: null,
+  });
+
+  return { mockSupabase, mockSession, mockUser };
 }
+
+// 必要な関数を再エクスポート
+export { rtlWaitFor as waitFor, act };
