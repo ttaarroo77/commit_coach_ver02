@@ -18,6 +18,34 @@ tasks_note: 必ず、終わったタスクには[x]印をつけて、ここに�
 - **デプロイ先**:
   - フロントエンド: Vercel
   - バックエンド: Fly.io
+
+## プロジェクト構造
+
+```
+commit_coach/
+├── apps/
+│   ├── backend/     # バックエンドアプリケーション
+│   └── frontend/    # フロントエンドアプリケーション
+├── docs/            # プロジェクトドキュメント
+│   └── overview/    # アーキテクチャと開発フロー
+├── supabase/        # Supabase設定
+└── cleanup_plan/    # プロジェクト整理計画
+```
+
+## 関連ドキュメント
+
+- **docs/overview/**: 公式プロジェクトドキュメント
+  - `architecture.spec.md`: アーキテクチャ仕様（本ドキュメント）
+  - `development_flow.md`: 開発フロー
+
+- **cleanup_plan/**: プロジェクト整理計画
+  - `cleanup_strategy.md`: 全体的な整理方針
+  - `frontend_cleanup.md`: フロントエンド整理手順
+  - `backend_cleanup.md`: バックエンド整理手順
+  - `project_structure_cleanup.md`: プロジェクト構造整理手順
+  - `execution_checklist.md`: 実行チェックリスト
+
+**注意**: `www_extra.md`ディレクトリには古いドキュメントが含まれており、参照用として保持されていますが、最新の情報は上記の公式ドキュメントを参照してください。
   - エッジ関数: Supabase Edge Functions
 
 ## 非機能要件
@@ -202,6 +230,9 @@ commit_coach/
 ├── .prettierrc.js        # Prettier設定
 ├── tsconfig.json         # ルートTypeScript設定
 └── package.json          # ルート依存関係とスクリプト
+└── www_extra.md/         # その他mdファイル群のディレクトリ
+    ├── skratchpad.md     # 短期作業記録
+    └── ...               # その他
 ```
 
 ## 2. 主要コンポーネントの最適化

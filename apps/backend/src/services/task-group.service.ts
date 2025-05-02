@@ -1,8 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
 import { TaskGroup, TaskGroupUpdate } from '../types/task-group.types';
 import { ApiError } from '../middleware/errorHandler';
+import { supabaseAnon } from '../config/supabase';
 
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+// config/supabase.tsから初期化済みのクライアントを使用
+const supabase = supabaseAnon;
 
 export class TaskGroupService {
   async createTaskGroup(userId: string, data: Omit<TaskGroup, 'order'>): Promise<TaskGroup> {

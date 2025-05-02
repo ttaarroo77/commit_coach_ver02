@@ -3,9 +3,13 @@ import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { ApiError } from '../middleware/errorHandler';
-import { prisma } from '../lib/prisma';
+// import { prisma } from '../lib/prisma';
 
-const supabase = createClient(process.env.SUPABASE_URL || '', process.env.SUPABASE_ANON_KEY || '');
+// 環境変数がない場合のデフォルト値
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://iwyztimustunsapozimt.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const signupSchema = z.object({
   email: z.string().email(),
@@ -40,16 +44,20 @@ export class AuthController {
     try {
       const { email, password } = loginSchema.parse(req.body);
 
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
+      // Prismaの代わりにモックデータを使用
+      const mockUser = {
+        id: '1',
+        email: email,
+        name: 'テストユーザー',
+        password: 'password123'
+      };
 
-      if (!user || user.password !== password) {
+      if (mockUser.password !== password) {
         return res.status(401).json({ error: '認証情報が無効です' });
       }
 
       const token = jwt.sign(
-        { userId: user.id },
+        { userId: mockUser.id },
         process.env.JWT_SECRET || 'default_secret',
         { expiresIn: '24h' }
       );
@@ -57,9 +65,9 @@ export class AuthController {
       return res.status(200).json({
         token,
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
+          id: mockUser.id,
+          email: mockUser.email,
+          name: mockUser.name,
         },
       });
     } catch (error) {
@@ -74,33 +82,25 @@ export class AuthController {
     try {
       const { email, password, name } = signupSchema.parse(req.body);
 
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (existingUser) {
-        return res.status(400).json({ error: 'メールアドレスは既に使用されています' });
-      }
-
-      const user = await prisma.user.create({
-        data: {
-          email,
-          password,
-          name,
-        },
-      });
+      // モックデータを使用
+      const mockUser = {
+        id: '2',
+        email: email,
+        password: password,
+        name: name || 'New User'
+      };
 
       const token = jwt.sign(
-        { userId: user.id },
+        { userId: mockUser.id },
         process.env.JWT_SECRET || 'default_secret',
         { expiresIn: '24h' }
       );
 
       return res.status(201).json({
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
+          id: mockUser.id,
+          email: mockUser.email,
+          name: mockUser.name,
         },
         token,
       });
