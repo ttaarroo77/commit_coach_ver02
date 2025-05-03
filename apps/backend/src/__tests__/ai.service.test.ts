@@ -1,6 +1,8 @@
 import { AIService } from '../services/ai.service';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { Task, TaskPriority, TaskStatus } from '../types/task.types';
+import { Project } from '../types/project.types';
 
 // モック
 jest.mock('@supabase/supabase-js', () => ({
@@ -49,12 +51,12 @@ jest.mock('openai', () => {
 });
 
 // テスト用データ
-const mockTask = {
+const mockTask: Task = {
   id: 'task-id',
   title: 'テストタスク',
   description: 'テスト用のタスクです',
-  status: 'TODO',
-  priority: 'HIGH',
+  status: TaskStatus.TODO,
+  priority: TaskPriority.HIGH,
   created_at: '2025-05-01T00:00:00Z',
   updated_at: '2025-05-01T00:00:00Z',
   user_id: 'user-id',
@@ -62,14 +64,16 @@ const mockTask = {
   order: 0
 };
 
-const mockProject = {
+const mockProject: Project = {
   id: 'project-id',
   title: 'テストプロジェクト',
+  name: 'テストプロジェクト',
   description: 'テスト用のプロジェクトです',
-  status: 'IN_PROGRESS',
-  created_at: '2025-05-01T00:00:00Z',
-  updated_at: '2025-05-01T00:00:00Z',
-  user_id: 'user-id'
+  status: 'active',
+  ownerId: 'user-id',
+  members: ['user-id'],
+  createdAt: new Date('2025-05-01T00:00:00Z'),
+  updatedAt: new Date('2025-05-01T00:00:00Z')
 };
 
 describe('AIService', () => {

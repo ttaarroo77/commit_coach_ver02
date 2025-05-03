@@ -7,6 +7,7 @@ console.log('SUPABASE_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
+import { Inter } from 'next/font/google';
 
 interface AuthContextType {
   user: any;
@@ -33,13 +34,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   // );
 
-  const supabase = createBrowserClient(
-    "https://iwyztimustunsapozimt.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eXp0aW11c3R1bnNhcG96aW10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MzgzNzIsImV4cCI6MjA2MDUxNDM3Mn0.XdAfEQNiMOZtcL8OF1KdcccDhtXJrO5J-fDlo_ozmLk"
-  );
+  const supabase = React.useMemo(() => {
+    if (typeof window !== "undefined") {
+      return createBrowserClient(
+        "https://iwyztimustunsapozimt.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eXp0aW11c3R1bnNhcG96aW10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MzgzNzIsImV4cCI6MjA2MDUxNDM3Mn0.XdAfEQNiMOZtcL8OF1KdcccDhtXJrO5J-fDlo_ozmLk"
+      );
+    }
+    return null;
+  }, []);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase?.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -47,14 +53,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, [supabase?.auth]);
 
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase?.auth.signInWithPassword({
         email,
         password,
       });
@@ -78,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const { error } = await supabase.auth.signUp({
+      const { error } = await supabase?.auth.signUp({
         email,
         password,
         options: {
@@ -104,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supabase?.auth.signOut();
 
       if (error) {
         throw error;
@@ -125,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
 
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase?.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password/confirm`,
       });
 
@@ -164,3 +170,5 @@ export function useAuth() {
   }
   return context;
 }
+
+export const inter = Inter({ subsets: ['latin'] });

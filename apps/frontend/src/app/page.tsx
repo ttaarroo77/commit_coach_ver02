@@ -22,30 +22,32 @@ export default function LandingPage() {
       </header>
 
       {/* ヒーローセクション */}
-      <section className="flex-1 flex flex-col md:flex-row items-center justify-between px-8 py-16 gap-8">
-        <div className="max-w-xl">
-          <div className="mb-4">
-            <span className="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-xs font-semibold">先延ばし撃退ツール</span>
+      <section className="flex-1 bg-[#f1f5f9] py-20">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-24 px-6">
+          {/* 左カラム */}
+          <div className="flex flex-col justify-center max-w-xl mx-auto md:mx-0">
+            <span className="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-xs font-semibold mb-4">先延ばし撃退ツール</span>
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+              AIコーチングで<br />タスク管理を<br />次のレベルへ
+            </h1>
+            <p className="text-lg text-gray-600 mb-8">
+              GitHubリポジトリをTrello風カンバンで可視化し、AIコーチング機能でタスクコミットを支援する生産性向上ツール。
+            </p>
+            <Link href="/register">
+              <Button className="bg-[#31A9B8] hover:bg-[#2691a1] text-base px-8 py-4">無料で始める</Button>
+            </Link>
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-            AIコーチングで<br />タスク管理を<br />次のレベルへ
-          </h1>
-          <p className="text-lg text-gray-600 mb-8">
-            GitHubリポジトリをTrello風カンバンで可視化し、AIコーチング機能でタスクコミットを支援する生産性向上ツール。
-          </p>
-          <Link href="/register">
-            <Button className="bg-[#31A9B8] hover:bg-[#2691a1] text-base px-8 py-4">無料で始める</Button>
-          </Link>
-        </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="relative bg-[#f1f5f9] rounded-2xl p-8 min-w-[340px] min-h-[180px] flex flex-col justify-end shadow-md">
-            <div className="absolute top-4 right-4 flex items-center gap-2">
-              <div className="bg-[#31A9B8] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">AI</div>
-            </div>
-            <div className="absolute bottom-4 right-4">
-              <div className="bg-white rounded-xl shadow px-4 py-3 text-sm text-gray-700">
-                「今日のタスクは進んでいますか？」<br />
-                <span className="text-xs text-gray-400">AIコーチがあなたをサポート</span>
+          {/* 右カラム */}
+          <div className="flex justify-center items-center w-full">
+            <div className="relative bg-white rounded-2xl p-12 w-full max-w-md min-h-[260px] flex flex-col justify-end shadow-2xl border border-blue-100">
+              <div className="absolute top-8 right-8 flex items-center gap-2">
+                <div className="bg-[#31A9B8] text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl shadow-lg">AI</div>
+              </div>
+              <div className="absolute bottom-8 right-8">
+                <div className="bg-blue-50 rounded-xl shadow px-8 py-6 text-lg text-gray-700 min-w-[240px]">
+                  「今日のタスクは進んでいますか？」<br />
+                  <span className="text-sm text-gray-400">AIコーチがあなたをサポート</span>
+                </div>
               </div>
             </div>
           </div>

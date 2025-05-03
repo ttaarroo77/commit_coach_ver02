@@ -1,18 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
-    domains: ['localhost'],
+    domains: ['avatars.githubusercontent.com'],
   },
   experimental: {
-    serverActions: true,
+    serverActions: {},
   },
   webpack: (config) => {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-    };
+    config.resolve.fallback = { fs: false };
     return config;
   },
 };
