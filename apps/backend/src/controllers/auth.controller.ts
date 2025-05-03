@@ -198,4 +198,11 @@ export class AuthController {
   }
 }
 
-export const authController = new AuthController();
+const authController = new AuthController();
+
+export const login = authController.login.bind(authController);
+export const signup = authController.signup.bind(authController);
+export const logout = authController.logout.bind(authController);
+export const refreshToken = authController.refreshToken.bind(authController);
+export const resetPasswordRequest = authController.resetPasswordRequest.bind(authController);
+export const resetPassword = authController.resetPassword.bind(authController);

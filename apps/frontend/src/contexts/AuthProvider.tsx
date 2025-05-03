@@ -1,8 +1,15 @@
+// /Users/nakazawatarou/Documents/tarou/project/commit_coach/apps/frontend/src/contexts/AuthProvider.tsx
+
 "use client";
+
+console.log('SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+console.log('SUPABASE_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
+import { Inter } from 'next/font/google';
 
 interface AuthContextType {
   user: any;
@@ -23,37 +30,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
 
-  // クライアントサイドでのみSupabaseクライアントを初期化
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  // ローカル環境では、process.env.NEXT_PUBLIC_SUPABASE_URL! と process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! を使用
+  // 本来は修正すべき。  // 本番環境では、定数を直接使用
+  //   process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  // );
+
+  // SSRとCSRを適切に分離するため、ブラウザ環境でのみSupabaseクライアントを初期化
+  const supabase = typeof window !== "undefined"
+    ? createBrowserClient(
+      "https://iwyztimustunsapozimt.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eXp0aW11c3R1bnNhcG96aW10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MzgzNzIsImV4cCI6MjA2MDUxNDM3Mn0.XdAfEQNiMOZtcL8OF1KdcccDhtXJrO5J-fDlo_ozmLk"
+    )
+    : undefined; // 初回はダミー、CSRで再初期化
 
   useEffect(() => {
-    // Supabaseの認証状態変更を監視
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // 初期状態の取得
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
+    // クライアントサイドでのみ実行
+    if (typeof window !== "undefined" && supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         setUser(session?.user ?? null);
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-      } finally {
         setLoading(false);
-      }
-    };
+      });
 
-    initializeAuth();
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [supabase.auth]);
+      return () => {
+        subscription?.unsubscribe();
+      };
+    } else {
+      // SSR時は即座にローディング状態を解除
+      setLoading(false);
+    }
+  }, [supabase?.auth]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -170,3 +176,5 @@ export function useAuth() {
   }
   return context;
 }
+
+export const inter = Inter({ subsets: ['latin'] });

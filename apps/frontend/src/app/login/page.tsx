@@ -1,31 +1,22 @@
-import { redirect } from 'next/navigation';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { LoginForm } from '@/components/auth/login-form';
+"use client";
 
-export default async function LoginPage() {
-  const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { LoginForm } from '/Users/nakazawatarou/Documents/tarou/project/commit_coach/apps/frontend/src/components/auth/login-form';
+import { useAuth } from '/Users/nakazawatarou/Documents/tarou/project/commit_coach/apps/frontend/src/hooks/useAuth';
 
-  const { data: { session } } = await supabase.auth.getSession();
+export default function LoginPage() {
+  const router = useRouter();
+  const { isLoading, error, login } = useAuth();
 
-  if (session) {
-    redirect('/projects');
-  }
+  // ログイン処理
+  const handleLogin = (email: string, password: string) => {
+    login(email, password);
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <LoginForm />
+      <LoginForm onLogin={handleLogin} />
     </div>
   );
-} 
+}

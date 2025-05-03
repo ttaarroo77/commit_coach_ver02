@@ -18,12 +18,6 @@ stakeholders: ["dev_team", "ai_assistant"]
 - [ ] バックエンドの基盤構築
 
 ## 2. フロントエンド再構築
-### 認証フローの実装
-- [ ] ログイン/ログアウト機能
-- [ ] ユーザー登録機能
-- [ ] パスワードリセット機能
-- [ ] セッション管理
-
 ### ダッシュボードの実装
 - [ ] レイアウト設計
 - [ ] データ表示
@@ -47,6 +41,12 @@ stakeholders: ["dev_team", "ai_assistant"]
 - [ ] フォームコンポーネント
 - [ ] モーダルコンポーネント
 - [ ] アニメーション
+
+### 認証フローの実装
+- [ ] ログイン/ログアウト機能
+- [ ] ユーザー登録機能
+- [ ] パスワードリセット機能
+- [ ] セッション管理
 
 ## 3. バックエンド再構築
 ### APIエンドポイントの設計
@@ -267,9 +267,9 @@ stakeholders: ["dev_team", "ai_assistant"]
 - [ ] **58** API モック → 本 API 切替 (2025-04-29)
 - [ ] **59** commit `feat(frontend): kanban` (2025-04-29)
 - [ ] **60** レスポンシブ & ユニットテスト最終
-- [ ] **60.1** パスエイリアス問題の修正（全ファイル・2025-04-30確認済）
+- [x] **60.1** パスエイリアス問題の修正（全ファイル・2025-05-03実装）
 - [ ] **60.2** プロジェクト詳細ページの修正
-- [ ] **60.3** データ連携の完全実装（2025-04-30 カンバン・タスク管理API/データ仕様明文化）
+- [x] **60.3** データ連携の完全実装（2025-05-03 useProjectsとuseProjectTasksフックのSupabase連携実装）
 - [ ] **60.4** 切れているリンク・画面の修正
 
 #### 3.3 AIチャット & 設定 (61‑80)
@@ -713,4 +713,165 @@ stakeholders: ["dev_team", "ai_assistant"]
 #### フェーズ4：運用（Step 191-200）
 - [ ] **191-195** モニタリング設定
 - [ ] **196-200** 運用ドキュメント整備
+
+---
+
+# CI/CDパイプライン設定ガイド
+
+## 概要
+
+このドキュメントでは、Commit Coachプロジェクトで使用するCI/CDパイプラインの設定方法について説明します。CI/CDパイプラインは、コードの品質保証、テスト自動化、デプロイの自動化を実現するために重要な役割を果たします。
+
+## 設定済みワークフロー
+
+以下のGitHub Actionsワークフローが設定されています：
+
+1. **CI** (`ci.yml`)
+   - リントとタイプチェック
+   - ビルドテスト
+   - セキュリティスキャン
+
+2. **テストスイート** (`test-suite.yml`)
+   - ユニットテスト
+   - 統合テスト
+   - E2Eテスト
+   - カバレッジレポート
+
+3. **バックエンドデプロイ** (`backend-deploy.yml`)
+   - テスト実行
+   - Fly.ioへのデプロイ
+
+4. **フロントエンドデプロイ** (`frontend-deploy.yml`)
+   - テスト実行
+   - プレビューデプロイ（PR時）
+   - 本番デプロイ（mainブランチへのマージ時）
+
+## 必要なシークレット設定
+
+GitHub Actionsワークフローを正常に実行するためには、以下のシークレットをGitHubリポジトリに設定する必要があります：
+
+### Codecov連携用
+
+- `CODECOV_TOKEN`: Codecovからのトークン（テストカバレッジレポート用）
+
+### Vercel連携用（フロントエンド）
+
+- `VERCEL_TOKEN`: Vercel CLIのトークン
+- `VERCEL_ORG_ID`: VercelのOrganization ID
+- `VERCEL_PROJECT_ID`: VercelのProject ID
+
+### Fly.io連携用（バックエンド）
+
+- `FLY_API_TOKEN`: Fly.io APIトークン
+
+## シークレットの設定方法
+
+1. GitHubリポジトリの「Settings」タブに移動
+2. 左側のメニューから「Secrets and variables」→「Actions」を選択
+3. 「New repository secret」ボタンをクリック
+4. 名前（例：`VERCEL_TOKEN`）と値を入力して保存
+
+## デプロイ設定
+
+### Vercel（フロントエンド）
+
+1. Vercelアカウントにログイン
+2. 新しいプロジェクトを作成
+3. 以下の設定を行う：
+   - Framework Preset: Next.js
+   - Root Directory: apps/frontend
+   - Build Command: pnpm build
+   - Output Directory: .next
+
+### Fly.io（バックエンド）
+
+1. Fly.ioアカウントにログイン
+2. 新しいアプリケーションを作成
+3. 以下の設定を行う：
+   - Dockerfile: apps/backend/Dockerfile
+   - Configuration: apps/backend/fly.toml
+
+## ローカル開発での使用方法
+
+Turborepoを使用して、以下のコマンドでローカル開発を行うことができます：
+
+```bash
+# 開発サーバーの起動
+pnpm dev
+
+# ビルド
+pnpm build
+
+# テスト実行
+pnpm test
+
+# リント実行
+pnpm lint
+
+# クリーンアップ
+pnpm clean
+```
+
+## CI/CDパイプラインの拡張
+
+新しいワークフローを追加する場合は、`.github/workflows/`ディレクトリに新しいYAMLファイルを作成します。既存のワークフローをテンプレートとして使用することができます。
+
+## トラブルシューティング
+
+### よくある問題と解決策
+
+1. **ビルドエラー**
+   - package.jsonの依存関係が最新かどうか確認
+   - node_modulesを削除して再インストール
+
+2. **テスト失敗**
+   - テストが最新のコードと一致しているか確認
+   - モックの設定を確認
+
+3. **デプロイ失敗**
+   - シークレットが正しく設定されているか確認
+   - デプロイ設定（Vercel/Fly.io）を確認
+
+## 参考リンク
+
+- [GitHub Actions ドキュメント](https://docs.github.com/ja/actions)
+- [Vercel デプロイドキュメント](https://vercel.com/docs/deployments/overview)
+- [Fly.io デプロイドキュメント](https://fly.io/docs/hands-on/install-flyctl/)
+- [Turborepo ドキュメント](https://turbo.build/repo/docs)
+
+---
+
+# 既知の課題・技術的制約
+
+### 1. SupabaseのRLS制約
+- RLS（Row Level Security）を有効化しているため、API経由でのデータ取得・更新時に認証トークンが必須。
+- テスト時はRLSを一時的に無効化するか、テスト用ユーザーで実行する必要あり。
+
+### 2. Next.js App RouterのSSR制約
+- App RouterでServer Componentとして解釈されると、`document`や`window`参照でクラッシュする。
+- クライアント専用ロジックは必ず`'use client'`ディレクティブを付与。
+
+### 3. Babel/SWC競合
+- Babel設定ファイルが存在するとNext.jsがSWCからBabelにフォールバックし、`next/font`等の一部機能が動作しなくなる。
+- Babelが必要な場合はStorybook/Jest等の個別設定に限定。
+
+### 4. Supabaseの型定義とZodスキーマの乖離
+- DBスキーマ変更時、`packages/shared-types`のZodスキーマも必ず更新。
+- 型の不整合によるバグが発生しやすい。
+
+### 5. CI/CDのSecrets管理
+- GitHub ActionsのSecretsが未設定だとデプロイ・テストが失敗する。
+- 新規環境構築時はREADME/CIガイドを必ず参照。
+
+### 6. Fly.ioの無料枠制限
+- 無料枠のCPU/メモリ制限により、バックエンドの一時停止やデプロイ失敗が発生する場合あり。
+- 商用運用時は有料プラン推奨。
+
+### 7. Vercelのビルドキャッシュ問題
+- Vercelのキャッシュが壊れると、デプロイが失敗することがある。
+- キャッシュクリアや再デプロイで解消可能。
+
+### 8. その他
+- 一部のnpmパッケージが非推奨・deprecatedになっている場合がある。定期的な依存アップデート推奨。
+- テスト用のダミーデータが本番に混入しないよう注意。
 

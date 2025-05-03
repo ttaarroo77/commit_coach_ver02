@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { Project } from '@/types/project';
-import { Task } from '@/types/task';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { formatDate } from '@/lib/utils';
+import { Project } from '../../types/project';
+import { Task } from '../../types/task';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { formatDate } from '../../lib/utils';
 
 interface ProjectDetailsProps {
   project: Project;

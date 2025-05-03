@@ -973,3 +973,37 @@ export function DragProvider({ children, onDragEnd }: {
 12. **Edge Functionsのテスト**: Playwright + Supabaseローカルによるe2eテスト
 
 
+
+---
+
+# AIサービス
+
+### 1. サービス概要
+- 本プロジェクトではOpenAI GPT-4 APIを利用したAIコーチング機能を提供。
+- ユーザーのタスク進捗やプロジェクト管理をAIがサポート。
+
+### 2. システム構成
+- バックエンド（Express）からOpenAI APIを呼び出し、フロントエンド（Next.js）経由でユーザーに応答。
+- APIキーはサーバー側で安全に管理。
+- AI応答はDB（ai_messagesテーブル）に保存し、履歴管理・再利用を実現。
+
+### 3. 主なAPIエンドポイント
+- `POST /api/v1/ai/coach` : タスク進捗や質問をAIに投げて応答を取得
+- `GET /api/v1/ai/messages` : 過去のAI応答履歴を取得
+
+### 4. プロンプト設計方針
+- ユーザーの入力内容・タスク状況・過去のAI応答履歴をもとにプロンプトを動的生成
+- プロンプトテンプレートは`packages/shared-prompts`で管理
+- ユーザーごとにパーソナライズされた応答を目指す
+
+### 5. 運用・セキュリティ
+- OpenAI APIキーは環境変数で管理し、フロントエンドには絶対に露出しない
+- レートリミット・エラーハンドリングを徹底
+- AI応答の品質・安全性を定期レビュー
+
+### 6. 今後の拡張案
+- LLMの切り替え（Anthropic Claude等）やマルチエージェント対応
+- ユーザーごとのAIパーソナライズ設定
+- AIによる自動リマインド・進捗サマリ生成
+
+</rewritten_file>
