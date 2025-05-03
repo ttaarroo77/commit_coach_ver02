@@ -1,3 +1,5 @@
+// /Users/nakazawatarou/Documents/tarou/project/commit_coach/apps/frontend/src/contexts/AuthProvider.tsx
+
 "use client";
 
 console.log('SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
@@ -34,25 +36,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   // );
 
-  const supabase = React.useMemo(() => {
-    if (typeof window !== "undefined") {
-      return createBrowserClient(
+  // SSRとCSRを適切に分離するため、ブラウザ環境でのみSupabaseクライアントを初期化
+  const supabase = typeof window !== "undefined"
+    ? createBrowserClient(
         "https://iwyztimustunsapozimt.supabase.co",
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eXp0aW11c3R1bnNhcG96aW10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MzgzNzIsImV4cCI6MjA2MDUxNDM3Mn0.XdAfEQNiMOZtcL8OF1KdcccDhtXJrO5J-fDlo_ozmLk"
-      );
-    }
-    return null;
-  }, []);
+      )
+    : undefined; // 初回はダミー、CSRで再初期化
 
   useEffect(() => {
-    const { data: { subscription } } = supabase?.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // クライアントサイドでのみ実行
+    if (typeof window !== "undefined" && supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+      return () => {
+        subscription?.unsubscribe();
+      };
+    } else {
+      // SSR時は即座にローディング状態を解除
+      setLoading(false);
+    }
   }, [supabase?.auth]);
 
   const login = async (email: string, password: string) => {
