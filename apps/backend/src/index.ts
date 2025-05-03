@@ -7,7 +7,7 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import router from './routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
-import authRoutes from './routes/auth.routes';
+import { authRouter } from './routes/auth';
 import healthRoutes from './routes/health.routes';
 
 const port = process.env.PORT || 3002;
@@ -53,7 +53,7 @@ async function startServer() {
 
     // ルートの設定
     app.use('/api', router);
-    app.use('/api/auth', authRoutes);
+    app.use('/api/auth', authRouter);
     app.use('/api/health', healthRoutes);
 
     // エラーハンドリング
