@@ -28,7 +28,7 @@ export const taskSchema = z.object({
   priority: taskPriorityEnum.default('MEDIUM'),
   status: taskStatusEnum.default('TODO'),
   due_date: z.string().datetime().optional(),
-  order: z.number().int().min(0),
+  position: z.number().int().min(0),
   user_id: z.string().uuid(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
@@ -43,7 +43,7 @@ export const taskUpdateSchema = z.object({
   priority: taskPriorityEnum.optional(),
   status: taskStatusEnum.optional(),
   due_date: z.string().datetime().optional(),
-  order: z.number().int().min(0).optional(),
+  position: z.number().int().min(0).optional(),
 });
 
 // タスクの型

@@ -7,7 +7,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import router from './routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
-import authRoutes from './routes/auth.routes';
+import { authRouter } from './routes/auth';
 
 // 環境変数の読み込み
 dotenv.config();
@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // ルーティング
 app.use(router);
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRouter);
 
 // 404エラーハンドラー
 app.use(notFoundHandler);

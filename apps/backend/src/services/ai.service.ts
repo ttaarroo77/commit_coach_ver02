@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { AIConfig, AIMessage, TaskBreakdown, SubTask } from '../types/ai.types';
-import { Task } from '../types/task.types';
+import { Task } from '../models/task.model';
 import { Project } from '../types/project.types';
 import { ApiError } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
@@ -26,10 +26,10 @@ const supabase = createClient(SUPABASE_URL || '', SUPABASE_ANON_KEY || '');
 // OpenAIクライアントの初期化（APIキーがある場合のみ）
 const openai = OPENAI_API_KEY
   ? new OpenAI({
-      apiKey: OPENAI_API_KEY,
-      maxRetries: 3,
-      timeout: 30000,
-    })
+    apiKey: OPENAI_API_KEY,
+    maxRetries: 3,
+    timeout: 30000,
+  })
   : null;
 
 // ユーティリティ関数
@@ -212,7 +212,7 @@ export class AIService {
 ${task.description || '説明なし'}
 
 ## 推定完了時間
-優先度が${task.priority}の場合、約 2-3時間で完了できる見込みです。
+優先度が${task.priority}の場合、約 2-3時間で完了できる見込みです。
 
 ## 注意点
 - テストカバレッジを確保すること
@@ -269,7 +269,7 @@ ${task.description || '説明なし'}
 ${task.description || '説明なし'}
 
 ## 推定完了時間
-優先度が${task.priority}の場合、約 2-3時間で完了できる見込みです。
+優先度が${task.priority}の場合、約 2-3時間で完了できる見込みです。
 
 ## 注意点
 - テストカバレッジを確保すること

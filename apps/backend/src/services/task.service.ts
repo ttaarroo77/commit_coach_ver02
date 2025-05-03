@@ -288,7 +288,7 @@ export class TaskService {
       // サブタスクを取得
       const { data: subtasks, error } = await dbService.select('tasks', {
         filters: { parent_id: parentId, user_id: userId },
-        orderBy: { column: 'order', ascending: true },
+        orderBy: { column: 'position', ascending: true },
       });
 
       if (error) {
