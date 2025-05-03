@@ -1,0 +1,110 @@
+name: Deploy Frontend to Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/frontend/**'
+      - '.github/workflows/frontend-deploy.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/frontend/**'
+
+jobs:
+  test:
+    name: フロントエンドテスト
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/frontend
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Node.js のセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          
+      - name: pnpm のインストール
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.9.0
+          
+      - name: 依存関係のインストール
+        run: pnpm install
+        
+      - name: リントの実行
+        run: pnpm lint
+        
+      - name: テストの実行
+        run: pnpm test
+        
+      - name: ビルドの実行
+        run: pnpm build
+
+  preview_deploy:
+    name: プレビューデプロイ
+    needs: test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Vercel CLI のセットアップ
+        run: npm install -g vercel
+        
+      - name: プレビューデプロイの実行
+        run: |
+          cd apps/frontend
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --confirm
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: プレビューURLのコメント
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+            github.rest.issues.createComment({
+              issue_number,
+              owner,
+              repo,
+              body: `✅ フロントエンドのプレビューデプロイが完了しました！\n🔗 [プレビューを確認](https://commit-coach-frontend-preview.vercel.app)`
+            });
+
+  production_deploy:
+    name: 本番デプロイ
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Vercel CLI のセットアップ
+        run: npm install -g vercel
+        
+      - name: 本番デプロイの実行
+        run: |
+          cd apps/frontend
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --confirm
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: デプロイ結果の通知
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ フロントエンドの本番デプロイが成功しました！"
+            echo "🔗 https://commit-coach.vercel.app にアクセスして確認できます。"
+          else
+            echo "❌ フロントエンドの本番デプロイに失敗しました。ログを確認してください。"
+          fi

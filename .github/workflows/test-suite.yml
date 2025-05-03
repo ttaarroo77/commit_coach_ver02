@@ -1,4 +1,4 @@
-name: CI
+name: Test Suite
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  lint:
-    name: リントとタイプチェック
+  unit-tests:
+    name: ユニットテスト
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,13 +23,11 @@ jobs:
           version: 8.9.0
       - name: 依存関係のインストール
         run: pnpm install
-      - name: ESLint の実行
-        run: pnpm lint
-      - name: TypeScript タイプチェックの実行
-        run: pnpm typecheck
+      - name: ユニットテストの実行
+        run: pnpm test:unit
 
-  build:
-    name: ビルドテスト
+  integration-tests:
+    name: 統合テスト
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -44,19 +42,11 @@ jobs:
           version: 8.9.0
       - name: 依存関係のインストール
         run: pnpm install
-      - name: ビルドの実行
-        run: pnpm build
-      - name: ビルド成果物の保存
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: |
-            apps/frontend/.next
-            apps/backend/dist
-          retention-days: 1
+      - name: 統合テストの実行
+        run: pnpm test:integration
 
-  security:
-    name: セキュリティスキャン
+  e2e-tests:
+    name: E2Eテスト
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -71,5 +61,30 @@ jobs:
           version: 8.9.0
       - name: 依存関係のインストール
         run: pnpm install
-      - name: 依存関係の監査
-        run: pnpm audit
+      - name: E2Eテストの実行
+        run: pnpm test:e2e
+
+  coverage:
+    name: カバレッジレポート
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Node.js のセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - name: pnpm のインストール
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.9.0
+      - name: 依存関係のインストール
+        run: pnpm install
+      - name: カバレッジレポートの生成
+        run: pnpm test:coverage
+      - name: カバレッジのアップロード
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: true

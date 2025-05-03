@@ -78,72 +78,10 @@ export const breakDownTask = async (req: Request, res: Response) => {
       throw new ApiError(404, 'タスクが見つかりません');
     }
 
-    // AIServiceが期待する形式にタスクを変換
-    const statusMap: Record<string, string> = {
-      todo: 'TODO',
-      in_progress: 'IN_PROGRESS',
-      review: 'IN_PROGRESS', // reviewもIN_PROGRESSとして扱う
-      done: 'DONE',
-    };
+    // AIServiceにタスクをそのまま渡す
 
-    const priorityMap: Record<string, string> = {
-      low: 'LOW',
-      medium: 'MEDIUM',
-      high: 'HIGH',
-      urgent: 'HIGH', // urgentはHIGHとして扱う
-    };
-
-    // タスクデータ構造のための型定義
-    interface TaskForAI {
-      title: string;
-      description: string;
-      order: number;
-      project_id: string;
-      status: 'TODO' | 'IN_PROGRESS' | 'DONE';
-      priority: 'LOW' | 'MEDIUM' | 'HIGH';
-      due_date?: string;
-      group_id?: string;
-      parent_id?: string;
-    }
-
-    // taskオブジェクトから必要なプロパティを取得
-    const taskForAI: TaskForAI = {
-      title: task.title,
-      description: task.description || '',
-      order: task.position || 0,
-      project_id: task.project_id || '',
-      status: statusMap[task.status.toLowerCase()] as 'TODO' | 'IN_PROGRESS' | 'DONE',
-      priority: priorityMap[task.priority.toLowerCase()] as 'LOW' | 'MEDIUM' | 'HIGH',
-    };
-
-    // オプショナルプロパティは存在する場合のみ追加
-    if (task.due_date) {
-      // 型判定ではなく、メソッド存在チェックで安全に変換
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const dateObj = task.due_date as any;
-        if (typeof dateObj.toISOString === 'function') {
-          taskForAI.due_date = dateObj.toISOString();
-        } else {
-          taskForAI.due_date = String(task.due_date);
-        }
-      } catch {
-        taskForAI.due_date = String(task.due_date);
-      }
-    }
-
-    // 特別なプロパティを安全に追加
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anyTask = task as any;
-    if (anyTask.group_id) {
-      taskForAI.group_id = anyTask.group_id;
-    }
-
-    if (anyTask.parent_task_id || anyTask.parent_id) {
-      taskForAI.parent_id = anyTask.parent_task_id || anyTask.parent_id;
-    }
-
-    const subtasks = await aiService.breakDownTask(taskForAI);
+    // AIServiceのbreakDownTaskメソッドにタスクをそのまま渡す
+    const subtasks = await aiService.breakDownTask(task);
     res.json(subtasks);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -153,23 +91,24 @@ export const breakDownTask = async (req: Request, res: Response) => {
   }
 };
 
-// 現在のAIServiceにはanalyzeTaskメソッドが実装されていないため、一時的にスタブ実装
+// タスク分析機能
 export const analyzeTask = async (req: Request, res: Response) => {
   try {
-    // パースしたデータを確認（taskIdが使用されることを示す）
-    const parsedData = taskAnalysisSchema.parse(req.body);
+    const { taskId } = taskAnalysisSchema.parse(req.body);
     const userId = req.user?.id;
     if (!userId) {
       throw new ApiError(401, '認証が必要です');
     }
 
-    // 実際の実装がないため、エラーを返す
-    res.status(501).json({
-      error: 'この機能は現在実装されていません',
-      taskId: parsedData.taskId, // 一応送り返して使っていることを示す
-      timestamp: new Date().toISOString(),
-    });
-    return;
+    // タスクを取得
+    const task = await taskService.getTaskById(userId, taskId);
+    if (!task) {
+      throw new ApiError(404, 'タスクが見つかりません');
+    }
+
+    // タスク分析を実行
+    const analysis = await aiService.analyzeTask(task);
+    res.json({ taskId, analysis });
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new ApiError(400, '無効なリクエストデータ', error as Error);
@@ -178,23 +117,31 @@ export const analyzeTask = async (req: Request, res: Response) => {
   }
 };
 
-// 現在のAIServiceにはanalyzeProjectメソッドが実装されていないため、一時的にスタブ実装
+// プロジェクト分析機能
 export const analyzeProject = async (req: Request, res: Response) => {
   try {
-    // パースしたデータを確認（projectIdが使用されることを示す）
-    const parsedData = projectAnalysisSchema.parse(req.body);
+    const { projectId } = projectAnalysisSchema.parse(req.body);
     const userId = req.user?.id;
     if (!userId) {
       throw new ApiError(401, '認証が必要です');
     }
 
-    // 実際の実装がないため、エラーを返す
-    res.status(501).json({
-      error: 'この機能は現在実装されていません',
-      projectId: parsedData.projectId, // 一応送り返して使っていることを示す
-      timestamp: new Date().toISOString(),
+    // プロジェクトを取得
+    // TaskServiceにはgetProjectByIdメソッドがないため、直接データベースから取得する
+    const dbService = (await import('../services/database.service')).default;
+    const { data: projects, error } = await dbService.select('projects', {
+      filters: { id: projectId, user_id: userId },
     });
-    return;
+
+    if (error || !projects || projects.length === 0) {
+      throw new ApiError(404, 'プロジェクトが見つかりません');
+    }
+
+    const project = projects[0];
+
+    // プロジェクト分析を実行
+    const analysis = await aiService.analyzeProject(project);
+    res.json({ projectId, analysis });
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new ApiError(400, '無効なリクエストデータ', error as Error);

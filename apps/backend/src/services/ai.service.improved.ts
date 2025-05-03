@@ -21,7 +21,10 @@ if (!OPENAI_API_KEY) {
 }
 
 // Supabaseクライアントの初期化
-const supabase = createClient(SUPABASE_URL || '', SUPABASE_ANON_KEY || '');
+const supabase = createClient(
+  SUPABASE_URL || '',
+  SUPABASE_ANON_KEY || ''
+);
 
 // OpenAIクライアントの初期化（APIキーがある場合のみ）
 const openai = OPENAI_API_KEY
@@ -88,7 +91,9 @@ export class AIService {
    */
   async saveMessage(userId: string, message: AIMessage): Promise<void> {
     try {
-      const { error } = await supabase.from('ai_messages').insert({ userId, ...message });
+      const { error } = await supabase
+        .from('ai_messages')
+        .insert({ userId, ...message });
 
       if (error) {
         logger.error('AIメッセージの保存中にエラーが発生しました', { error, userId });
@@ -126,10 +131,8 @@ export class AIService {
 
   /**
    * タスクを分解する
-   * @param task 分解対象のタスク
-   * @returns タスク分解結果
    */
-  async breakDownTask(task: any): Promise<TaskBreakdown> {
+  async breakDownTask(task: Task): Promise<TaskBreakdown> {
     // OpenAI APIキーがない場合はモックデータを返す
     if (!openai) {
       return this.getMockTaskBreakdown(task);
@@ -175,7 +178,10 @@ export class AIService {
         lastError = error instanceof Error ? error : new Error(String(error));
 
         // OpenAI APIエラーの場合の特別処理
-        if (lastError.message.includes('rate limit') || lastError.message.includes('timeout')) {
+        if (
+          lastError.message.includes('rate limit') ||
+          lastError.message.includes('timeout')
+        ) {
           // 指数バックオフでリトライ
           const waitTime = Math.pow(2, i) * 1000;
           logger.warn(`OpenAI APIエラー、${waitTime}ms後にリトライします`, {
@@ -200,81 +206,7 @@ export class AIService {
   }
 
   /**
-   * タスク分析を行う
-   * @param task 分析対象のタスク
-   * @returns 分析結果のテキスト
-   */
-  async analyzeTask(task: any): Promise<string> {
-    // OpenAI APIキーがない場合はモックデータを返す
-    if (!openai) {
-      return `
-# タスク分析: ${task.title}
-
-## 概要
-${task.description || '説明なし'}
-
-## 推定完了時間
-優先度が${task.priority}の場合、約 2-3時間で完了できる見込みです。
-
-## 注意点
-- テストカバレッジを確保すること
-- ドキュメントを更新すること
-- 他のタスクとの依存関係を確認すること
-      `;
-    }
-
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'あなたはタスク分析を行うAIアシスタントです。タスクの内容を分析し、実装のポイントや注意点を提案してください。',
-          },
-          {
-            role: 'user',
-            content: `以下のタスクを分析してください：\nタイトル: ${task.title}\n説明: ${task.description || '説明なし'}\nステータス: ${task.status || '不明'}\n優先度: ${task.priority || '中'}`,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 800,
-      });
-
-      const content = response.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error('AIからの応答が空です');
-      }
-
-      return content;
-    } catch (error) {
-      logger.error('タスク分析中にエラーが発生しました', {
-        error,
-        taskId: task.id,
-      });
-      
-      // フォールバック: モックデータを返す
-      return `
-# タスク分析: ${task.title}
-
-## 概要
-${task.description || '説明なし'}
-
-## 推定完了時間
-優先度が${task.priority}の場合、約 2-3時間で完了できる見込みです。
-
-## 注意点
-- テストカバレッジを確保すること
-- ドキュメントを更新すること
-- 他のタスクとの依存関係を確認すること
-      `;
-    }
-  }
-
-  /**
    * プロジェクト分析を行う
-   * @param project 分析対象のプロジェクト
-   * @returns 分析結果のテキスト
    */
   async analyzeProject(project: Project): Promise<string> {
     // OpenAI APIキーがない場合はモックデータを返す

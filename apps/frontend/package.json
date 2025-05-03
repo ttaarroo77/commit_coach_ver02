@@ -2,11 +2,17 @@
   "name": "commit-coach",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "start": "turbo run start",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=\"/__tests__/unit/\"",
+    "test:integration": "jest --testPathPattern=\"/__tests__/integration/\"",
+    "test:e2e": "jest --testPathPattern=\"/__tests__/e2e/\"",
+    "test:coverage": "jest --coverage",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .next",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {

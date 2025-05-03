@@ -3,16 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "turbo run test",
+    "test:unit": "vitest run tests/unit",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "test:accessibility": "vitest run tests/accessibility",
     "test:performance": "vitest run tests/performance",
     "test:integration": "vitest run tests/integration",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "test:e2e": "vitest run tests/e2e",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
+    "typecheck": "tsc --noEmit",
+    "clean": "turbo run clean",
+    "deploy": "turbo run deploy"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",

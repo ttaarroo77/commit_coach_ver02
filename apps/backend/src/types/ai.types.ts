@@ -9,16 +9,20 @@ export const aiConfigSchema = z.object({
 
 export type AIConfig = z.infer<typeof aiConfigSchema>;
 
+// サブタスクのスキーマ定義
+export const subTaskSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  estimatedHours: z.number().optional(),
+  estimatedTime: z.number().optional(), // 後方互換性のため
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+});
+
+export type SubTask = z.infer<typeof subTaskSchema>;
+
 export const taskBreakdownSchema = z.object({
   taskId: z.string(),
-  breakdown: z.array(
-    z.object({
-      title: z.string(),
-      description: z.string().optional(),
-      estimatedTime: z.number().optional(),
-      priority: z.enum(['low', 'medium', 'high']).optional(),
-    })
-  ),
+  breakdown: z.array(subTaskSchema),
 });
 
 export type TaskBreakdown = z.infer<typeof taskBreakdownSchema>;
@@ -26,6 +30,7 @@ export type TaskBreakdown = z.infer<typeof taskBreakdownSchema>;
 export const aiMessageSchema = z.object({
   role: z.enum(['system', 'user', 'assistant']),
   content: z.string(),
+  timestamp: z.date().optional(),
 });
 
 export type AIMessage = z.infer<typeof aiMessageSchema>;

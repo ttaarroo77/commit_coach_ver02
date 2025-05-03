@@ -1,58 +1,40 @@
-# プロジェクト整理実行チェックリスト
+# 実行チェックリスト
 
-## フロントエンド整理
+## プロジェクト構造の整理
+- [x] モノレポ構成の初期化
+- [x] 開発環境のセットアップ
+- [x] CI/CDパイプラインの準備
+- [ ] フロントエンドの基盤構築
+- [ ] バックエンドの基盤構築
 
-- [ ] 重複ディレクトリの削除確認
-  - [x] `apps/frontend/apps` ディレクトリのバックアップと削除
-  - [x] `apps/frontend/src/src` ディレクトリのバックアップと削除
-  - [ ] `apps/frontend/src/app/app` ディレクトリの内容を確認
+## フロントエンド再構築
+- [ ] 認証フローの実装
+- [ ] ダッシュボードの実装
+- [ ] プロジェクト管理機能の実装
+- [ ] タスク管理機能の実装
+- [ ] UIコンポーネントの実装
 
-- [ ] パスエイリアスの修正
-  - [x] `apps/frontend/src/hooks/useProjects.ts`
-  - [x] `apps/frontend/src/types/project.ts`
-  - [x] `apps/frontend/src/types/task.ts`
-  - [x] `apps/frontend/src/app/components/ui/command.tsx`
-  - [x] `apps/frontend/src/app/components/ui/badge.tsx`
-  - [x] `apps/frontend/src/app/components/ui/button.tsx`
-  - [x] `apps/frontend/src/app/components/ui/input.tsx`
-  - [x] `apps/frontend/src/components/LinkValidator.tsx`
-  - [x] `apps/frontend/src/app/layout.tsx`
-  - [ ] その他のパスエイリアスを使用しているファイル
+## バックエンド再構築
+- [ ] APIエンドポイントの設計
+- [ ] データベーススキーマの設計
+- [ ] 認証システムの実装
+- [ ] プロジェクト管理APIの実装
+- [ ] タスク管理APIの実装
 
-- [ ] ディレクトリ構造の整理
-  - [ ] `apps/frontend/src/app/app` → `apps/frontend/src/app`
-  - [x] `apps/frontend/src/app/components` → バックアップ済み
-  - [x] `apps/frontend/src/app/contexts` → バックアップ済み
-  - [x] `apps/frontend/src/app/hooks` → バックアップ済み
-  - [x] `apps/frontend/src/app/lib` → バックアップ済み
-  - [x] `apps/frontend/src/app/types` → バックアップ済み
+## テスト
+- [ ] ユニットテストの実装
+- [ ] 統合テストの実装
+- [ ] パフォーマンステストの実装
+- [ ] セキュリティテストの実装
 
-## バックエンド整理
+## デプロイメント
+- [ ] ステージング環境の構築
+- [ ] 本番環境の構築
+- [ ] モニタリングシステムの構築
+- [ ] ログ管理システムの構築
 
-- [x] 動作確認済み（ポート3002でサーバー起動）
-- [ ] 不要ファイルの削除
-- [ ] 設定ファイルの確認
-
-## プロジェクト全体の整理
-
-- [ ] バックアップディレクトリの整理
-  - [ ] `project_backup` - 必要なファイルを確認後削除
-  - [ ] `babel_backup` - 不要なら削除
-  - [ ] `backup` - 不要なら削除
-  - [ ] `zips` - 不要なら削除
-
-- [ ] 設定ファイルの整理
-  - [ ] 重複するJest設定ファイル
-  - [ ] 重複するVite設定ファイル
-  - [ ] 古いバックアップファイル
-
-- [ ] ドキュメントの整理
-  - [ ] 古いバックアッププラン
-  - [ ] 重複するドキュメント
-
-## 最終確認
-
-- [ ] バックエンドの起動確認
-- [ ] フロントエンドの起動確認
-- [ ] フロントエンド・バックエンド連携確認
-- [ ] ビルド確認
+## ドキュメント
+- [ ] アーキテクチャ設計書の作成
+- [ ] API仕様書の作成
+- [ ] ユーザーマニュアルの作成
+- [ ] 開発者ガイドの作成

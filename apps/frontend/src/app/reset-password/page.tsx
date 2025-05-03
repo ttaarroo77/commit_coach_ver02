@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { RegisterForm } from '@/components/auth/register-form';
+import { ResetPasswordForm } from '@/components/auth/reset-password-form';
 
-export default async function RegisterPage() {
+export default async function ResetPasswordPage() {
   const cookieStore = cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,7 +25,7 @@ export default async function RegisterPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <RegisterForm />
+      <ResetPasswordForm />
     </div>
   );
-}
+} 
