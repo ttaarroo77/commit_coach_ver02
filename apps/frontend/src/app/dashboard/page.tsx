@@ -4,11 +4,11 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { DragDropContext, Droppable, Draggable, type DropResult } from "react-beautiful-dnd"
-import { Button } from "../../../components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
-import { Checkbox } from "../../../components/ui/checkbox"
-import { Sidebar } from "../../../components/sidebar"
-import { AIChat } from "../../../components/ai-chat"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Sidebar } from "@/components/sidebar"
+import { AIChat } from "@/components/ai-chat"
 import {
   ChevronDown,
   ChevronRight,

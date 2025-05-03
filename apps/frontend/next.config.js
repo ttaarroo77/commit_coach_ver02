@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const webpack = require('webpack');
+const path = require('path');
 
 const nextConfig = {
   reactStrictMode: true,
@@ -21,6 +22,19 @@ const nextConfig = {
       stream: require.resolve('stream-browserify'),
       util: require.resolve('util/'),
     };
+    
+    // パスエイリアスの設定
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@lib': path.resolve(__dirname, './src/lib'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@contexts': path.resolve(__dirname, './src/contexts'),
+      '@types': path.resolve(__dirname, './src/types'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+    };
+    
     config.plugins.push(
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
