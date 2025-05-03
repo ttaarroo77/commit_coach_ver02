@@ -1,11 +1,16 @@
 /** @type {import('next').NextConfig} */
+const webpack = require('webpack');
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
     domains: ['avatars.githubusercontent.com'],
   },
   experimental: {
-    serverActions: true,
+    serverActions: {
+      // Next.js 15.3.1ではboolean値ではなくオブジェクトが必要
+      allowedOrigins: ['localhost:3000'],
+    },
   },
   webpack: (config) => {
     // Node コア Polyfill を手動注入
@@ -17,7 +22,7 @@ const nextConfig = {
       util: require.resolve('util/'),
     };
     config.plugins.push(
-      new (require('webpack')).ProvidePlugin({
+      new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
         process: 'process/browser',
       })
@@ -26,4 +31,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
