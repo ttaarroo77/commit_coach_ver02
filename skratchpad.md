@@ -148,3 +148,7 @@ curl -X GET http://localhost:3000/api/projects/999
 - Supabase 2.x は `signInWithPassword` が非推奨 → `signInWithPasswordless` に移行
 - react-beautiful-dndとFramer Motionの併用時は、Draggableコンポーネント内で直接motion.divを使わず、通常のdivでラップする必要がある
 - SWRのキャッシュ戦略は適切に設定することでパフォーマンスが向上する
+
+## 🛠️ 技術的負債・暫定対応メモ
+- [ ] SupabaseのURL/KEYは現状AuthProvider.tsxにベタ打ち。ポートフォリオ・検証用の暫定対応。
+- [ ] 本番・公開前に必ず.env.local（または.env）で `NEXT_PUBLIC_SUPABASE_URL` `NEXT_PUBLIC_SUPABASE_ANON_KEY` として環境変数管理に修正すること。

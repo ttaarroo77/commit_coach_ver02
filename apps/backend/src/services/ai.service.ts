@@ -69,9 +69,7 @@ export class AIService {
    */
   async saveUserConfig(userId: string, config: AIConfig): Promise<void> {
     try {
-      const { error } = await supabase
-        .from('ai_configs')
-        .upsert({ userId, ...config });
+      const { error } = await supabase.from('ai_configs').upsert({ userId, ...config });
 
       if (error) {
         logger.error('AI設定の保存中にエラーが発生しました', { error, userId });
@@ -129,7 +127,7 @@ export class AIService {
    * @param task 分解対象のタスク
    * @returns タスク分解結果
    */
-  async breakDownTask(task: any): Promise<TaskBreakdown> {
+  async breakDownTask(task: Task): Promise<TaskBreakdown> {
     // OpenAI APIキーがない場合はモックデータを返す
     if (!openai) {
       return this.getMockTaskBreakdown(task);
@@ -153,7 +151,7 @@ export class AIService {
             },
             {
               role: 'user',
-              content: `以下のタスクを分解してください：\nタイトル: ${task.title}\n説明: ${task.description || '説明なし'}`,
+              content: prompt,
             },
           ],
           temperature: 0.7,
@@ -194,7 +192,7 @@ export class AIService {
 
     // すべてのリトライが失敗した場合
     logger.error('タスク分解の最大リトライ回数に達しました', { taskId, error: lastError });
-    
+
     // フォールバック: モックデータを返す
     return this.getMockTaskBreakdown(task);
   }
@@ -204,7 +202,7 @@ export class AIService {
    * @param task 分析対象のタスク
    * @returns 分析結果のテキスト
    */
-  async analyzeTask(task: any): Promise<string> {
+  async analyzeTask(task: Task): Promise<string> {
     // OpenAI APIキーがない場合はモックデータを返す
     if (!openai) {
       return `
@@ -224,6 +222,16 @@ ${task.description || '説明なし'}
     }
 
     try {
+      const prompt = `以下のタスクを分析し、実装のヒントやアドバイスを提供してください：
+タイトル: ${task.title}
+説明: ${task.description || '説明なし'}
+
+回答は以下の形式で提供してください：
+1. タスクの概要
+2. 実装のアプローチ
+3. 考慮すべき点
+4. 技術的なヒント`;
+
       const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
@@ -234,7 +242,7 @@ ${task.description || '説明なし'}
           },
           {
             role: 'user',
-            content: `以下のタスクを分析してください：\nタイトル: ${task.title}\n説明: ${task.description || '説明なし'}\nステータス: ${task.status || '不明'}\n優先度: ${task.priority || '中'}`,
+            content: prompt,
           },
         ],
         temperature: 0.7,
@@ -252,7 +260,7 @@ ${task.description || '説明なし'}
         error,
         taskId: task.id,
       });
-      
+
       // フォールバック: モックデータを返す
       return `
 # タスク分析: ${task.title}
@@ -283,6 +291,17 @@ ${task.description || '説明なし'}
     }
 
     try {
+      const prompt = `以下のプロジェクトを分析し、進捗状況や改善点、次のステップについてアドバイスを提供してください：
+プロジェクト名: ${project.title}
+説明: ${project.description || '説明なし'}
+ステータス: ${project.status || '不明'}
+
+回答は以下の形式で提供してください：
+1. プロジェクトの概要
+2. 現在の進捗状況
+3. 改善点
+4. 次のステップ`;
+
       const response = await openai.chat.completions.create({
         model: 'gpt-4',
         messages: [
@@ -293,7 +312,7 @@ ${task.description || '説明なし'}
           },
           {
             role: 'user',
-            content: `以下のプロジェクトを分析してください：\nタイトル: ${project.title}\n説明: ${project.description || '説明なし'}\n進捗状況: ${project.status || '不明'}`,
+            content: prompt,
           },
         ],
         temperature: 0.7,
@@ -311,7 +330,7 @@ ${task.description || '説明なし'}
         error,
         projectId: project.id,
       });
-      
+
       // フォールバック: モックデータを返す
       return this.getMockProjectAnalysis(project);
     }
@@ -323,11 +342,7 @@ ${task.description || '説明なし'}
   async suggestCommits(taskId: string, description: string): Promise<string[]> {
     // OpenAI APIキーがない場合はモックデータを返す
     if (!openai) {
-      return [
-        'feat: タスク管理機能の実装',
-        'fix: バグ修正',
-        'docs: ドキュメント更新',
-      ];
+      return ['feat: タスク管理機能の実装', 'fix: バグ修正', 'docs: ドキュメント更新'];
     }
 
     try {
@@ -362,20 +377,12 @@ ${task.description || '説明なし'}
 
       return commits.length > 0
         ? commits
-        : [
-            'feat: タスク管理機能の実装',
-            'fix: バグ修正',
-            'docs: ドキュメント更新',
-          ];
+        : ['feat: タスク管理機能の実装', 'fix: バグ修正', 'docs: ドキュメント更新'];
     } catch (error) {
       logger.error('コミット提案中にエラーが発生しました', { error, taskId });
-      
+
       // フォールバック: モックデータを返す
-      return [
-        'feat: タスク管理機能の実装',
-        'fix: バグ修正',
-        'docs: ドキュメント更新',
-      ];
+      return ['feat: タスク管理機能の実装', 'fix: バグ修正', 'docs: ドキュメント更新'];
     }
   }
 
@@ -392,7 +399,7 @@ ${task.description || '説明なし'}
 
       for (const line of lines) {
         const trimmedLine = line.trim();
-        
+
         // サブタスクのタイトル行を検出
         const titleMatch = trimmedLine.match(/^(\d+)\.\s*(.+)$/);
         if (titleMatch) {
@@ -400,7 +407,7 @@ ${task.description || '説明なし'}
           if (currentSubtask && currentSubtask.title) {
             subtasks.push(currentSubtask as SubTask);
           }
-          
+
           // 新しいサブタスクを開始
           currentSubtask = {
             title: titleMatch[2],
@@ -425,14 +432,17 @@ ${task.description || '説明なし'}
         const priorityMatch = trimmedLine.match(/優先度:?\s*(高|中|低)/);
         if (priorityMatch) {
           const priority = priorityMatch[1];
-          currentSubtask.priority = 
-            priority === '高' ? 'high' :
-            priority === '低' ? 'low' : 'medium';
+          currentSubtask.priority =
+            priority === '高' ? 'high' : priority === '低' ? 'low' : 'medium';
           continue;
         }
 
         // それ以外の行は説明として追加
-        if (trimmedLine && !trimmedLine.startsWith('-') && currentSubtask.description !== undefined) {
+        if (
+          trimmedLine &&
+          !trimmedLine.startsWith('-') &&
+          currentSubtask.description !== undefined
+        ) {
           currentSubtask.description += (currentSubtask.description ? '\n' : '') + trimmedLine;
         }
       }
@@ -475,7 +485,7 @@ ${task.description || '説明なし'}
       return subtasks;
     } catch (error) {
       logger.error('タスク分解の解析中にエラーが発生しました', { error, content });
-      
+
       // エラー時はデフォルトのサブタスクを返す
       return [
         {
@@ -511,7 +521,7 @@ ${task.description || '説明なし'}
    */
   private getMockTaskBreakdown(task: Task): TaskBreakdown {
     logger.info('モックのタスク分解を使用します', { taskId: task.id });
-    
+
     return {
       taskId: task.id || 'unknown',
       breakdown: [
@@ -554,7 +564,7 @@ ${task.description || '説明なし'}
    */
   private getMockProjectAnalysis(project: Project): string {
     logger.info('モックのプロジェクト分析を使用します', { projectId: project.id });
-    
+
     return `
 # ${project.title} プロジェクト分析
 
