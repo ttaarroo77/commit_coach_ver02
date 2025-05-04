@@ -233,7 +233,7 @@ stakeholders: ["dev_team", "ai_assistant"]
 - [x] **26** `/register` & `/password/reset` ページ (2025-05-04)
 - [x] **27** react-hook‑form + zod バリデーション (2025-05-04)
 - [x] **28** ローディング & エラーメッセージ (2025-05-04)
-- [ ] **29** commit `feat(frontend): auth flow` (2025-04-28)
+- [x] **29** commit `feat(frontend): auth flow` (2025-05-04)
 - [ ] **30** RTL ユニットテスト(Auth) (2025-04-30)
 - [ ] **31** `/dashboard` 骨格 (2025-04-28)
 - [ ] **32** AIチャットプレースホルダ (2025-04-28)

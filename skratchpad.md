@@ -234,11 +234,11 @@ curl -X GET http://localhost:3000/api/projects/999
 
 ## ✅ セーブポイント予定（backend開発）
 
-- [予定] テスト・モックの order→position 置換＆enum値統一後、「npm run dev」でエラー0（型エラーは残る可能性あり）
-- [予定] OpenAI SDK content型エラー修正後、「npm run dev」「typecheck」両方エラー0
-- [予定] テストディレクトリの型・モック修正完了後、「typecheck」「test」両方エラー0
-- [予定] DB/RPC（order→position）・CI/CD修正後、CI緑化
-- [予定] 主要ドキュメント・README更新後
+- [x] テスト・モックの order→position 置換＆enum値統一後、「npm run dev」でエラー0（型エラーは残る可能性あり）
+- [x] OpenAI SDK content型エラー修正後、「npm run dev」「typecheck」両方エラー0
+- [x] テストディレクトリの型・モック修正完了後、「typecheck」「test」両方エラー0
+- [x] DB/RPC（order→position）・CI/CD修正後、CI緑化
+- [x] 主要ドキュメント・README更新後
 
 ---
 
