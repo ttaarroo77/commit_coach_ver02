@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/auth-context';
 
 const formSchema = z.object({
+  name: z.string().min(1, '名前を入力してください'),
   email: z.string().email('有効なメールアドレスを入力してください'),
   password: z.string().min(8, 'パスワードは8文字以上で入力してください'),
   confirmPassword: z.string(),
@@ -28,6 +29,7 @@ export function RegisterForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -37,7 +39,7 @@ export function RegisterForm() {
   const onSubmit = async (values: FormValues) => {
     try {
       setIsLoading(true);
-      await register(values.email, values.password);
+      await register(values.email, values.password, values.name);
     } catch (error) {
       console.error('Registration error:', error);
     } finally {
@@ -54,6 +56,19 @@ export function RegisterForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>お名前</FormLabel>
+                  <FormControl>
+                    <Input placeholder="山田 太郎" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"

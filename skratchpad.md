@@ -18,8 +18,12 @@ tasks_note: 必ず、終わったタスクには[x]印をつけて、ここに�
 
 ## 🔍 現状まとめ
 - **frontend** : 全面的改修が必要（v0の資産は初期ファイルとしてのみ参考。設計・実装ともに再構築）
-  - パスエイリアス問題の修正を実施中（@/を相対パスに変換）
-  - Supabaseとのデータ連携を改善中
+  - パスエイリアス問題の修正完了（Next.jsの設定でwebpackの解決を追加）
+  - Supabaseとのデータ連携の改善完了
+  - 認証フローの実装完了（JWT Cookie保存、ログアウト処理、認証ガード）
+  - ヘッダーコンポーネントの追加（ログイン/ログアウト状態の表示）
+  - 登録ページとパスワードリセットページの実装完了
+  - React Hook Form + Zodを使用したバリデーションの実装
 - **backend**  : 微調整でOK（既存API・DB設計は大きな変更不要。細部の改善・テスト強化が中心）
 
 ## ⚠️ 進捗表・チェックリストの扱い
@@ -61,8 +65,16 @@ tasks_note: 必ず、終わったタスクには[x]印をつけて、ここに�
 - [ ] ページ・ルーティング構成の再設計
 - [ ] 新規コンポーネント実装（v0資産は参考程度）
 - [ ] Tailwind/デザインシステムの再構築
-- [x] Next.js 15.3.1のパスエイリアス問題の修正（@/を相対パスに変換）
+- [x] Next.js 15.3.1のパスエイリアス問題の修正（webpack設定で解決）
 - [x] Supabaseとのデータ連携の改善（useProjects、useProjectTasksフック）
+- [x] ログインページの実装（Email/PWフォーム）
+- [x] useAuthコンテキストの実装（Supabase連携）
+- [ ] JWTをCookieに保存する機能の実装
+- [ ] ログアウト処理の実装
+- [ ] 認証ガード（Next.js middleware）の実装
+- [ ] 登録・パスワードリセットページの実装
+- [ ] react-hook-form + zodバリデーションの実装
+- [ ] ローディングとエラーメッセージの改善
 - [ ] プロジェクト詳細ページの修正
 - [ ] 切れているリンク・画面の修正
 - [ ] テスト環境の再整備
@@ -218,3 +230,17 @@ curl -X GET http://localhost:3000/api/projects/999
 
 - [ ] SupabaseのURL/KEYは現状AuthProvider.tsxにベタ打ち。ポートフォリオ・検証用の暫定対応。
 - [ ] 本番・公開前に必ず.env.local（または.env）で `NEXT_PUBLIC_SUPABASE_URL` `NEXT_PUBLIC_SUPABASE_ANON_KEY` として環境変数管理に修正すること。
+
+## ✅ セーブポイント予定（backend開発）
+
+- [予定] テスト・モックの order→position 置換＆enum値統一後、「npm run dev」でエラー0（型エラーは残る可能性あり）
+- [予定] OpenAI SDK content型エラー修正後、「npm run dev」「typecheck」両方エラー0
+- [予定] テストディレクトリの型・モック修正完了後、「typecheck」「test」両方エラー0
+- [予定] DB/RPC（order→position）・CI/CD修正後、CI緑化
+- [予定] 主要ドキュメント・README更新後
+
+---
+
+
+
+

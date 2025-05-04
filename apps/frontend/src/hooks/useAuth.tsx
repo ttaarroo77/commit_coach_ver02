@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { getAuthToken, removeAuthToken } from '@/lib/auth';
 
 // AuthフックのReturn型を定義
 type UseAuthReturn = {
@@ -13,13 +14,41 @@ type UseAuthReturn = {
   resetPassword: (email: string) => Promise<void>;
   isLoading: boolean;
   error: string | null;
+  isAuthenticated: boolean;
 };
 
 export function useAuth(): UseAuthReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
   const supabase = createClientComponentClient();
+  
+  // 初期化時にJWTトークンの存在を確認
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = getAuthToken();
+      setIsAuthenticated(!!token);
+      
+      // セッションの有効性を確認
+      if (token) {
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          if (error || !data.session) {
+            console.warn('保存されたトークンが無効です:', error);
+            removeAuthToken();
+            setIsAuthenticated(false);
+          }
+        } catch (err) {
+          console.error('セッション確認エラー:', err);
+          removeAuthToken();
+          setIsAuthenticated(false);
+        }
+      }
+    };
+    
+    checkAuth();
+  }, [supabase.auth]);
 
   const login = useCallback(async (email: string, password: string) => {
     try {
@@ -126,5 +155,6 @@ export function useAuth(): UseAuthReturn {
     resetPassword,
     isLoading,
     error,
+    isAuthenticated,
   };
 } 

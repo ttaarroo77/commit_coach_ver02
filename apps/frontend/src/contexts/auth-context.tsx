@@ -3,8 +3,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { getSupabaseClient } from "@/lib/supabase"
-import { signIn, signUp, signOut, getCurrentUser } from "@/lib/auth"
-import type { User } from "@supabase/supabase-js"
+import { signIn, signUp, signOut, getCurrentUser, getAuthToken } from "@/lib/auth"
+import type { User, Session, AuthChangeEvent } from "@supabase/supabase-js"
 import Cookies from "js-cookie"
 
 interface AuthContextType {
@@ -14,6 +14,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, name: string) => Promise<void>
   logout: () => Promise<void>
+  resetPassword: (email: string) => Promise<void>
+  isAuthenticated?: boolean
 }
 
 // デフォルト値を提供
@@ -24,6 +26,7 @@ const defaultContextValue: AuthContextType = {
   login: async () => {},
   register: async () => {},
   logout: async () => {},
+  resetPassword: async () => {},
 }
 
 const AuthContext = createContext<AuthContextType>(defaultContextValue)
@@ -48,7 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: "demo-user-id",
         email: "demo@example.com",
         user_metadata: { name: "デモユーザー" },
-      } as User
+        app_metadata: {},
+        aud: "authenticated",
+        created_at: new Date().toISOString(),
+        role: "",
+        updated_at: new Date().toISOString()
+      } as unknown as User
       setUser(demoUser)
       setLoading(false)
       return
@@ -57,27 +65,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 初期ロード時にユーザー情報を取得
     async function loadUser() {
       try {
-        const currentUser = await getCurrentUser()
-        setUser(currentUser || null)
+        // クッキーからJWTトークンを確認
+        const token = getAuthToken();
+        
+        if (token) {
+          console.log("保存されたトークンを使用してセッションを復元します");
+          // トークンが存在する場合、ユーザー情報を取得
+          const currentUser = await getCurrentUser();
+          if (currentUser) {
+            setUser(currentUser);
+          } else {
+            // トークンはあるがユーザー情報が取得できない場合
+            console.warn("トークンは存在しますが、ユーザー情報を取得できませんでした");
+            // クッキーを削除するなどの処理が必要かもしれません
+          }
+        } else {
+          // トークンがない場合は未認証状態
+          setUser(null);
+        }
       } catch (err) {
-        console.error("ユーザー情報の取得に失敗しました", err)
+        console.error("ユーザー情報の取得に失敗しました", err);
+        setUser(null);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
     // 認証状態の変更を監視
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+      console.log("認証状態が変更されました:", event);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-    loadUser()
+    loadUser();
 
     return () => {
-      subscription.unsubscribe()
+      subscription.unsubscribe();
     }
   }, [router])
 
@@ -107,7 +133,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           id: "demo-user-id",
           email: "demo@example.com",
           user_metadata: { name: "デモユーザー" },
-        } as User
+          app_metadata: {},
+          aud: "authenticated",
+          created_at: new Date().toISOString(),
+          role: "",
+          updated_at: new Date().toISOString()
+        } as unknown as User
 
         setUser(demoUser)
         router.push("/dashboard")
@@ -171,8 +202,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // パスワードリセット処理
+  const resetPassword = async (email: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+    } catch (err: any) {
+      const errorMessage = err.message ? authErrorMessages[err.message] || err.message : "パスワードリセットに失敗しました";
+      setError(errorMessage);
+      console.error("パスワードリセットエラー:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, register, logout }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, loading, error, login, register, logout, resetPassword }}>{children}</AuthContext.Provider>
   )
 }
 

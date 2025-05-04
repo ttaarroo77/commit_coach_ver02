@@ -1,31 +1,28 @@
-import { redirect } from 'next/navigation';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+"use client";
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { RegisterForm } from '@/components/auth/register-form';
+import { useAuth } from '@/contexts/auth-context';
+import { Toaster } from 'sonner';
 
-export default async function RegisterPage() {
-  const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
+export default function RegisterPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  // 認証済みユーザーはダッシュボードにリダイレクト
+  useEffect(() => {
+    if (user && !loading) {
+      router.push('/dashboard');
     }
-  );
-
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (session) {
-    redirect('/projects');
-  }
+  }, [user, loading, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <RegisterForm />
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 bg-muted/20">
+      <div className="w-full max-w-md">
+        <RegisterForm />
+      </div>
+      <Toaster position="top-right" richColors />
     </div>
   );
 }

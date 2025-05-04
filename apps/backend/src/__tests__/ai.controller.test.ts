@@ -3,6 +3,7 @@ import { AIService } from '../services/ai.service';
 import { TaskService } from '../services/task.service';
 import * as aiController from '../controllers/ai.controller';
 import { ApiError } from '../middleware/errorHandler';
+import { TaskPriority, TaskStatus } from '../types/task.types';
 
 // モック
 jest.mock('../services/ai.service');
@@ -139,8 +140,8 @@ describe('AIController', () => {
         id: 'task-id',
         title: 'テストタスク',
         description: 'テスト用のタスクです',
-        status: 'TODO',
-        priority: 'HIGH'
+        status: TaskStatus.TODO,
+        priority: TaskPriority.HIGH
       };
       (TaskService.prototype.getTaskById as jest.Mock).mockResolvedValue(mockTask);
 
@@ -194,8 +195,8 @@ describe('AIController', () => {
         id: 'task-id',
         title: 'テストタスク',
         description: 'テスト用のタスクです',
-        status: 'TODO',
-        priority: 'HIGH'
+        status: TaskStatus.TODO,
+        priority: TaskPriority.HIGH
       };
       (TaskService.prototype.getTaskById as jest.Mock).mockResolvedValue(mockTask);
 
@@ -232,9 +233,9 @@ describe('AIController', () => {
         id: 'project-id',
         title: 'テストプロジェクト',
         description: 'テスト用のプロジェクトです',
-        status: 'IN_PROGRESS'
+        status: TaskStatus.IN_PROGRESS
       };
-      
+
       jest.mock('../services/database.service', () => ({
         __esModule: true,
         default: {

@@ -141,6 +141,8 @@ export class AIService {
 
     for (let i = 0; i < maxRetries; i++) {
       try {
+        // promptを組み立て
+        const prompt = `以下のタスクを分解してください：\nタイトル: ${task.title}\n説明: ${task.description || '説明なし'}`;
         const response = await openai.chat.completions.create({
           model: 'gpt-4',
           messages: [
