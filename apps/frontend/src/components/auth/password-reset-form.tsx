@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 const formSchema = z.object({
   email: z.string().email('有効なメールアドレスを入力してください'),
@@ -21,6 +23,7 @@ export function PasswordResetForm() {
   const { resetPassword } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -32,11 +35,13 @@ export function PasswordResetForm() {
   const onSubmit = async (values: FormValues) => {
     try {
       setIsLoading(true);
+      setError(null);
       await resetPassword(values.email);
       setIsSubmitted(true);
       toast.success('パスワードリセットのメールを送信しました');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Password reset error:', error);
+      setError(error?.message || 'パスワードリセットに失敗しました。もう一度お試しください。');
       toast.error('パスワードリセットに失敗しました');
     } finally {
       setIsLoading(false);
@@ -52,6 +57,7 @@ export function PasswordResetForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {!isSubmitted && <ErrorMessage message={error || null} dismissible />}
         {isSubmitted ? (
           <div className="text-center py-4">
             <p className="mb-4">
@@ -78,7 +84,14 @@ export function PasswordResetForm() {
                 )}
               />
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? '送信中...' : 'リセットリンクを送信'}
+                {isLoading ? (
+                  <>
+                    <LoadingSpinner size="sm" className="mr-2" />
+                    送信中...
+                  </>
+                ) : (
+                  'リセットリンクを送信'
+                )}
               </Button>
             </form>
           </Form>

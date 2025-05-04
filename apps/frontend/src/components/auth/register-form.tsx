@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/auth-context';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 const formSchema = z.object({
   name: z.string().min(1, '名前を入力してください'),
@@ -25,6 +27,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function RegisterForm() {
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -39,9 +42,11 @@ export function RegisterForm() {
   const onSubmit = async (values: FormValues) => {
     try {
       setIsLoading(true);
+      setError(null);
       await register(values.email, values.password, values.name);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
+      setError(error?.message || '登録に失敗しました。もう一度お試しください。');
     } finally {
       setIsLoading(false);
     }
@@ -54,6 +59,8 @@ export function RegisterForm() {
         <CardDescription>アカウントを作成して始めましょう</CardDescription>
       </CardHeader>
       <CardContent>
+        {isLoading && <LoadingSpinner />}
+        <ErrorMessage message={error || null} dismissible />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -109,7 +116,14 @@ export function RegisterForm() {
               )}
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? '登録中...' : '登録'}
+              {isLoading ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  登録中...
+                </>
+              ) : (
+                '登録'
+              )}
             </Button>
           </form>
         </Form>
