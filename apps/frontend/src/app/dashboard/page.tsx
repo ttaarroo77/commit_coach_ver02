@@ -758,7 +758,7 @@ export default function DashboardPage() {
 
                     {group.expanded && (
                       <CardContent className="p-4">
-                        <Droppable droppableId={group.id} type="task" isDropDisabled={false}>
+                        <Droppable droppableId={group.id} type="task" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
                           {(provided: any, snapshot: any) => (
                             <div
                               className={`space-y-4 relative ${snapshot.isDraggingOver ? "bg-gray-50/50 rounded-lg p-2" : ""}`}

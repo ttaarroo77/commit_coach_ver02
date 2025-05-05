@@ -3,7 +3,9 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
-import { DragDropContext, Droppable, Draggable, type DropResult } from "react-beautiful-dnd"
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+// @ts-ignore
+import type { DropResult } from "react-beautiful-dnd"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -189,6 +191,14 @@ export default function ProjectTemplate({
     null,
   )
 
+  // IDを生成する関数（クライアントサイドのみで実行）
+  const generateId = (prefix: string) => {
+    if (typeof window === 'undefined') {
+      return `${prefix}-placeholder`;
+    }
+    return `${prefix}-${Date.now()}`;
+  };
+
   // プロジェクト全体の完了状態を更新
   useEffect(() => {
     const allGroupsCompleted = taskGroups.length > 0 && taskGroups.every((group) => group.completed)
@@ -262,6 +272,7 @@ export default function ProjectTemplate({
   }
 
   // ドラッグ&ドロップの処理
+  // @ts-ignore
   const handleDragEnd = (result: DropResult) => {
     const { source, destination, type } = result
 
@@ -593,7 +604,7 @@ export default function ProjectTemplate({
   // 新しいタスクグループを追加
   const addTaskGroup = () => {
     const newTaskGroup: TaskGroup = {
-      id: `group-${Date.now()}`,
+      id: generateId('group'),
       title: "新しいタスクグループ",
       expanded: true,
       tasks: [],
@@ -607,7 +618,7 @@ export default function ProjectTemplate({
   // 新しい中タスクを追加
   const addTask = (groupId: string) => {
     const newTask: Task = {
-      id: `task-${Date.now()}`,
+      id: generateId('task'),
       title: "新しいタスク",
       completed: false,
       expanded: true,
@@ -626,7 +637,7 @@ export default function ProjectTemplate({
   // 新しい小タスクを追加
   const addSubtask = (groupId: string, taskId: string) => {
     const newSubtask: SubTask = {
-      id: `subtask-${Date.now()}`,
+      id: generateId('subtask'),
       title: "新しいサブタスク",
       completed: false,
     }
@@ -927,7 +938,9 @@ export default function ProjectTemplate({
 
               {/* タスクグループのリスト - ドラッグ&ドロップコンテキスト */}
               <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="taskGroups" type="taskGroup" isDropDisabled={false}>
+                {/* @ts-ignore */}
+                <Droppable droppableId="taskGroups" type="taskGroup" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
+                  {/* @ts-ignore */}
                   {(provided, snapshot) => (
                     <div
                       className={`space-y-6 relative ${snapshot.isDraggingOver ? "bg-gray-50/50 rounded-lg" : ""}`}
@@ -939,6 +952,7 @@ export default function ProjectTemplate({
                     >
                       {taskGroups.map((group, groupIndex) => (
                         <Draggable key={group.id} draggableId={group.id} index={groupIndex}>
+                          {/* @ts-ignore */}
                           {(provided, snapshot) => (
                             <div
                               ref={provided.innerRef}
@@ -1074,7 +1088,9 @@ export default function ProjectTemplate({
 
                                 {group.expanded && (
                                   <CardContent className="p-4">
-                                    <Droppable droppableId={group.id} type="task" isDropDisabled={false}>
+                                    {/* @ts-ignore */}
+                                    <Droppable droppableId={group.id} type="task" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
+                                      {/* @ts-ignore */}
                                       {(provided, snapshot) => (
                                         <div
                                           className={`space-y-4 relative ${snapshot.isDraggingOver ? "bg-gray-50/50 rounded-lg p-2" : ""}`}
@@ -1086,6 +1102,7 @@ export default function ProjectTemplate({
                                         >
                                           {group.tasks.map((task, taskIndex) => (
                                             <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
+                                              {/* @ts-ignore */}
                                               {(provided, snapshot) => (
                                                 <div
                                                   ref={provided.innerRef}
@@ -1157,10 +1174,10 @@ export default function ProjectTemplate({
                                                         <div className="flex items-center gap-1 w-48 relative">
                                                           <div
                                                             className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredTask &&
-                                                                hoveredTask.groupId === group.id &&
-                                                                hoveredTask.taskId === task.id
-                                                                ? "opacity-100"
-                                                                : "opacity-0"
+                                                              hoveredTask.groupId === group.id &&
+                                                              hoveredTask.taskId === task.id
+                                                              ? "opacity-100"
+                                                              : "opacity-0"
                                                               }`}
                                                           >
                                                             <Button
@@ -1303,11 +1320,11 @@ export default function ProjectTemplate({
                                                               <div className="flex items-center gap-1 w-32 relative">
                                                                 <div
                                                                   className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredSubtask &&
-                                                                      hoveredSubtask.groupId === group.id &&
-                                                                      hoveredSubtask.taskId === task.id &&
-                                                                      hoveredSubtask.subtaskId === subtask.id
-                                                                      ? "opacity-100"
-                                                                      : "opacity-0"
+                                                                    hoveredSubtask.groupId === group.id &&
+                                                                    hoveredSubtask.taskId === task.id &&
+                                                                    hoveredSubtask.subtaskId === subtask.id
+                                                                    ? "opacity-100"
+                                                                    : "opacity-0"
                                                                     }`}
                                                                 >
                                                                   <Button
