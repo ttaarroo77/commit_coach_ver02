@@ -35,7 +35,7 @@ export function AIChat() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  
+
   // 新しいメッセージが追加されたら自動スクロール
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -60,7 +60,7 @@ export function AIChat() {
       // 実際の実装ではここでAIからの応答を取得します
       // 現在はモック応答を返します
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
+
       // ランダムな応答を選択
       const responses = [
         "了解しました。タスクの進捗状況を教えていただけますか？",
@@ -70,7 +70,7 @@ export function AIChat() {
         "コミットメッセージの書き方についてアドバイスが必要ですか？"
       ]
       const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-      
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
@@ -87,7 +87,7 @@ export function AIChat() {
   }
 
   return (
-    <div className="flex h-full flex-col rounded-lg border bg-white">
+    <div className="flex h-full flex-col rounded-lg border bg-white ai-chat-container">
       <div className="p-3 border-b bg-gray-50">
         <h3 className="text-sm font-medium">AIコミットコーチ</h3>
         <p className="text-xs text-gray-500">タスク管理や優先順位付けのアドバイスを提供します</p>
@@ -104,9 +104,8 @@ export function AIChat() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#31A9B8] text-white">AI</div>
               )}
               <div
-                className={`rounded-lg p-3 ${
-                  message.role === "user" ? "bg-[#31A9B8] text-white" : "bg-gray-100 text-gray-800"
-                }`}
+                className={`rounded-lg p-3 ${message.role === "user" ? "bg-[#31A9B8] text-white" : "bg-gray-100 text-gray-800"
+                  }`}
               >
                 <p className="text-sm">{message.content}</p>
                 <p className="mt-1 text-xs opacity-70">{message.timestamp}</p>
@@ -144,9 +143,9 @@ export function AIChat() {
               }
             }}
           />
-          <Button 
-            size="icon" 
-            className="h-10 w-10 shrink-0 rounded-full bg-[#31A9B8]" 
+          <Button
+            size="icon"
+            className="h-10 w-10 shrink-0 rounded-full bg-[#31A9B8]"
             onClick={handleSendMessage}
             disabled={isLoading || !input.trim()}
           >

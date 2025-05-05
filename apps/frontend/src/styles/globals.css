@@ -10,6 +10,15 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 @layer base {
@@ -47,7 +56,28 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --color-primary: #31A9B8;
+    --color-primary-dark: #1e656f;
+    --color-success: #258039;
+    --color-warning: #F5BE41;
+    --color-danger: #CF3721;
+    --color-gray: #666B6E;
+    --color-gray-light: #ECEFF1;
+    --color-gray-lighter: #F5F7F9;
+    --color-background: #FFFFFF;
+    --color-text: #333333;
+    --color-text-light: #666666;
+    --color-border: #ECEFF1;
+    --color-placeholder: #A0AEC0;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --radius-sm: 0.25rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -81,6 +111,19 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --color-primary: #31A9B8;
+    --color-primary-dark: #1e656f;
+    --color-success: #258039;
+    --color-warning: #F5BE41;
+    --color-danger: #CF3721;
+    --color-gray: #A0AEC0;
+    --color-gray-light: #2D3748;
+    --color-gray-lighter: #1A202C;
+    --color-background: #121212;
+    --color-text: #FFFFFF;
+    --color-text-light: #CBD5E0;
+    --color-border: #2D3748;
+    --color-placeholder: #718096;
   }
 }
 
@@ -88,7 +131,42 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* プログレスバースタイル */
+.progress-bar {
+  height: 6px;
+  background-color: var(--color-gray-light);
+  border-radius: 3px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* チャット欄の下に余白を追加 */
+.ai-chat-container {
+  margin-bottom: 40px;
 }

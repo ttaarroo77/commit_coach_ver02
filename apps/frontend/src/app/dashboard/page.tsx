@@ -177,6 +177,14 @@ export default function DashboardPage() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none")
 
+  // IDを生成する関数（クライアントサイドのみで実行）
+  const generateId = (prefix: string) => {
+    if (typeof window === 'undefined') {
+      return `${prefix}-placeholder`;
+    }
+    return `${prefix}-${Date.now()}`;
+  };
+
   // タスクグループ
   const [taskGroups, setTaskGroups] = useState<TaskGroup[]>([
     {
@@ -339,7 +347,7 @@ export default function DashboardPage() {
   // タスクを追加
   const addTask = (groupId: string) => {
     const newTask: Task = {
-      id: `task-${Date.now()}`,
+      id: generateId('task'),
       title: "新しいタスク",
       status: "todo",
       progress: 0,
@@ -607,7 +615,7 @@ export default function DashboardPage() {
   // サブタスクを追加
   const addSubtask = (groupId: string, taskId: string) => {
     const newSubtask: SubTask = {
-      id: `subtask-${Date.now()}`,
+      id: generateId('subtask'),
       title: "新しいサブタスク",
       completed: false,
     }
@@ -1085,7 +1093,7 @@ export default function DashboardPage() {
           {/* AIコーチング */}
           <div className="w-96 border-l bg-gray-50 p-4">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold">AIコーチング</h2>
+              {/* <h2 className="text-lg font-semibold">AIコーチング</h2> */}
             </div>
             <AIChat />
           </div>

@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Task } from '@/types/task';
 
 // モックデータ（将来的にはSupabaseから取得）
@@ -32,21 +32,25 @@ const tasks: Task[] = [
   // 他のタスクは省略
 ];
 
+type Params = {
+  id: string;
+};
+
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Params }
 ) {
   try {
     const id = params.id;
     const task = tasks.find(t => t.id === id);
-    
+
     if (!task) {
       return NextResponse.json(
         { error: 'タスクが見つかりません' },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(task);
   } catch (error) {
     console.error('タスク取得エラー:', error);
@@ -58,13 +62,13 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Params }
 ) {
   try {
     const id = params.id;
     const updates = await request.json();
-    
+
     const taskIndex = tasks.findIndex(t => t.id === id);
     if (taskIndex === -1) {
       return NextResponse.json(
@@ -72,7 +76,7 @@ export async function PATCH(
         { status: 404 }
       );
     }
-    
+
     // 実際のアプリケーションではここでデータベース更新処理を行う
     // モックデータの更新（開発用）
     tasks[taskIndex] = {
@@ -80,7 +84,7 @@ export async function PATCH(
       ...updates,
       updated_at: new Date().toISOString()
     };
-    
+
     return NextResponse.json(tasks[taskIndex]);
   } catch (error) {
     console.error('タスク更新エラー:', error);
@@ -92,12 +96,12 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Params }
 ) {
   try {
     const id = params.id;
-    
+
     const taskIndex = tasks.findIndex(t => t.id === id);
     if (taskIndex === -1) {
       return NextResponse.json(
@@ -105,12 +109,12 @@ export async function DELETE(
         { status: 404 }
       );
     }
-    
+
     // 実際のアプリケーションではここでデータベース削除処理を行う
     // モックデータの削除（開発用）
     const deletedTask = tasks[taskIndex];
     tasks.splice(taskIndex, 1);
-    
+
     return NextResponse.json({ success: true, deletedTask });
   } catch (error) {
     console.error('タスク削除エラー:', error);

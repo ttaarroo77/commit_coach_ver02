@@ -2,17 +2,22 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { CircleIcon } from "lucide-react"
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc]">
-      {/* ヘッダー */}
+
+      {/* ヘッダー : 実験的にコメントアウト
       <header className="flex items-center justify-between px-8 py-6 bg-white shadow-sm">
+        
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#31A9B8] text-white font-bold text-xl">C</div>
+          
           <span className="text-xl font-semibold">コミットコーチ</span>
         </div>
+        
         <div className="flex gap-4">
           <Link href="/login" className="text-gray-700 hover:underline font-medium">ログイン</Link>
           <Link href="/register">
@@ -20,6 +25,7 @@ export default function LandingPage() {
           </Link>
         </div>
       </header>
+      */}
 
       {/* ヒーローセクション */}
       <section className="flex-1 bg-[#f1f5f9] py-20">
@@ -33,9 +39,11 @@ export default function LandingPage() {
             <p className="text-lg text-gray-600 mb-8">
               GitHubリポジトリをTrello風カンバンで可視化し、AIコーチング機能でタスクコミットを支援する生産性向上ツール。
             </p>
-            <Link href="/register">
-              <Button className="bg-[#31A9B8] hover:bg-[#2691a1] text-base px-8 py-4">無料で始める</Button>
-            </Link>
+            <div className="flex flex-col gap-2 min-[400px]:flex-row">
+              <Link href="/register">
+                <Button className="bg-[#31A9B8] hover:bg-[#2691a1] text-white text-base px-8 py-4">無料で始める</Button>
+              </Link>
+            </div>
           </div>
           {/* 右カラム */}
           <div className="flex justify-center items-center w-full">
@@ -88,7 +96,7 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col gap-4 mt-8">
               <div className="bg-white rounded-xl shadow px-4 py-3 text-sm text-gray-700 w-fit">「まだ終わってないんですか？締め切りまであと3時間ですよ！」</div>
-              <div className="bg-white rounded-xl shadow px-4 py-3 text-sm text-gray-700 w-fit">「あと少しで終わります…」</div>
+              <div className="bg-white rounded-xl shadow px-4 py-3 text-sm text-gray-700 w-fit">「あと少しで終わります...」</div>
               <div className="bg-white rounded-xl shadow px-4 py-3 text-sm text-gray-700 w-fit">「頑張ってください！完了したら次のタスクの分析を手伝いますよ！」</div>
             </div>
           </div>
