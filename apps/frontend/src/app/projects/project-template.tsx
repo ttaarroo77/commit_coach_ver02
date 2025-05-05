@@ -331,9 +331,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, expanded: !task.expanded } : task)),
-            }
+            ...group,
+            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, expanded: !task.expanded } : task)),
+          }
           : group,
       ),
     )
@@ -447,18 +447,18 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      subtasks: task.subtasks.map((subtask) =>
-                        subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask,
-                      ),
-                    }
-                  : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: task.subtasks.map((subtask) =>
+                    subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask,
+                  ),
+                }
+                : task,
+            ),
+          }
           : group,
       ),
     )
@@ -499,9 +499,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, title: newTitle } : task)),
-            }
+            ...group,
+            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, title: newTitle } : task)),
+          }
           : group,
       ),
     )
@@ -513,9 +513,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, dueDate: newDueDate } : task)),
-            }
+            ...group,
+            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, dueDate: newDueDate } : task)),
+          }
           : group,
       ),
     )
@@ -527,18 +527,18 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      subtasks: task.subtasks.map((subtask) =>
-                        subtask.id === subtaskId ? { ...subtask, title: newTitle } : subtask,
-                      ),
-                    }
-                  : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: task.subtasks.map((subtask) =>
+                    subtask.id === subtaskId ? { ...subtask, title: newTitle } : subtask,
+                  ),
+                }
+                : task,
+            ),
+          }
           : group,
       ),
     )
@@ -555,9 +555,9 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.filter((task) => task.id !== taskId),
-            }
+            ...group,
+            tasks: group.tasks.filter((task) => task.id !== taskId),
+          }
           : group,
       ),
     )
@@ -572,16 +572,16 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      subtasks: task.subtasks.filter((subtask) => subtask.id !== subtaskId),
-                    }
-                  : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: task.subtasks.filter((subtask) => subtask.id !== subtaskId),
+                }
+                : task,
+            ),
+          }
           : group,
       ),
     )
@@ -635,11 +635,11 @@ export default function ProjectTemplate({
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              tasks: group.tasks.map((task) =>
-                task.id === taskId ? { ...task, subtasks: [...task.subtasks, newSubtask] } : task,
-              ),
-            }
+            ...group,
+            tasks: group.tasks.map((task) =>
+              task.id === taskId ? { ...task, subtasks: [...task.subtasks, newSubtask] } : task,
+            ),
+          }
           : group,
       ),
     )
@@ -927,7 +927,7 @@ export default function ProjectTemplate({
 
               {/* タスクグループのリスト - ドラッグ&ドロップコンテキスト */}
               <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="taskGroups" type="taskGroup">
+                <Droppable droppableId="taskGroups" type="taskGroup" isDropDisabled={false}>
                   {(provided, snapshot) => (
                     <div
                       className={`space-y-6 relative ${snapshot.isDraggingOver ? "bg-gray-50/50 rounded-lg" : ""}`}
@@ -1074,7 +1074,7 @@ export default function ProjectTemplate({
 
                                 {group.expanded && (
                                   <CardContent className="p-4">
-                                    <Droppable droppableId={group.id} type="task">
+                                    <Droppable droppableId={group.id} type="task" isDropDisabled={false}>
                                       {(provided, snapshot) => (
                                         <div
                                           className={`space-y-4 relative ${snapshot.isDraggingOver ? "bg-gray-50/50 rounded-lg p-2" : ""}`}
@@ -1156,13 +1156,12 @@ export default function ProjectTemplate({
                                                         {/* メニューアイコン - 常に領域を確保し、ホバー時のみ表示 */}
                                                         <div className="flex items-center gap-1 w-48 relative">
                                                           <div
-                                                            className={`absolute right-0 flex items-center gap-1 transition-opacity ${
-                                                              hoveredTask &&
-                                                              hoveredTask.groupId === group.id &&
-                                                              hoveredTask.taskId === task.id
+                                                            className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredTask &&
+                                                                hoveredTask.groupId === group.id &&
+                                                                hoveredTask.taskId === task.id
                                                                 ? "opacity-100"
                                                                 : "opacity-0"
-                                                            }`}
+                                                              }`}
                                                           >
                                                             <Button
                                                               variant="ghost"
@@ -1303,14 +1302,13 @@ export default function ProjectTemplate({
                                                               {/* メニューアイコン - 常に領域を確保し、ホバー時のみ表示 */}
                                                               <div className="flex items-center gap-1 w-32 relative">
                                                                 <div
-                                                                  className={`absolute right-0 flex items-center gap-1 transition-opacity ${
-                                                                    hoveredSubtask &&
-                                                                    hoveredSubtask.groupId === group.id &&
-                                                                    hoveredSubtask.taskId === task.id &&
-                                                                    hoveredSubtask.subtaskId === subtask.id
+                                                                  className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredSubtask &&
+                                                                      hoveredSubtask.groupId === group.id &&
+                                                                      hoveredSubtask.taskId === task.id &&
+                                                                      hoveredSubtask.subtaskId === subtask.id
                                                                       ? "opacity-100"
                                                                       : "opacity-0"
-                                                                  }`}
+                                                                    }`}
                                                                 >
                                                                   <Button
                                                                     variant="ghost"
@@ -1434,7 +1432,6 @@ export default function ProjectTemplate({
               <Button variant="outline" onClick={cancelDeleteProject}>
                 キャンセル
               </Button>
-              <Button onClick={cancelDeleteProject}>キャンセル</Button>
               <Button variant="destructive" onClick={confirmDeleteProject}>
                 削除する
               </Button>

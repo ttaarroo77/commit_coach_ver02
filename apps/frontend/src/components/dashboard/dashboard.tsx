@@ -64,40 +64,40 @@ export function Dashboard() {
     <div className="flex h-screen bg-gray-50">
       {/* サイドバー */}
       <div 
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white shadow-lg transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-50 w-44 transform bg-white border-r border-gray-100 transition-transform duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:relative md:translate-x-0 md:w-72 lg:w-64`}
+        } md:relative md:translate-x-0 md:w-44`}
       >
         <div className="flex h-full flex-col">
           {/* サイドバーヘッダー */}
-          <div className="flex h-16 items-center justify-between border-b px-4">
+          <div className="flex h-8 items-center justify-between px-2 py-1 border-b border-gray-100">
             <Link href="/dashboard" className="flex items-center">
-              <div className="h-8 w-8 rounded-md bg-[#31A9B8] text-white flex items-center justify-center mr-2">
+              <div className="h-4 w-4 rounded-[2px] bg-[#31A9B8] text-white flex items-center justify-center mr-1 text-[8px] font-medium">
                 CC
               </div>
-              <span className="text-lg font-semibold">Commit Coach</span>
+              <span className="text-[10px] font-medium text-gray-700">Commit Coach</span>
             </Link>
-            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden">
-              <X className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden -mr-1 h-4 w-4 p-0">
+              <X className="h-2.5 w-2.5" />
             </Button>
           </div>
           
           {/* サイドバーコンテンツ */}
-          <div className="flex-1 overflow-auto py-4">
-            <nav className="space-y-1 px-2">
+          <div className="flex-1 overflow-auto py-1">
+            <nav className="space-y-0 px-1.5">
               {[
-                { name: 'ダッシュボード', href: '/dashboard', icon: <Home className="h-5 w-5" /> },
-                { name: 'タスク', href: '/tasks', icon: <CheckSquare className="h-5 w-5" /> },
-                { name: 'プロジェクト', href: '/projects', icon: <FolderKanban className="h-5 w-5" /> },
-                { name: 'チーム', href: '/team', icon: <Users className="h-5 w-5" /> },
-                { name: 'レポート', href: '/reports', icon: <BarChart3 className="h-5 w-5" /> },
+                { name: 'ダッシュボード', href: '/dashboard', icon: <Home className="h-2.5 w-2.5" /> },
+                { name: 'タスク', href: '/tasks', icon: <CheckSquare className="h-2.5 w-2.5" /> },
+                { name: 'プロジェクト', href: '/projects', icon: <FolderKanban className="h-2.5 w-2.5" /> },
+                { name: 'チーム', href: '/team', icon: <Users className="h-2.5 w-2.5" /> },
+                { name: 'レポート', href: '/reports', icon: <BarChart3 className="h-2.5 w-2.5" /> },
               ].map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 transition-colors"
+                  className={`flex items-center px-1.5 py-0.5 text-[8px] font-normal text-gray-600 hover:bg-gray-50 hover:text-gray-800 rounded-[2px] transition-colors ${item.href === '/dashboard' ? 'bg-gray-50 text-gray-800 font-medium' : ''}`}
                 >
-                  <div className="mr-3 text-gray-500">{item.icon}</div>
+                  <div className="mr-1.5 text-gray-500">{item.icon}</div>
                   <span className="truncate">{item.name}</span>
                 </Link>
               ))}
@@ -105,38 +105,38 @@ export function Dashboard() {
           </div>
           
           {/* サイドバーフッター */}
-          <div className="border-t p-4">
+          <div className="border-t border-gray-100 px-1.5 py-1.5">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start px-2 hover:bg-gray-100 transition-colors">
+                <Button variant="ghost" className="w-full justify-start px-1 py-0.5 h-auto hover:bg-gray-50 rounded-[2px]">
                   <div className="flex items-center">
-                    <Avatar className="h-8 w-8 mr-2 ring-2 ring-offset-2 ring-gray-100">
+                    <Avatar className="h-3.5 w-3.5 mr-1 ring-1 ring-offset-0 ring-gray-100">
                       <AvatarImage src={user?.user_metadata?.avatar_url} />
-                      <AvatarFallback>{getInitials()}</AvatarFallback>
+                      <AvatarFallback className="text-[6px]">{getInitials()}</AvatarFallback>
                     </Avatar>
-                    <div className="ml-1 overflow-hidden">
-                      <p className="text-sm font-medium">{getUserName()}</p>
-                      <p className="text-xs text-gray-500 truncate max-w-[120px] md:max-w-[180px] lg:max-w-[120px]">{user?.email}</p>
+                    <div className="overflow-hidden">
+                      <p className="text-[8px] font-medium text-gray-700">{getUserName()}</p>
+                      <p className="text-[6px] text-gray-400 truncate max-w-[80px] md:max-w-[100px]">{user?.email}</p>
                     </div>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-32 p-0.5">
                 <DropdownMenuItem asChild>
-                  <Link href="/profile" className="flex items-center">
-                    <User className="mr-2 h-4 w-4" />
+                  <Link href="/profile" className="flex items-center text-[8px] py-0.5">
+                    <User className="mr-1 h-2.5 w-2.5" />
                     <span>プロフィール</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings" className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
+                  <Link href="/settings" className="flex items-center text-[8px] py-0.5">
+                    <Settings className="mr-1 h-2.5 w-2.5" />
                     <span>設定</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-red-600">
-                  <LogOut className="mr-2 h-4 w-4" />
+                <DropdownMenuSeparator className="my-0.5" />
+                <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-[8px] py-0.5 text-red-500">
+                  <LogOut className="mr-1 h-2.5 w-2.5" />
                   <span>ログアウト</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -148,30 +148,30 @@ export function Dashboard() {
       {/* メインコンテンツ */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* ヘッダー */}
-        <header className="bg-white border-b h-16 flex items-center justify-between px-4 md:px-6 sticky top-0 z-10 shadow-sm">
+        <header className="bg-white border-b border-gray-100 h-6 flex items-center justify-between px-1.5 sticky top-0 z-10">
           <div className="flex items-center">
-            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-2 md:hidden">
-              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-0.5 md:hidden h-4 w-4 p-0">
+              {sidebarOpen ? <X className="h-2.5 w-2.5" /> : <Menu className="h-2.5 w-2.5" />}
             </Button>
-            <h1 className="text-xl font-semibold">ダッシュボード</h1>
+            <h1 className="text-[8px] font-medium text-gray-700">ダッシュボード</h1>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-0.5">
             {/* モバイル用のアイコンボタン */}
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <HelpCircle className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="md:hidden h-4 w-4 p-0">
+              <HelpCircle className="h-2.5 w-2.5" />
             </Button>
-            <Button size="icon" className="md:hidden bg-[#31A9B8] hover:bg-[#2A95A2]">
-              <PlusCircle className="h-5 w-5" />
+            <Button size="icon" className="md:hidden h-4 w-4 p-0 bg-[#31A9B8] hover:bg-[#2A95A2]">
+              <PlusCircle className="h-2.5 w-2.5" />
             </Button>
             
             {/* デスクトップ用のテキスト付きボタン */}
-            <Button variant="outline" size="sm" className="hidden md:flex items-center">
-              <HelpCircle className="h-4 w-4 mr-1" />
+            <Button variant="outline" size="sm" className="hidden md:flex items-center h-4 text-[8px] px-1 py-0">
+              <HelpCircle className="h-2 w-2 mr-0.5" />
               <span>ヘルプ</span>
             </Button>
-            <Button size="sm" className="hidden md:flex items-center bg-[#31A9B8] hover:bg-[#2A95A2]">
-              <PlusCircle className="h-4 w-4 mr-1" />
+            <Button size="sm" className="hidden md:flex items-center h-4 text-[8px] px-1 py-0 bg-[#31A9B8] hover:bg-[#2A95A2]">
+              <PlusCircle className="h-2 w-2 mr-0.5" />
               <span>新規タスク</span>
             </Button>
           </div>

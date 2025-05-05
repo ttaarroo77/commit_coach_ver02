@@ -10,9 +10,10 @@ import { ja } from 'date-fns/locale';
 interface TaskListItemProps {
   task: Task;
   onClick?: () => void;
+  onStatusToggle?: (taskId: string) => void;
 }
 
-export function TaskListItem({ task, onClick }: TaskListItemProps) {
+export function TaskListItem({ task, onClick, onStatusToggle }: TaskListItemProps) {
   // タスクの状態（完了/未完了）
   const isCompleted = task.status === 'completed';
   
@@ -77,46 +78,60 @@ export function TaskListItem({ task, onClick }: TaskListItemProps) {
   
   return (
     <motion.div
-      className={`flex items-center px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer ${isCompleted ? 'opacity-70' : ''}`}
+      className={`flex items-center px-1 py-1 transition-all cursor-pointer ${isCompleted ? 'opacity-65' : ''}`}
       onClick={onClick}
-      whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.02)' }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.02)', x: 1 }}
+      whileTap={{ scale: 0.99, backgroundColor: 'rgba(0, 0, 0, 0.03)' }}
+      transition={{ duration: 0.1, ease: 'easeInOut' }}
     >
       {/* チェックボックス */}
-      <div className="mr-3">
+      <div className="mr-1">
         <button 
           className={`focus:outline-none ${isCompleted ? 'text-green-500' : 'text-gray-400 hover:text-gray-600'}`}
           onClick={(e) => {
             e.stopPropagation();
-            // ここでタスクの完了状態を切り替える処理を実装
+            if (onStatusToggle) {
+              onStatusToggle(task.id);
+            }
           }}
         >
-          {isCompleted ? 
-            <CheckCircle className="h-5 w-5" /> : 
-            <Circle className="h-5 w-5" />}
+          <motion.div
+            initial={{ scale: 1 }}
+            whileTap={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+          >
+            {isCompleted ? 
+              <CheckCircle className="h-3 w-3" /> : 
+              <Circle className="h-3 w-3" />}
+          </motion.div>
         </button>
       </div>
       
       {/* タスク情報 */}
       <div className="flex-grow min-w-0">
         <div className="flex items-center">
-          <h3 className={`text-sm font-medium truncate ${isCompleted ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+          <motion.h3 
+            className={`text-[10px] font-normal truncate ${isCompleted ? 'text-gray-400' : 'text-gray-700'}`}
+            animate={{ textDecoration: isCompleted ? 'line-through' : 'none' }}
+            transition={{ duration: 0.2 }}
+          >
             {task.title}
-          </h3>
+          </motion.h3>
           
           {/* サブタスク数バッジ */}
           {task.subtasks && task.subtasks.length > 0 && (
-            <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+            <span className="ml-1 text-[8px] bg-gray-100 text-gray-500 px-0.5 rounded-[2px]">
               {task.subtasks.filter(st => st.completed).length}/{task.subtasks.length}
             </span>
           )}
         </div>
         
         {/* タスクのメタ情報 */}
-        <div className="flex items-center mt-1 text-xs space-x-3">
+        <div className="flex items-center mt-0.5 text-[8px] space-x-1.5">
           {/* プロジェクトタグ */}
           {task.project && (
-            <span className={`px-2 py-0.5 rounded-full ${getProjectTagColor()}`}>
+            <span className={`px-0.5 rounded-[2px] ${getProjectTagColor()}`}>
               {task.project}
             </span>
           )}
@@ -125,33 +140,33 @@ export function TaskListItem({ task, onClick }: TaskListItemProps) {
           {task.dueDate && (
             <span 
               className={`flex items-center ${
-                isOverdue() ? 'text-red-600' : 
-                isDueToday() ? 'text-amber-600' : 
-                'text-gray-500'
+                isOverdue() ? 'text-red-500' : 
+                isDueToday() ? 'text-amber-500' : 
+                'text-gray-400'
               }`}
             >
               {isOverdue() ? 
-                <AlertCircle className="h-3 w-3 mr-1" /> : 
+                <AlertCircle className="h-2 w-2 mr-0.5" /> : 
                 isDueToday() ? 
-                  <Clock className="h-3 w-3 mr-1" /> : 
-                  <Calendar className="h-3 w-3 mr-1" />
+                  <Clock className="h-2 w-2 mr-0.5" /> : 
+                  <Calendar className="h-2 w-2 mr-0.5" />
               }
               {formatDueDate()}
             </span>
           )}
           
           {/* 優先度 */}
-          <span className={`${getPriorityStyle()}`}>
-            {task.priority === 'high' ? '優先度: 高' : 
-             task.priority === 'medium' ? '優先度: 中' : 
-             '優先度: 低'}
+          <span className={`${getPriorityStyle()} text-[7px]`}>
+            {task.priority === 'high' ? '高' : 
+             task.priority === 'medium' ? '中' : 
+             '低'}
           </span>
         </div>
       </div>
       
       {/* 時間表示（オプション） */}
       {task.dueDate && (
-        <div className="text-xs text-gray-400 ml-2 hidden sm:block">
+        <div className="text-[10px] text-gray-400 ml-1 hidden sm:block">
           {format(new Date(task.dueDate), 'HH:mm', { locale: ja })}
         </div>
       )}

@@ -8,7 +8,7 @@ import { useTasks } from '@/hooks/use-tasks';
 import { useAuth } from '@/hooks/use-auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Plus, Calendar, Clock, Filter, Search } from 'lucide-react';
+import { Plus, Calendar, Clock, Filter, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { TaskList } from './task-list';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -44,7 +44,7 @@ const fallbackTasks: Task[] = [
 
 export function DashboardContent() {
   // SWRを使用してタスクデータを取得
-  const { tasks, todayTasks, upcomingTasks, isLoading, isError, toggleTaskStatus, deleteTask, mutate } = useTasks();
+  const { tasks, isLoading, isError, toggleTaskStatus, deleteTask, mutate } = useTasks();
   // 認証情報を取得
   const { user } = useAuth();
   
@@ -54,7 +54,59 @@ export function DashboardContent() {
   
   // 現在の日付を取得
   const today = new Date();
-  const formattedDate = format(today, 'yyyy年MM月dd日EEEE', { locale: ja });
+  const formattedDate = format(today, 'yyyy/MM/dd (EEEE)', { locale: ja });
+  const time = format(today, 'HH:mm', { locale: ja });
+  
+  // タスクのグループ化
+  const todayTasks = tasks.filter(task => {
+    if (!task.dueDate) return false;
+    const taskDate = new Date(task.dueDate);
+    taskDate.setHours(0, 0, 0, 0);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    return taskDate.getTime() === todayDate.getTime();
+  });
+  
+  // 未来のタスクをフィルタリング
+  const futureTasks = tasks.filter(task => {
+    if (!task.dueDate) return false;
+    const taskDate = new Date(task.dueDate);
+    taskDate.setHours(0, 0, 0, 0);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    return taskDate.getTime() > todayDate.getTime();
+  });
+  
+  // 展開状態を管理
+  type GroupKey = 'today' | 'future';
+  type ExpandedGroupsState = {
+    [key in GroupKey]: boolean;
+  };
+  
+  const [expandedGroups, setExpandedGroups] = useState<ExpandedGroupsState>({
+    today: true,
+    future: true
+  });
+  
+  // グループの展開/折りたたみ切り替え
+  const toggleGroup = (group: GroupKey) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }));
+  };
+  
+  // タスクグループを管理するオブジェクト
+  const taskGroups: Record<GroupKey, { title: string; tasks: Task[] }> = {
+    today: {
+      title: '今日のタスク',
+      tasks: todayTasks
+    },
+    future: {
+      title: '今後のタスク',
+      tasks: futureTasks
+    }
+  };
   
   // タスク作成モーダルを開く
   const handleOpenCreateTaskModal = () => {
@@ -122,94 +174,114 @@ export function DashboardContent() {
   }
   
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6">
-      {/* ダッシュボードヘッダー */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold">ダッシュボード</h1>
-          <p className="text-gray-500 text-sm mt-1">{formattedDate}</p>
+    <div className="flex h-full max-w-full overflow-hidden">
+      {/* メインタスクリストエリア */}
+      <div className="flex-1 overflow-auto px-3 py-2">
+        {/* ヘッダー */}
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h1 className="text-[10px] font-medium text-gray-800">ダッシュボード</h1>
+            <div className="flex items-center">
+              <p className="text-[9px] text-gray-500 font-medium">{formattedDate}</p>
+              <p className="text-[9px] ml-1 font-medium text-[#31A9B8]">{time}</p>
+            </div>
+          </div>
+          
+          <motion.button 
+            onClick={handleOpenCreateTaskModal}
+            className="flex items-center px-1 py-0.5 bg-[#31A9B8] text-white rounded-[2px] text-[8px] hover:bg-[#2A95A2] transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Plus className="h-2 w-2 mr-0.5" />
+            <span>新規タスク</span>
+          </motion.button>
         </div>
         
-        <div className="mt-3 sm:mt-0 flex items-center space-x-2">
-          <button 
-            onClick={handleOpenCreateTaskModal}
-            className="flex items-center px-3 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary/90 transition-colors"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            <span>新規タスク</span>
-          </button>
-        </div>
-      </div>
-      
-      {/* メインコンテンツ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* 左カラム: タスクリスト */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* タスクリストエリア */}
+        <div className="space-y-3">
           {isLoading ? (
-            <div className="bg-white rounded-lg border shadow-sm p-4">
-              <Skeleton className="h-8 w-48 mb-4" />
-              <Skeleton className="h-16 w-full mb-2" />
-              <Skeleton className="h-16 w-full mb-2" />
-              <Skeleton className="h-16 w-full" />
+            <div className="bg-white rounded-[2px] border shadow-sm p-1.5">
+              <Skeleton className="h-3 w-20 mb-1.5" />
+              <Skeleton className="h-4 w-full mb-1" />
+              <Skeleton className="h-4 w-full mb-1" />
+              <Skeleton className="h-4 w-full" />
             </div>
           ) : (
             <>
-              {/* 今日のタスク */}
-              <TaskList
-                title="## 今日のタスク"
-                tasks={todayTasks}
-                onTaskClick={handleOpenEditTaskModal}
-                onCreateTask={handleOpenCreateTaskModal}
-              />
+              {/* タスクグループを表示 */}
+              {Object.entries(taskGroups).map(([key, group]) => (
+                <div key={key} className="bg-white rounded-[2px] border overflow-hidden">
+                  <div 
+                    className="flex items-center justify-between py-0.5 px-1.5 border-b cursor-pointer"
+                    onClick={() => toggleGroup(key as GroupKey)}
+                  >
+                    <div className="flex items-center">
+                      {expandedGroups[key as GroupKey] ? 
+                        <ChevronDown className="h-2.5 w-2.5 text-gray-400 mr-1" /> : 
+                        <ChevronRight className="h-2.5 w-2.5 text-gray-400 mr-1" />
+                      }
+                      <h2 className="text-[8px] font-medium text-gray-700">{group.title}</h2>
+                    </div>
+                    <span className="text-[7px] bg-gray-100 text-gray-500 px-1 py-0.5 rounded-[2px]">
+                      {group.tasks.length}
+                    </span>
+                  </div>
+                  
+                  {expandedGroups[key as GroupKey] && (
+                    <TaskList
+                      title=""
+                      tasks={group.tasks}
+                      onTaskClick={handleOpenEditTaskModal}
+                      onStatusToggle={handleToggleTaskStatus}
+                      onCreateTask={handleOpenCreateTaskModal}
+                    />
+                  )}
+                </div>
+              ))}
               
-              {/* 今後のタスク */}
-              <TaskList
-                title="## 今後のタスク"
-                tasks={tasks.filter(task => {
-                  if (!task.dueDate) return false;
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
-                  const dueDate = new Date(task.dueDate);
-                  dueDate.setHours(0, 0, 0, 0);
-                  return dueDate > today;
-                })}
-                onTaskClick={handleOpenEditTaskModal}
-                onCreateTask={handleOpenCreateTaskModal}
-              />
+              {/* タスクが一つもない場合 */}
+              {tasks.length === 0 && (
+                <div className="bg-white rounded-[2px] border p-2 text-center">
+                  <p className="text-[8px] text-gray-500">タスクがまだありません</p>
+                  <motion.button
+                    onClick={handleOpenCreateTaskModal}
+                    className="mt-1.5 flex items-center px-1.5 py-0.5 bg-[#31A9B8] text-white rounded-[2px] text-[8px] mx-auto"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Plus className="h-2 w-2 mr-0.5" />
+                    <span>新規タスクを作成</span>
+                  </motion.button>
+                </div>
+              )}
             </>
           )}
         </div>
-        
-        {/* 右カラム: AIコーチング */}
-        <div className="space-y-6">
-          <motion.div 
-            className="bg-white rounded-lg border shadow-sm overflow-hidden"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div className="p-4 border-b bg-gray-50">
-              <h2 className="font-medium">AIコーチング</h2>
-            </div>
-            <div className="h-[400px]">
-              <AIChat />
-            </div>
-          </motion.div>
+      </div>
+      
+      {/* AIコーチングエリア */}
+      <div className="w-[250px] bg-white border-l border-gray-100 overflow-hidden flex flex-col">
+        <div className="px-2 py-1 border-b border-gray-100">
+          <h2 className="text-[10px] font-medium text-gray-700">AIコーチング</h2>
+        </div>
+        <div className="flex-1 overflow-auto">
+          <AIChat />
         </div>
       </div>
       
       {/* 新規タスク作成ボタン - モバイルでは固定表示 */}
-      <div className="fixed bottom-6 right-6 z-10 sm:hidden">
+      <div className="fixed bottom-3 right-3 z-10 md:hidden">
         <motion.button
-          className="w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center"
+          className="w-8 h-8 rounded-full bg-[#31A9B8] text-white shadow-sm flex items-center justify-center"
           onClick={handleOpenCreateTaskModal}
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.5 }}
-          whileHover={{ scale: 1.1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.3 }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-3 w-3" />
         </motion.button>
       </div>
       

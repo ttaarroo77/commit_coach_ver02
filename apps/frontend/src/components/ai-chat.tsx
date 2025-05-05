@@ -7,6 +7,14 @@ import { Send, Loader2 } from "lucide-react"
 import { LoadingSpinner } from "./ui/loading-spinner"
 import { ErrorMessage } from "./ui/error-message"
 
+// 時刻フォーマット関数 - サーバー・クライアント間で一貫した形式を提供
+const formatTime = () => {
+  const now = new Date()
+  const hours = now.getHours().toString().padStart(2, '0')
+  const minutes = now.getMinutes().toString().padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
 interface Message {
   id: string
   role: "user" | "assistant"
@@ -20,7 +28,7 @@ export function AIChat() {
       id: "1",
       role: "assistant",
       content: "何かお手伝いできることはありますか？タスクの分解や優先順位付けのお手伝いができます。",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: formatTime(),
     },
   ])
   const [input, setInput] = useState("")
@@ -41,7 +49,7 @@ export function AIChat() {
       id: Date.now().toString(),
       role: "user",
       content: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: formatTime(),
     }
 
     setMessages((prev) => [...prev, userMessage])
@@ -67,7 +75,7 @@ export function AIChat() {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: randomResponse,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: formatTime(),
       }
       setMessages((prev) => [...prev, aiResponse])
     } catch (err) {

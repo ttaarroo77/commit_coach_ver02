@@ -1,159 +1,160 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Task } from '@/types/task';
 import { TaskListItem } from './task-list-item';
-import { Search, Filter, Plus, ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  DndContext, 
+  closestCenter, 
+  KeyboardSensor, 
+  PointerSensor, 
+  useSensor, 
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
 
 interface TaskListProps {
   title: string;
   tasks: Task[];
-  onTaskClick?: (task: Task) => void;
-  onCreateTask?: () => void;
+  onTaskClick: (task: Task) => void;
+  onCreateTask: () => void;
+  onStatusToggle: (taskId: string) => void;
+  onOrderChange?: (taskIds: string[]) => void;
+  isDraggable?: boolean;
 }
 
-export function TaskList({ title, tasks, onTaskClick, onCreateTask }: TaskListProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+export function TaskList({ 
+  title, 
+  tasks, 
+  onTaskClick, 
+  onCreateTask, 
+  onStatusToggle, 
+  onOrderChange,
+  isDraggable = false
+}: TaskListProps) {
   const [isExpanded, setIsExpanded] = useState(true);
-
-  // フィルタリングされたタスク
-  const filteredTasks = tasks.filter(task => {
-    // 検索クエリによるフィルタリング
-    const matchesSearch = searchQuery === '' || 
-      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    // 優先度によるフィルタリング
-    const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter;
-    
-    return matchesSearch && matchesPriority;
-  });
+  const [items, setItems] = useState<Task[]>(tasks);
+  
+  // 親からのタスクリストが変更されたら、内部状態も更新
+  useEffect(() => {
+    setItems(tasks);
+  }, [tasks]);
+  
+  // DnDセンサーの設定
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // タスクグループの展開/折りたたみを切り替える
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
+  
+  // ドラッグ終了時の処理
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      // 新しい順序でタスクを並べ替え
+      const oldIndex = items.findIndex(task => task.id === active.id);
+      const newIndex = items.findIndex(task => task.id === over.id);
+      
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      setItems(newItems);
+      
+      // 親コンポーネントに新しい順序を通知
+      if (onOrderChange) {
+        onOrderChange(newItems.map(task => task.id));
+      }
+    }
+  };
 
   return (
-    <div className="bg-white rounded-lg border shadow-sm mb-4">
-      {/* ヘッダー */}
-      <div className="p-3 border-b">
-        <div className="flex items-center justify-between">
-          <button 
-            onClick={toggleExpand}
-            className="flex items-center text-lg font-medium text-gray-800 hover:text-gray-600 transition-colors"
-          >
-            {isExpanded ? <ChevronDown className="h-5 w-5 mr-1" /> : <ChevronRight className="h-5 w-5 mr-1" />}
-            {title}
-            <span className="ml-2 text-sm text-gray-500">({filteredTasks.length})</span>
-          </button>
-          
-          <div className="flex items-center space-x-2">
-            {/* 検索ボックス */}
-            <div className="relative hidden sm:block">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-                <Search className="w-4 h-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="検索..."
-                className="pl-8 pr-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-primary w-36 md:w-44"
-              />
-            </div>
-            
-            {/* 優先度フィルター */}
-            <div className="relative hidden sm:block">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-                <Filter className="w-4 h-4 text-gray-400" />
-              </div>
-              <select
-                value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
-                className="pl-8 pr-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-primary appearance-none bg-white"
-              >
-                <option value="all">すべて</option>
-                <option value="high">高</option>
-                <option value="medium">中</option>
-                <option value="low">低</option>
-              </select>
-            </div>
-            
-            {/* 新規タスク作成ボタン */}
-            {onCreateTask && (
-              <button 
-                onClick={onCreateTask}
-                className="p-1 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            )}
+    <div className="overflow-hidden">
+      {/* タイトルがある場合のみヘッダーを表示 */}
+      {title && (
+        <div className="flex items-center justify-between py-0.5 px-1.5 cursor-pointer" onClick={toggleExpand}>
+          <div className="flex items-center">
+            {isExpanded ? 
+              <ChevronDown className="h-2 w-2 mr-1 text-gray-400" /> : 
+              <ChevronRight className="h-2 w-2 mr-1 text-gray-400" />
+            }
+            <h2 className="text-[8px] font-medium text-gray-700">{title}</h2>
           </div>
+          <span className="text-[7px] bg-gray-100 text-gray-500 px-1 py-0.5 rounded-[2px]">
+            {items.length}
+          </span>
         </div>
-        
-        {/* モバイル用の検索・フィルター (折りたたみ可能) */}
-        <div className="mt-2 sm:hidden flex space-x-2">
-          <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-              <Search className="w-4 h-4 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="検索..."
-              className="w-full pl-8 pr-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-          
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-              <Filter className="w-4 h-4 text-gray-400" />
-            </div>
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="pl-8 pr-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-primary appearance-none bg-white"
-            >
-              <option value="all">すべて</option>
-              <option value="high">高</option>
-              <option value="medium">中</option>
-              <option value="low">低</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      )}
       
       {/* タスクリスト */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.15 }}
             className="overflow-hidden"
           >
-            <div className="divide-y">
-              {filteredTasks.length > 0 ? (
-                filteredTasks.map((task) => (
+            {isDraggable ? (
+              // ドラッグ＆ドロップ可能なリスト
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={items.map(task => task.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="divide-y divide-gray-50">
+                    {items.map((task) => (
+                      <TaskListItem
+                        key={task.id}
+                        task={task}
+                        onClick={() => onTaskClick(task)}
+                        onStatusToggle={onStatusToggle}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            ) : (
+              // 通常のリスト（ドラッグ不可）
+              <div className="divide-y divide-gray-50">
+                {items.map((task) => (
                   <TaskListItem
                     key={task.id}
                     task={task}
-                    onClick={() => onTaskClick && onTaskClick(task)}
+                    onClick={() => onTaskClick(task)}
+                    onStatusToggle={onStatusToggle}
                   />
-                ))
-              ) : (
-                <div className="py-4 text-center text-gray-500">
-                  {searchQuery || priorityFilter !== 'all' ? 
-                    'フィルター条件に一致するタスクがありません' : 
-                    'タスクがありません'}
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
+            
+            {/* タスクが一つもない場合 */}
+            {items.length === 0 && (
+              <div className="py-2 text-center">
+                <p className="text-[8px] text-gray-400">タスクがありません</p>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
