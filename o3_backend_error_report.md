@@ -14,8 +14,8 @@ commit/apps/backend において、npm run dev してもerrorが出てしまう�
     - 具体的には「order」プロパティが不足しているため、型 `{ ..., order: number, ... }` を満たしていない、というエラーです。
     - エラー例：
       ```
-      src/controllers/ai.controller.ts(84,52): error TS2345: Argument of type '{ ... }' is not assignable to parameter of type '{ ..., order: number, ... }'.
-      Property 'order' is missing in type '{ ... }' but required in type '{ ..., order: number, ... }'.
+    src/controllers/ai.controller.ts(84,52): error TS2345: Argument of type '{ ... }' is not assignable to parameter of type '{ ..., order: number, ... }'.
+    Property 'order' is missing in type '{ ... }' but required in type '{ ..., order: number, ... }'.
       ```
 
 ---

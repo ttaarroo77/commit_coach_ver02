@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Send } from "lucide-react"
+import { Send, Loader2 } from "lucide-react"
+import { LoadingSpinner } from "./ui/loading-spinner"
+import { ErrorMessage } from "./ui/error-message"
 
 interface Message {
   id: string
@@ -17,14 +19,23 @@ export function AIChat() {
     {
       id: "1",
       role: "assistant",
-      content: "何かお手伝いできることはありますか？",
-      timestamp: "10:30",
+      content: "何かお手伝いできることはありますか？タスクの分解や優先順位付けのお手伝いができます。",
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
   ])
   const [input, setInput] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  
+  // 新しいメッセージが追加されたら自動スクロール
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!input.trim()) return
+    setError(null)
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -35,22 +46,46 @@ export function AIChat() {
 
     setMessages((prev) => [...prev, userMessage])
     setInput("")
+    setIsLoading(true)
 
-    // 実際の実装ではここでAIからの応答を取得します
-    setTimeout(() => {
+    try {
+      // 実際の実装ではここでAIからの応答を取得します
+      // 現在はモック応答を返します
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // ランダムな応答を選択
+      const responses = [
+        "了解しました。タスクの進捗状況を教えていただけますか？",
+        "タスクを小さな単位に分解すると、より効率的に進められるかもしれません。",
+        "優先度の高いタスクから取り組むことをお勧めします。何か具体的なタスクはありますか？",
+        "タスクの期限が近づいているものはありますか？一緒に確認しましょう。",
+        "コミットメッセージの書き方についてアドバイスが必要ですか？"
+      ]
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)]
+      
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "了解しました。タスクの進捗状況を教えていただけますか？",
+        content: randomResponse,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       }
       setMessages((prev) => [...prev, aiResponse])
-    }, 1000)
+    } catch (err) {
+      console.error("AI応答の取得に失敗しました", err)
+      setError("AI応答の取得に失敗しました。もう一度お試しください。")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <div className="flex h-full flex-col rounded-lg border bg-white">
+      <div className="p-3 border-b bg-gray-50">
+        <h3 className="text-sm font-medium">AIコミットコーチ</h3>
+        <p className="text-xs text-gray-500">タスク管理や優先順位付けのアドバイスを提供します</p>
+      </div>
       <div className="flex-1 overflow-auto p-4">
+        {error && <ErrorMessage message={error} dismissible />}
         <div className="space-y-4">
           {messages.map((message) => (
             <div
@@ -70,6 +105,20 @@ export function AIChat() {
               </div>
             </div>
           ))}
+          {isLoading && (
+            <div className="flex items-start gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#31A9B8] text-white">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </div>
+              <div className="rounded-lg bg-gray-100 p-3 text-gray-800">
+                <div className="flex items-center space-x-2">
+                  <LoadingSpinner size="sm" />
+                  <p className="text-sm">応答を生成中...</p>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
       </div>
       <div className="border-t p-4">
@@ -79,6 +128,7 @@ export function AIChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className="min-h-[60px] resize-none"
+            disabled={isLoading}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault()
@@ -86,8 +136,17 @@ export function AIChat() {
               }
             }}
           />
-          <Button size="icon" className="h-10 w-10 shrink-0 rounded-full bg-[#31A9B8]" onClick={handleSendMessage}>
-            <Send className="h-4 w-4" />
+          <Button 
+            size="icon" 
+            className="h-10 w-10 shrink-0 rounded-full bg-[#31A9B8]" 
+            onClick={handleSendMessage}
+            disabled={isLoading || !input.trim()}
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </div>

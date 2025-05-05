@@ -64,10 +64,30 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "fadeIn": {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+        "fadeOut": {
+          from: { opacity: 1 },
+          to: { opacity: 0 },
+        },
+        "slideInFromLeft": {
+          from: { transform: "translateX(-100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        "slideInFromRight": {
+          from: { transform: "translateX(100%)" },
+          to: { transform: "translateX(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fadeIn": "fadeIn 0.3s ease-in-out",
+        "fadeOut": "fadeOut 0.3s ease-in-out",
+        "slideInFromLeft": "slideInFromLeft 0.3s ease-in-out",
+        "slideInFromRight": "slideInFromRight 0.3s ease-in-out",
       },
     },
   },

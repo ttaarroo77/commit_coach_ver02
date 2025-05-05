@@ -32,6 +32,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // 開発モード: 認証チェックを一時的に無効化
+  console.log('認証チェックは一時的に無効化されています');
+  
+  // 以下のコードはコメントアウトして認証チェックを無効化
+  /*
   // Cookieからトークンを取得
   const token = request.cookies.get('auth_token')?.value;
   const isAuthenticated = !!token;
@@ -58,6 +63,7 @@ export function middleware(request: NextRequest) {
     // ダッシュボードにリダイレクト
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
+  */
 
   return NextResponse.next();
 }
