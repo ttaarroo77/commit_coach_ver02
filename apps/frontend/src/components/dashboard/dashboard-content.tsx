@@ -2,17 +2,16 @@
 
 import { useState } from 'react';
 import { AIChat } from '@/components/ai-chat';
-import { TaskSummaryCard } from '@/components/dashboard/task-summary-card';
-import { Clock } from '@/components/dashboard/clock';
-import { MiniCalendar } from '@/components/dashboard/mini-calendar';
-import { TaskBoard } from '@/components/dashboard/task-board';
 import { TaskFormModal } from '@/components/dashboard/task-form-modal';
 import { Task } from '@/types/task';
 import { useTasks } from '@/hooks/use-tasks';
 import { useAuth } from '@/hooks/use-auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { User, Settings, Calendar, CheckCircle, Plus } from 'lucide-react';
+import { Plus, Calendar, Clock, Filter, Search } from 'lucide-react';
+import { TaskList } from './task-list';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 
 // APIが実装されるまでのフォールバック用モックデータ
 const fallbackTasks: Task[] = [
@@ -45,7 +44,7 @@ const fallbackTasks: Task[] = [
 
 export function DashboardContent() {
   // SWRを使用してタスクデータを取得
-  const { todayTasks, upcomingTasks, taskCounts, isLoading, isError, toggleTaskStatus, deleteTask, mutate } = useTasks();
+  const { tasks, todayTasks, upcomingTasks, isLoading, isError, toggleTaskStatus, deleteTask, mutate } = useTasks();
   // 認証情報を取得
   const { user } = useAuth();
   
@@ -53,12 +52,9 @@ export function DashboardContent() {
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
   
-  // 日付が選択されたときの処理
-  const handleDateSelect = (date: string) => {
-    console.log(`選択された日付: ${date}`);
-    // 将来的には選択された日付でフィルタリングする
-    // 今後の実装: const { mutate } = useTasks({ dueDate: date });
-  };
+  // 現在の日付を取得
+  const today = new Date();
+  const formattedDate = format(today, 'yyyy年MM月dd日EEEE', { locale: ja });
   
   // タスク作成モーダルを開く
   const handleOpenCreateTaskModal = () => {
@@ -101,9 +97,16 @@ export function DashboardContent() {
       
       // データを再取得
       mutate();
+      // モーダルを閉じる
+      setIsTaskFormOpen(false);
     } catch (error) {
       console.error('タスク保存エラー:', error);
     }
+  };
+  
+  // タスクのステータス変更処理
+  const handleToggleTaskStatus = async (taskId: string) => {
+    await toggleTaskStatus(taskId);
   };
   
   // エラー状態の表示
@@ -119,217 +122,95 @@ export function DashboardContent() {
   }
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6">
-      {/* ユーザー情報カード - モバイルでは上部に表示 */}
-      <motion.div 
-        className="lg:col-span-3 bg-white rounded-lg border shadow-sm p-4 lg:p-6 mb-2 order-1 lg:order-1"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="bg-primary/10 p-2 rounded-full">
-              <User className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-lg font-medium">
-                {user?.user_metadata?.name || 'ユーザー'} さん、こんにちは！
-              </h2>
-              <p className="text-sm text-gray-500">
-                今日のタスク: {todayTasks.length}件 / 期限間近: {upcomingTasks.length}件
-              </p>
-            </div>
-          </div>
-          <div className="hidden sm:flex items-center space-x-2">
-            <div className="flex items-center space-x-1 bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm">
-              <CheckCircle className="h-4 w-4" />
-              <span>進行中</span>
-            </div>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <Settings className="h-5 w-5 text-gray-500" />
-            </button>
-          </div>
-        </div>
-      </motion.div>
-      
-      {/* 左カラム: 今日のタスクと期限間近タスク */}
-      <div className="lg:col-span-2 space-y-4 sm:space-y-6 order-2 lg:order-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {isLoading ? (
-            <>
-              <div className="bg-white rounded-lg border p-6 shadow-sm">
-                <Skeleton className="h-6 w-32 mb-4" />
-                <div className="space-y-3">
-                  <Skeleton className="h-14 w-full" />
-                  <Skeleton className="h-14 w-full" />
-                </div>
-              </div>
-              <div className="bg-white rounded-lg border p-6 shadow-sm">
-                <Skeleton className="h-6 w-32 mb-4" />
-                <div className="space-y-3">
-                  <Skeleton className="h-14 w-full" />
-                  <Skeleton className="h-14 w-full" />
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <TaskSummaryCard 
-                  title="今日のタスク" 
-                  icon="clock" 
-                  tasks={todayTasks.length > 0 ? todayTasks : []}
-                  onToggleTaskStatus={toggleTaskStatus}
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-              >
-                <TaskSummaryCard 
-                  title="期限間近のタスク" 
-                  icon="alert" 
-                  tasks={upcomingTasks.length > 0 ? upcomingTasks : []}
-                  onToggleTaskStatus={toggleTaskStatus}
-                />
-              </motion.div>
-            </>
-          )}
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      {/* ダッシュボードヘッダー */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">ダッシュボード</h1>
+          <p className="text-gray-500 text-sm mt-1">{formattedDate}</p>
         </div>
         
-        {/* タスク管理セクション */}
-        <div className="relative">
-          {isLoading ? (
-            <motion.div 
-              className="bg-white rounded-lg border p-4 shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <Skeleton className="h-6 w-32" />
-                <div className="flex space-x-2">
-                  <Skeleton className="h-6 w-20" />
-                  <Skeleton className="h-6 w-20" />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-                <Skeleton className="h-28 w-full" />
-                <Skeleton className="h-28 w-full" />
-                <Skeleton className="h-28 w-full" />
-              </div>
-            </motion.div>
-          ) : (
-            <TaskBoard onEditTask={handleOpenEditTaskModal} />
-          )}
-          
-          {/* 新規タスク作成ボタン */}
-          <motion.button
-            className="fixed bottom-6 right-6 bg-primary text-white rounded-full p-3 shadow-lg hover:bg-primary/90 transition-colors z-10"
+        <div className="mt-3 sm:mt-0 flex items-center space-x-2">
+          <button 
             onClick={handleOpenCreateTaskModal}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.5 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            className="flex items-center px-3 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary/90 transition-colors"
           >
-            <Plus className="h-6 w-6" />
-          </motion.button>
+            <Plus className="h-4 w-4 mr-1" />
+            <span>新規タスク</span>
+          </button>
         </div>
       </div>
       
-      {/* 右カラム: AIチャット、時計、カレンダー */}
-      <div className="space-y-4 sm:space-y-6 order-3 lg:order-3 mb-4 lg:mb-0">
-        {/* モバイルではAIチャットを小さく表示 */}
-        <motion.div 
-          className="h-[250px] sm:h-[300px]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <AIChat />
-        </motion.div>
-        
-        {/* 時計とカレンダーをモバイルでは横並びに */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
-          >
-            <Clock />
-          </motion.div>
-          
+      {/* メインコンテンツ */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 左カラム: タスクリスト */}
+        <div className="lg:col-span-2 space-y-6">
           {isLoading ? (
-            <div className="bg-white rounded-lg border shadow-sm">
-              <div className="p-4 border-b">
-                <Skeleton className="h-6 w-32" />
-              </div>
-              <div className="p-4">
-                <Skeleton className="h-48 w-full" />
-              </div>
+            <div className="bg-white rounded-lg border shadow-sm p-4">
+              <Skeleton className="h-8 w-48 mb-4" />
+              <Skeleton className="h-16 w-full mb-2" />
+              <Skeleton className="h-16 w-full mb-2" />
+              <Skeleton className="h-16 w-full" />
             </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.5 }}
-            >
-              <MiniCalendar 
-                taskCounts={taskCounts}
-                onDateSelect={handleDateSelect}
+            <>
+              {/* 今日のタスク */}
+              <TaskList
+                title="## 今日のタスク"
+                tasks={todayTasks}
+                onTaskClick={handleOpenEditTaskModal}
+                onCreateTask={handleOpenCreateTaskModal}
               />
-            </motion.div>
+              
+              {/* 今後のタスク */}
+              <TaskList
+                title="## 今後のタスク"
+                tasks={tasks.filter(task => {
+                  if (!task.dueDate) return false;
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const dueDate = new Date(task.dueDate);
+                  dueDate.setHours(0, 0, 0, 0);
+                  return dueDate > today;
+                })}
+                onTaskClick={handleOpenEditTaskModal}
+                onCreateTask={handleOpenCreateTaskModal}
+              />
+            </>
           )}
         </div>
         
-        {/* 進捗サマリーカード */}
-        <motion.div 
-          className="bg-white rounded-lg border shadow-sm p-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
+        {/* 右カラム: AIコーチング */}
+        <div className="space-y-6">
+          <motion.div 
+            className="bg-white rounded-lg border shadow-sm overflow-hidden"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="p-4 border-b bg-gray-50">
+              <h2 className="font-medium">AIコーチング</h2>
+            </div>
+            <div className="h-[400px]">
+              <AIChat />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+      
+      {/* 新規タスク作成ボタン - モバイルでは固定表示 */}
+      <div className="fixed bottom-6 right-6 z-10 sm:hidden">
+        <motion.button
+          className="w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center"
+          onClick={handleOpenCreateTaskModal}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.5 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <div className="flex items-center space-x-2 mb-3">
-            <Calendar className="h-5 w-5 text-primary" />
-            <h3 className="font-medium">今週の進捗</h3>
-          </div>
-          
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>タスク完了率</span>
-                <span className="font-medium">
-                  {isLoading ? '計算中...' : 
-                    `${Math.round((todayTasks.filter(t => t.status === 'completed').length / Math.max(todayTasks.length, 1)) * 100)}%`}
-                </span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary rounded-full transition-all duration-500"
-                  style={{ 
-                    width: isLoading ? '0%' : 
-                      `${Math.round((todayTasks.filter(t => t.status === 'completed').length / Math.max(todayTasks.length, 1)) * 100)}%` 
-                  }}
-                />
-              </div>
-            </div>
-            
-            <div className="pt-2 border-t text-xs text-gray-500">
-              <div className="flex justify-between">
-                <span>今週のコミット</span>
-                <span className="font-medium">12件</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+          <Plus className="h-5 w-5" />
+        </motion.button>
       </div>
       
       {/* タスクフォームモーダル */}
