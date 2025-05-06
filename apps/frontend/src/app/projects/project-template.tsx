@@ -760,11 +760,12 @@ export default function ProjectTemplate({
     }
   }
 
+  // 音声機能を一時的にコメントアウト
   // 音声入力を開始
-  const startVoiceInput = () => {
-    // 実際の実装では、ここで音声入力APIを呼び出す
-    alert("音声入力を開始します")
-  }
+  // const startVoiceInput = () => {
+  //   // 実際の実装では、ここで音声入力APIを呼び出す
+  //   alert("音声入力を開始します")
+  // }
 
   // タスクを分解
   const decomposeTask = (groupId: string, taskId: string) => {
@@ -772,10 +773,11 @@ export default function ProjectTemplate({
     alert("AIによるタスク分解を開始します")
   }
 
+  // 音声機能を一時的にコメントアウト
   // プロジェクトレベルの音声入力
-  const startProjectVoiceInput = () => {
-    alert(`プロジェクト「${projectTitle}」の音声入力を開始します`)
-  }
+  // const startProjectVoiceInput = () => {
+  //   alert(`プロジェクト「${projectTitle}」の音声入力を開始します`)
+  // }
 
   // プロジェクトレベルのタスク分解
   const decomposeProject = () => {
@@ -819,11 +821,12 @@ export default function ProjectTemplate({
     setShowDeleteConfirm(false)
   }
 
+  // 音声機能を一時的にコメントアウト
   // タスクグループレベルの音声入力
-  const startGroupVoiceInput = (groupId: string) => {
-    const group = taskGroups.find((g) => g.id === groupId)
-    alert(`タスクグループ「${group?.title}」の音声入力を開始します`)
-  }
+  // const startGroupVoiceInput = (groupId: string) => {
+  //   const group = taskGroups.find((g) => g.id === groupId)
+  //   alert(`タスクグループ「${group?.title}」の音声入力を開始します`)
+  // }
 
   // タスクグループレベルのタスク分解
   const decomposeGroup = (groupId: string) => {
@@ -878,7 +881,9 @@ export default function ProjectTemplate({
                       >
                         <Trash2 className="h-4 w-4 text-red-500" />
                       </Button>
-                      <Button
+
+                      {/* // 音声機能を一時的にコメントアウト */}
+                      {/* <Button
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0"
@@ -886,7 +891,9 @@ export default function ProjectTemplate({
                         title="音声入力"
                       >
                         <Mic className={iconStyle} />
-                      </Button>
+                      </Button> */}
+
+
                       <Button
                         variant="ghost"
                         size="sm"
@@ -914,7 +921,9 @@ export default function ProjectTemplate({
                       >
                         <Clock className={iconStyle} />
                       </Button>
-                      <Button
+
+                      {/* 一時的に、更新ボタンをコメントアウト */}
+                      {/* <Button
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0"
@@ -922,7 +931,8 @@ export default function ProjectTemplate({
                         title="更新"
                       >
                         <RefreshCw className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : iconStyle}`} />
-                      </Button>
+                      </Button> */}
+
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="他メニュー">
                         <MoreHorizontal className={iconStyle} />
                       </Button>
@@ -1023,7 +1033,9 @@ export default function ProjectTemplate({
                                         >
                                           <Trash2 className="h-4 w-4 text-red-500" />
                                         </Button>
-                                        <Button
+
+                                        {/* // 音声機能を一時的にコメントアウト */}
+                                        {/* <Button
                                           variant="ghost"
                                           size="sm"
                                           className="h-8 w-8 p-0"
@@ -1031,7 +1043,9 @@ export default function ProjectTemplate({
                                           title="音声入力"
                                         >
                                           <Mic className={iconStyle} />
-                                        </Button>
+                                        </Button> */}
+
+
                                         <Button
                                           variant="ghost"
                                           size="sm"
@@ -1059,7 +1073,9 @@ export default function ProjectTemplate({
                                         >
                                           <Clock className={iconStyle} />
                                         </Button>
-                                        <Button
+
+                                        {/* 一時的に、更新ボタンをコメントアウト */}
+                                        {/* <Button
                                           variant="ghost"
                                           size="sm"
                                           className="h-8 w-8 p-0"
@@ -1069,7 +1085,8 @@ export default function ProjectTemplate({
                                           <RefreshCw
                                             className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : iconStyle}`}
                                           />
-                                        </Button>
+                                        </Button> */}
+
                                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="他メニュー">
                                           <MoreHorizontal className={iconStyle} />
                                         </Button>
@@ -1189,7 +1206,9 @@ export default function ProjectTemplate({
                                                             >
                                                               <Trash2 className="h-4 w-4 text-red-500" />
                                                             </Button>
-                                                            <Button
+
+                                                            {/* // 音声機能を一時的にコメントアウト */}
+                                                            {/* <Button
                                                               variant="ghost"
                                                               size="sm"
                                                               className="h-8 w-8 p-0"
@@ -1197,7 +1216,8 @@ export default function ProjectTemplate({
                                                               title="音声入力"
                                                             >
                                                               <Mic className={iconStyle} />
-                                                            </Button>
+                                                            </Button> */}
+
                                                             <Button
                                                               variant="ghost"
                                                               size="sm"
@@ -1225,7 +1245,9 @@ export default function ProjectTemplate({
                                                             >
                                                               <Clock className={iconStyle} />
                                                             </Button>
-                                                            <Button
+
+                                                            {/* 一時的に、更新ボタンをコメントアウト */}
+                                                            {/* <Button
                                                               variant="ghost"
                                                               size="sm"
                                                               className="h-8 w-8 p-0"
@@ -1235,7 +1257,9 @@ export default function ProjectTemplate({
                                                               title="更新"
                                                             >
                                                               <RefreshCw className={iconStyle} />
-                                                            </Button>
+                                                            </Button> */}
+
+
                                                             <Button
                                                               variant="ghost"
                                                               size="sm"
@@ -1338,7 +1362,10 @@ export default function ProjectTemplate({
                                                                   >
                                                                     <Trash2 className="h-4 w-4 text-red-500" />
                                                                   </Button>
-                                                                  <Button
+
+
+                                                                  {/* 一時的に、更新ボタンをコメントアウト */}
+                                                                  {/* <Button
                                                                     variant="ghost"
                                                                     size="sm"
                                                                     className="h-8 w-8 p-0"
@@ -1346,7 +1373,8 @@ export default function ProjectTemplate({
                                                                     title="音声入力"
                                                                   >
                                                                     <Mic className={iconStyle} />
-                                                                  </Button>
+                                                                  </Button> */}
+
                                                                   <Button
                                                                     variant="ghost"
                                                                     size="sm"
