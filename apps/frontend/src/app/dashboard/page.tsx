@@ -323,7 +323,7 @@ export default function DashboardPage() {
   // ホバー状態を管理する状態変数
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null)
   const [hoveredTask, setHoveredTask] = useState<{ groupId: string; taskId: string } | null>(null)
-
+  
   // クライアントサイドレンダリングのための状態
   const [isMounted, setIsMounted] = useState(false)
 
@@ -846,9 +846,9 @@ export default function DashboardPage() {
                                                 className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredTask &&
                                                   hoveredTask.groupId === group.id &&
                                                   hoveredTask.taskId === task.id
-                                                  ? "opacity-100"
-                                                  : "opacity-0"
-                                                  }`}
+                                                    ? "opacity-100"
+                                                    : "opacity-0"
+                                                }`}
                                               >
                                                 <Button
                                                   variant="ghost"
@@ -1015,9 +1015,9 @@ export default function DashboardPage() {
                                                         hoveredSubtask.groupId === group.id &&
                                                         hoveredSubtask.taskId === task.id &&
                                                         hoveredSubtask.subtaskId === subtask.id
-                                                        ? "opacity-100"
-                                                        : "opacity-0"
-                                                        }`}
+                                                          ? "opacity-100"
+                                                          : "opacity-0"
+                                                      }`}
                                                     >
                                                       <Button
                                                         variant="ghost"
@@ -1086,8 +1086,8 @@ export default function DashboardPage() {
                     )}
                   </Card>
                 ))}
-              </div>
-            </DragDropContext>
+                </div>
+              </DragDropContext>
           </div>
 
           {/* AIコーチング */}

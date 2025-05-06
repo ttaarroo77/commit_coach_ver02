@@ -383,4 +383,143 @@ curl -X GET http://localhost:3000/api/projects/999
 ## TDDサイクル
 1. テスト作成 → 2. 実装 → 3. リファクタリング
 
-# 📝 メモ
+## 📝 メモ
+
+## 🧪 テスト実装の注意点
+
+- テストはコンポーネントごとに分割して進める
+- 各コンポーネントの責務に基づいたテストケースを設計
+- テストの独立性を保つため、適切なモックを使用
+
+## 💡 学んだこと
+
+- Supabase 2.x は `signInWithPassword` が非推奨 → `signInWithPasswordless` に移行
+- react-beautiful-dndとFramer Motionの併用時は、Draggableコンポーネント内で直接motion.divを使わず、通常のdivでラップする必要がある
+- SWRのキャッシュ戦略は適切に設定することでパフォーマンスが向上する
+- Next.js 15.3.1では特にクライアント/サーバーハイドレーションエラーに注意が必要。`suppressHydrationWarning`属性を適切に使うことで解決できる場合がある
+
+## 🛠️ 技術的負債・暫定対応メモ
+
+- [ ] SupabaseのURL/KEYは現状AuthProvider.tsxにベタ打ち。ポートフォリオ・検証用の暫定対応。
+- [ ] 本番・公開前に必ず.env.local（または.env）で `NEXT_PUBLIC_SUPABASE_URL` `NEXT_PUBLIC_SUPABASE_ANON_KEY` として環境変数管理に修正すること。
+- [x] layout.tsxのbodyタグにsuppressHydrationWarning属性を追加してハイドレーションエラーを解決
+
+## ✅ 実装済み機能
+
+### 1. 認証機能の実装
+
+- [x] サインアップ機能の実装
+- [x] ログイン機能の実装
+- [x] ログアウト機能の実装
+- [x] パスワードリセット機能の実装
+- [x] 認証状態の管理
+
+### 2. プロジェクト管理機能の実装
+
+- [x] プロジェクト作成機能の実装
+- [x] プロジェクト編集機能の実装
+- [x] プロジェクト削除機能の実装
+- [x] プロジェクト一覧表示の実装
+- [x] リアルタイム更新機能の実装（Supabaseのリアルタイムサブスクリプション）
+- [x] ローディング状態の改善
+
+### 3. カンバンボードのテスト実装
+
+- [x] レンダリングテスト
+- [x] ドラッグ＆ドロップ機能のテスト
+- [x] タスク追加・編集・削除のテスト
+- [x] スタイルの実装
+
+### 4. タスクカードのテスト実装
+
+- [x] レンダリングテスト
+- [x] イベントハンドリングのテスト
+- [x] 状態変更のテスト
+- [x] スタイルの実装
+
+### 5. プロジェクト一覧のテスト実装
+
+- [x] レンダリングテスト
+- [x] フィルタリング機能のテスト
+- [x] ページネーションのテスト
+- [x] スタイルの実装
+
+## 🚀 次のステップ
+
+### 1. 統合テストの実装
+
+- [ ] コンポーネント間の連携テスト
+- [ ] データフローのテスト
+- [ ] エラーハンドリングのテスト
+
+### 2. パフォーマンステストの実装
+
+- [ ] レンダリングパフォーマンスのテスト
+- [ ] メモリリークのテスト
+- [ ] レスポンシブデザインのテスト
+
+### 3. アクセシビリティテストの実装
+
+- [ ] ARIA属性のテスト
+- [ ] キーボードナビゲーションのテスト
+- [ ] スクリーンリーダーのテスト
+
+## 🔍 APIエンドポイント確認タイミング
+
+統合テストを開始する前に、以下のタイミングでAPIエンドポイントの動作確認を行うことを推奨します：
+
+### 1. テストデータの準備時
+
+```bash
+# プロジェクト一覧の取得
+curl -X GET http://localhost:3000/api/projects
+
+# タスク一覧の取得
+curl -X GET http://localhost:3000/api/tasks
+```
+
+### 2. CRUD操作のテスト前
+
+```bash
+# プロジェクトの作成
+curl -X POST http://localhost:3000/api/projects \
+  -H "Content-Type: application/json" \
+  -d '{"name": "テストプロジェクト", "description": "テスト用"}'
+
+# タスクの作成
+curl -X POST http://localhost:3000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title": "テストタスク", "description": "テスト用", "status": "todo"}'
+```
+
+### 3. 認証関連のテスト前
+
+```bash
+# ログイン
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com", "password": "password"}'
+
+# トークンの確認
+curl -X GET http://localhost:3000/api/auth/me \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+### 4. エラーハンドリングのテスト前
+
+```bash
+# 無効なデータでの作成
+curl -X POST http://localhost:3000/api/projects \
+  -H "Content-Type: application/json" \
+  -d '{"name": ""}'
+
+# 存在しないリソースへのアクセス
+curl -X GET http://localhost:3000/api/projects/999
+```
+
+## 💡 確認の効果
+
+- APIの動作を確実に把握できる
+- テストケースの設計が効率的になる
+- エラーパターンを事前に特定できる
+- テストの信頼性が向上する
