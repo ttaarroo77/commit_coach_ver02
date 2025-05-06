@@ -323,7 +323,7 @@ export default function DashboardPage() {
   // ホバー状態を管理する状態変数
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null)
   const [hoveredTask, setHoveredTask] = useState<{ groupId: string; taskId: string } | null>(null)
-  
+
   // クライアントサイドレンダリングのための状態
   const [isMounted, setIsMounted] = useState(false)
 
@@ -711,6 +711,7 @@ export default function DashboardPage() {
                             >
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
+                            {/* 音声入力ボタンをコメントアウト
                             <Button
                               variant="ghost"
                               size="sm"
@@ -720,6 +721,7 @@ export default function DashboardPage() {
                             >
                               <Mic className={iconStyle} />
                             </Button>
+                            */}
                             <Button
                               variant="ghost"
                               size="sm"
@@ -738,6 +740,7 @@ export default function DashboardPage() {
                             >
                               <Plus className={iconStyle} />
                             </Button>
+                            {/* ダッシュボードに追加ボタンをコメントアウト
                             <Button
                               variant="ghost"
                               size="sm"
@@ -747,7 +750,10 @@ export default function DashboardPage() {
                             >
                               <Clock className={iconStyle} />
                             </Button>
-                            <Button
+                            */}
+
+                            {/* 一時的に、更新ボタンをコメントアウト */}
+                            {/* <Button
                               variant="ghost"
                               size="sm"
                               className="h-8 w-8 p-0"
@@ -755,7 +761,8 @@ export default function DashboardPage() {
                               title="更新"
                             >
                               <RefreshCw className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : iconStyle}`} />
-                            </Button>
+                            </Button> */}
+
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="他メニュー">
                               <MoreHorizontal className={iconStyle} />
                             </Button>
@@ -846,9 +853,9 @@ export default function DashboardPage() {
                                                 className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredTask &&
                                                   hoveredTask.groupId === group.id &&
                                                   hoveredTask.taskId === task.id
-                                                    ? "opacity-100"
-                                                    : "opacity-0"
-                                                }`}
+                                                  ? "opacity-100"
+                                                  : "opacity-0"
+                                                  }`}
                                               >
                                                 <Button
                                                   variant="ghost"
@@ -859,6 +866,7 @@ export default function DashboardPage() {
                                                 >
                                                   <Trash2 className="h-4 w-4 text-red-500" />
                                                 </Button>
+                                                {/* 音声入力ボタンをコメントアウト
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
@@ -868,6 +876,7 @@ export default function DashboardPage() {
                                                 >
                                                   <Mic className={iconStyle} />
                                                 </Button>
+                                                */}
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
@@ -886,6 +895,7 @@ export default function DashboardPage() {
                                                 >
                                                   <Plus className={iconStyle} />
                                                 </Button>
+                                                {/* ダッシュボードに追加ボタンをコメントアウト
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
@@ -895,7 +905,10 @@ export default function DashboardPage() {
                                                 >
                                                   <Clock className={iconStyle} />
                                                 </Button>
-                                                <Button
+                                                */}
+
+                                                {/* 一時的に、更新ボタンをコメントアウト */}
+                                                {/* <Button
                                                   variant="ghost"
                                                   size="sm"
                                                   className="h-8 w-8 p-0"
@@ -905,7 +918,9 @@ export default function DashboardPage() {
                                                   title="更新"
                                                 >
                                                   <RefreshCw className={iconStyle} />
-                                                </Button>
+                                                </Button> */}
+
+
                                                 {group.id === "today" ? (
                                                   <Button
                                                     variant="ghost"
@@ -1015,9 +1030,9 @@ export default function DashboardPage() {
                                                         hoveredSubtask.groupId === group.id &&
                                                         hoveredSubtask.taskId === task.id &&
                                                         hoveredSubtask.subtaskId === subtask.id
-                                                          ? "opacity-100"
-                                                          : "opacity-0"
-                                                      }`}
+                                                        ? "opacity-100"
+                                                        : "opacity-0"
+                                                        }`}
                                                     >
                                                       <Button
                                                         variant="ghost"
@@ -1028,6 +1043,7 @@ export default function DashboardPage() {
                                                       >
                                                         <Trash2 className="h-4 w-4 text-red-500" />
                                                       </Button>
+                                                      {/* 音声入力ボタンをコメントアウト
                                                       <Button
                                                         variant="ghost"
                                                         size="sm"
@@ -1037,15 +1053,7 @@ export default function DashboardPage() {
                                                       >
                                                         <Mic className={iconStyle} />
                                                       </Button>
-                                                      <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="h-8 w-8 p-0"
-                                                        onClick={() => { }}
-                                                        title="ダッシュボードに追加"
-                                                      >
-                                                        <Clock className={iconStyle} />
-                                                      </Button>
+                                                      */}
                                                       <Button
                                                         variant="ghost"
                                                         size="sm"
@@ -1086,8 +1094,8 @@ export default function DashboardPage() {
                     )}
                   </Card>
                 ))}
-                </div>
-              </DragDropContext>
+              </div>
+            </DragDropContext>
           </div>
 
           {/* AIコーチング */}
