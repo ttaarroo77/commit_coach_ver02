@@ -24,6 +24,8 @@ import {
   GripVertical,
   RefreshCw,
 } from "lucide-react"
+import { useDashboardTasks, type DashboardTask, type NewDashboardTask } from "@/hooks/useDashboardTasks"
+import useTasksWithSWR from '@/hooks/use-tasks';
 
 interface SubTask {
   id: string
@@ -65,6 +67,11 @@ interface EditableTextProps {
   prefix?: string
   isOverdue?: boolean
 }
+
+
+
+
+
 
 // EditableTextコンポーネントを更新して isOverdue プロパティを処理
 const EditableText = ({ value, onChange, className = "", prefix = "", isOverdue = false }: EditableTextProps) => {
@@ -164,9 +171,8 @@ export default function ProjectTemplate({
   dueDate: initialDueDate,
   projectColor = "#31A9B8", // デフォルト色を設定
 }: ProjectTemplateProps) {
-  // 既存のコードの中で、ProjectTemplate関数の先頭付近に以下の状態変数を追加
+  const [mounted, setMounted] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none")
-
   const [projectTitle, setProjectTitle] = useState(initialProjectTitle)
   const [taskGroups, setTaskGroups] = useState<TaskGroup[]>(
     initialTaskGroups.map((group) => ({
@@ -180,6 +186,7 @@ export default function ProjectTemplate({
   )
   const [projectDueDate, setProjectDueDate] = useState(initialDueDate || "")
   const [projectCompleted, setProjectCompleted] = useState(false)
+  const { addTask: addDashboardTask } = useDashboardTasks()
 
   // ホバー状態を管理する状態変数
   const [hoveredProject, setHoveredProject] = useState(false)
@@ -191,6 +198,64 @@ export default function ProjectTemplate({
     null,
   )
 
+  // プロジェクトのタスクをSWRで取得
+  const { tasks: swrTasks, isLoading: tasksLoading, error: tasksError, refresh: refreshTasks } = useTasksWithSWR();
+
+  // swrTasksが変更されたらtasksの状態を更新
+  useEffect(() => {
+    if (swrTasks && swrTasks.length > 0) {
+      // プロジェクトに関連するタスクをフィルタリング
+      const projectTasks = swrTasks.filter(task => task.project === projectTitle);
+
+      // 既存のタスクグループをコピー
+      const updatedTaskGroups = [...taskGroups];
+
+      // 「タスク」グループを見つけるか、なければ追加
+      let tasksGroup = updatedTaskGroups.find(group => group.id === 'tasks');
+      if (!tasksGroup) {
+        tasksGroup = {
+          id: 'tasks',
+          title: 'タスク',
+          expanded: true,
+          tasks: [],
+          completed: false
+        };
+        updatedTaskGroups.push(tasksGroup);
+      }
+
+      // APIから取得したタスクを、タスクグループのタスク配列に変換
+      tasksGroup.tasks = projectTasks.map(task => ({
+        id: task.id,
+        title: task.title,
+        status: task.status,
+        project: task.project,
+        progress: task.progress || 0,
+        dueDate: task.dueDate,
+        subtasks: task.subtasks || [],
+        expanded: false, // デフォルト値を設定
+        startTime: task.startTime || '',
+        endTime: task.endTime || '',
+        created_at: task.created_at
+      }));
+
+      setTaskGroups(updatedTaskGroups);
+    }
+  }, [swrTasks, projectTitle]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // プロジェクト全体の完了状態を更新
+  useEffect(() => {
+    const allGroupsCompleted = taskGroups.length > 0 && taskGroups.every((group) => group.completed)
+    setProjectCompleted(allGroupsCompleted)
+  }, [taskGroups])
+
+  if (!mounted) {
+    return <div className="flex h-screen items-center justify-center">読み込み中...</div>;
+  }
+
   // IDを生成する関数（クライアントサイドのみで実行）
   const generateId = (prefix: string) => {
     if (typeof window === 'undefined') {
@@ -198,12 +263,6 @@ export default function ProjectTemplate({
     }
     return `${prefix}-${Date.now()}`;
   };
-
-  // プロジェクト全体の完了状態を更新
-  useEffect(() => {
-    const allGroupsCompleted = taskGroups.length > 0 && taskGroups.every((group) => group.completed)
-    setProjectCompleted(allGroupsCompleted)
-  }, [taskGroups])
 
   // タスクを期限順にソートする
   const sortTasksByDueDate = (order: "asc" | "desc" | "none") => {
@@ -662,24 +721,23 @@ export default function ProjectTemplate({
   // タスクをスケジュールに追加（ダッシュボードの今日のタスクに追加）
   const addToSchedule = (groupId: string, taskId: string) => {
     const task = taskGroups.find((g) => g.id === groupId)?.tasks.find((t) => t.id === taskId)
-    if (task && typeof window !== "undefined") {
+    if (task) {
       // 現在時刻から開始時間と終了時間を設定
       const now = new Date()
       const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
       const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
 
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
+      // ダッシュボードに追加
+      const newTask: NewDashboardTask = {
         title: task.title,
         startTime,
         endTime,
         project: projectTitle,
+        status: 'pending',
       }
+      addDashboardTask(newTask)
 
-      // ローカルストレージに保存（実際の実装ではAPIやデータベースを使用）
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(`タスク「${task.title}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`)
+      alert(`タスク「${task.title}」をダッシュボードに追加しました。`)
     }
   }
 
@@ -690,73 +748,66 @@ export default function ProjectTemplate({
       ?.tasks.find((t) => t.id === taskId)
       ?.subtasks.find((s) => s.id === subtaskId)
 
-    if (subtask && typeof window !== "undefined") {
+    if (subtask) {
       // 現在時刻から開始時間と終了時間を設定
       const now = new Date()
       const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
       const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
 
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
+      // ダッシュボードに追加
+      const newTask: NewDashboardTask = {
         title: subtask.title,
         startTime,
         endTime,
         project: projectTitle,
+        status: 'pending',
       }
+      addDashboardTask(newTask)
 
-      // ローカルストレージに保存
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(`サブタスク「${subtask.title}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`)
+      alert(`サブタスク「${subtask.title}」をダッシュボードに追加しました。`)
     }
   }
 
   // プロジェクトをスケジュールに追加
   const addProjectToSchedule = () => {
-    if (typeof window !== "undefined") {
-      // 現在時刻から開始時間と終了時間を設定
-      const now = new Date()
-      const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-      const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+    // 現在時刻から開始時間と終了時間を設定
+    const now = new Date()
+    const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+    const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
 
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
-        title: projectTitle,
-        startTime,
-        endTime,
-        project: "プロジェクト全体",
-      }
-
-      // ローカルストレージに保存
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(`プロジェクト「${projectTitle}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`)
+    // ダッシュボードに追加
+    const newTask: NewDashboardTask = {
+      title: projectTitle,
+      startTime,
+      endTime,
+      project: "プロジェクト全体",
+      status: 'pending',
     }
+    addDashboardTask(newTask)
+
+    alert(`プロジェクト「${projectTitle}」をダッシュボードに追加しました。`)
   }
 
   // タスクグループをスケジュールに追加
   const addTaskGroupToSchedule = (groupId: string) => {
     const group = taskGroups.find((g) => g.id === groupId)
-    if (group && typeof window !== "undefined") {
+    if (group) {
       // 現在時刻から開始時間と終了時間を設定
       const now = new Date()
       const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
       const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
 
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
+      // ダッシュボードに追加
+      const newTask: NewDashboardTask = {
         title: group.title,
         startTime,
         endTime,
         project: projectTitle,
+        status: 'pending',
       }
+      addDashboardTask(newTask)
 
-      // ローカルストレージに保存
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(
-        `タスクグループ「${group.title}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`,
-      )
+      alert(`タスクグループ「${group.title}」をダッシュボードに追加しました。`)
     }
   }
 

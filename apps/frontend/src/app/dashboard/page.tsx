@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 // 簡略化した型定義
 type DropResult = any
@@ -29,33 +29,13 @@ import {
   SplitSquareVertical,
   RefreshCw,
 } from "lucide-react"
+import { useDashboardTasks, type DashboardTask, type NewDashboardTask } from "@/hooks/useDashboardTasks"
+import { Task } from "@/types/task"
 
 interface SubTask {
   id: string
   title: string
   completed: boolean
-}
-
-interface Task {
-  id: string
-  title: string
-  startTime?: string
-  endTime?: string
-  status: "todo" | "in-progress" | "completed"
-  project?: string
-  priority?: string
-  progress: number
-  subtasks: SubTask[]
-  expanded?: boolean
-  dueDate?: string
-}
-
-// 型キャスト用のヘルパー関数
-const asTaskStatus = (status: string): "todo" | "in-progress" | "completed" => {
-  if (status === "todo" || status === "in-progress" || status === "completed") {
-    return status;
-  }
-  return "todo";
 }
 
 interface TaskGroup {
@@ -173,17 +153,66 @@ const formatDateDisplay = (date: Date) => {
 // 共通のアイコンスタイル
 const iconStyle = "h-4 w-4 text-gray-300"
 
+// statusの型変換関数
+const convertStatus = (status: DashboardTask['status']): Task['status'] => {
+  switch (status) {
+    case 'pending':
+      return 'todo'
+    case 'in_progress':
+      return 'in_progress'
+    case 'completed':
+      return 'completed'
+    default:
+      return 'todo'
+  }
+}
+
+// Task型のstatusからDashboardTask型のstatusへの変換関数
+const convertToDashboardStatus = (status: Task['status']): DashboardTask['status'] => {
+  switch (status) {
+    case 'todo':
+      return 'pending'
+    case 'in_progress':
+      return 'in_progress'
+    case 'completed':
+      return 'completed'
+    default:
+      return 'pending'
+  }
+}
+
+// DashboardTaskからTask型への変換関数
+const convertToTask = (dashboardTask: DashboardTask): Task => ({
+  id: dashboardTask.id,
+  title: dashboardTask.title,
+  status: convertStatus(dashboardTask.status),
+  project: dashboardTask.project,
+  progress: 0, // デフォルト値
+  subtasks: [], // デフォルト値
+  startTime: dashboardTask.startTime,
+  endTime: dashboardTask.endTime,
+  created_at: dashboardTask.createdAt,
+})
+
 export default function DashboardPage() {
+  const { tasks: dashboardTasks, isLoading, error, addTask: addDashboardTask, updateTask, deleteTask } = useDashboardTasks()
+
+  // 日付・時刻の取得
   const [currentTime, setCurrentTime] = useState(new Date())
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000) // 1分ごとに更新
+    return () => clearInterval(timer)
+  }, [])
+
+  // ソート順
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none")
 
-  // IDを生成する関数（クライアントサイドのみで実行）
-  const generateId = (prefix: string) => {
-    if (typeof window === 'undefined') {
-      return `${prefix}-placeholder`;
-    }
-    return `${prefix}-${Date.now()}`;
-  };
+  // DashboardTaskをTask型に変換
+  const convertedTasks = dashboardTasks.map(convertToTask)
+
+  // タスクを今日のタスクと未定のタスクに分類
+  const todayTasks = convertedTasks.filter(task => task.startTime && task.endTime)
+  const unscheduledTasks = convertedTasks.filter(task => !task.startTime || !task.endTime)
 
   // タスクグループ
   const [taskGroups, setTaskGroups] = useState<TaskGroup[]>([
@@ -192,444 +221,372 @@ export default function DashboardPage() {
       title: "今日のタスク",
       expanded: true,
       completed: false,
-      tasks: [
-        {
-          id: "1",
-          title: "朝のミーティング",
-          startTime: "09:00",
-          endTime: "10:00",
-          status: "completed",
-          project: "チーム管理",
-          priority: "中",
-          progress: 100,
-          expanded: false,
-          subtasks: [
-            { id: "1-1", title: "議事録作成", completed: true },
-            { id: "1-2", title: "タスク割り当て", completed: true },
-          ],
-        },
-        {
-          id: "2",
-          title: "ログイン機能の実装",
-          startTime: "10:00",
-          endTime: "13:00",
-          status: "completed",
-          project: "ウェブアプリ開発",
-          priority: "高",
-          progress: 100,
-          expanded: false,
-          subtasks: [
-            { id: "2-1", title: "UI設計", completed: true },
-            { id: "2-2", title: "バックエンド連携", completed: true },
-            { id: "2-3", title: "テスト", completed: true },
-          ],
-        },
-        {
-          id: "3",
-          title: "ランチミーティング",
-          startTime: "13:00",
-          endTime: "14:00",
-          status: "completed",
-          project: "チーム管理",
-          priority: "低",
-          progress: 100,
-          expanded: false,
-          subtasks: [],
-        },
-        {
-          id: "4",
-          title: "APIエンドポイントの実装",
-          startTime: "14:00",
-          endTime: "16:00",
-          status: "in-progress",
-          project: "ウェブアプリ開発",
-          priority: "高",
-          progress: 50,
-          expanded: false,
-          subtasks: [
-            { id: "4-1", title: "認証エンドポイント", completed: true },
-            { id: "4-2", title: "ユーザー管理API", completed: false },
-            { id: "4-3", title: "データ取得API", completed: false },
-          ],
-        },
-        {
-          id: "5",
-          title: "ダッシュボード画面のデザイン",
-          startTime: "16:00",
-          endTime: "18:00",
-          status: "todo",
-          project: "デザインプロジェクト",
-          priority: "中",
-          progress: 0,
-          expanded: false,
-          subtasks: [
-            { id: "5-1", title: "ワイヤーフレーム作成", completed: false },
-            { id: "5-2", title: "コンポーネント設計", completed: false },
-            { id: "5-3", title: "レスポンシブ対応", completed: false },
-          ],
-        },
-      ],
+      tasks: todayTasks,
     },
     {
       id: "unscheduled",
       title: "未定のタスク",
       expanded: true,
       completed: false,
-      tasks: [
-        {
-          id: "6",
-          title: "レスポンシブデザインの実装",
-          status: "todo",
-          project: "ウェブアプリ開発",
-          priority: "中",
-          progress: 0,
-          expanded: false,
-          subtasks: [
-            { id: "6-1", title: "モバイル対応", completed: false },
-            { id: "6-2", title: "タブレット対応", completed: false },
-          ],
-        },
-        {
-          id: "7",
-          title: "ユーザー設定画面の作成",
-          status: "todo",
-          project: "ウェブアプリ開発",
-          priority: "低",
-          progress: 0,
-          expanded: false,
-          subtasks: [
-            { id: "7-1", title: "プロフィール編集機能", completed: false },
-            { id: "7-2", title: "パスワード変更機能", completed: false },
-            { id: "7-3", title: "通知設定機能", completed: false },
-          ],
-        },
-        {
-          id: "8",
-          title: "テスト計画書の作成",
-          status: "todo",
-          project: "QA",
-          priority: "高",
-          progress: 0,
-          expanded: false,
-          subtasks: [
-            { id: "8-1", title: "テスト範囲の定義", completed: false },
-            { id: "8-2", title: "テストケースの作成", completed: false },
-          ],
-        },
-      ],
+      tasks: unscheduledTasks,
     },
   ])
+
+  // convertedTasksが変更されたら、taskGroupsを更新
+  useEffect(() => {
+    const todayTasks = convertedTasks.filter(task => task.startTime && task.endTime)
+    const unscheduledTasks = convertedTasks.filter(task => !task.startTime || !task.endTime)
+
+    setTaskGroups([
+      {
+        id: "today",
+        title: "今日のタスク",
+        expanded: true,
+        completed: false,
+        tasks: todayTasks,
+      },
+      {
+        id: "unscheduled",
+        title: "未定のタスク",
+        expanded: true,
+        completed: false,
+        tasks: unscheduledTasks,
+      },
+    ])
+  }, [convertedTasks])
 
   // ホバー状態を管理する状態変数
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null)
   const [hoveredTask, setHoveredTask] = useState<{ groupId: string; taskId: string } | null>(null)
-
-  // クライアントサイドレンダリングのための状態
-  const [isMounted, setIsMounted] = useState(false)
-
-  // クライアントサイドでのみレンダリングを行うための効果
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  // 現在時刻を更新
-  useEffect(() => {
-    // 必要な処理があればここに記述
-  }, []);
-
-  // タスクグループの展開/折りたたみを切り替える
-  const toggleTaskGroup = (groupId: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) => (group.id === groupId ? { ...group, expanded: !group.expanded } : group)),
-    )
-  }
-
-  // タスクを追加
-  const addTask = (groupId: string) => {
-    const newTask: Task = {
-      id: generateId('task'),
-      title: "新しいタスク",
-      status: "todo",
-      progress: 0,
-      subtasks: [],
-      expanded: true,
-    }
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) => (group.id === groupId ? { ...group, tasks: [...group.tasks, newTask] } : group)),
-    )
-  }
-
-  // タスクグループの削除（例: 最初のタスクを削除）
-  const deleteTask = (groupId: string, taskId: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) =>
-        group.id === groupId ? { ...group, tasks: group.tasks.filter((task) => task.id !== taskId) } : group,
-      ),
-    )
-  }
+  const [hoveredSubtask, setHoveredSubtask] = useState<{ groupId: string; taskId: string; subtaskId: string } | null>(null)
 
   // タスクを期限順にソートする
   const sortTasksByDueDate = (order: "asc" | "desc" | "none") => {
     setSortOrder(order)
+
     if (order === "none") return
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) => {
+
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group => {
+        // タスクを期限でソート
         const sortedTasks = [...group.tasks].sort((a, b) => {
+          // 完了したタスクは常に下部に
           if (a.status === "completed" && b.status !== "completed") return 1
           if (a.status !== "completed" && b.status === "completed") return -1
+
+          // 期限がないタスクは下部に
           if (!a.dueDate && !b.dueDate) return 0
           if (!a.dueDate) return 1
           if (!b.dueDate) return -1
+
+          // 期限順にソート
           const dateA = new Date(a.dueDate)
           const dateB = new Date(b.dueDate)
           return order === "asc" ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime()
         })
+
         return { ...group, tasks: sortedTasks }
-      }),
+      })
     )
   }
 
-  // ドラッグ&ドロップの処理
-  const handleDragEnd = (result: any) => {
-    const { source, destination, type } = result
-    if (!destination) return
-    if (source.droppableId === destination.droppableId && source.index === destination.index) return
-    if (type === "task") {
-      if (source.droppableId === destination.droppableId) {
-        const groupId = source.droppableId
-        const group = taskGroups.find((g) => g.id === groupId)
-        if (!group) return
-        const reorderedTasks = reorder(group.tasks, source.index, destination.index)
-        setTaskGroups((prevGroups) => prevGroups.map((g) => (g.id === groupId ? { ...g, tasks: reorderedTasks } : g)))
-      } else {
-        const sourceGroupId = source.droppableId
-        const destGroupId = destination.droppableId
-        const sourceGroup = taskGroups.find((g) => g.id === sourceGroupId)
-        const destGroup = taskGroups.find((g) => g.id === destGroupId)
-        if (!sourceGroup || !destGroup) return
-        const taskToMove = { ...sourceGroup.tasks[source.index] }
-        if (destGroupId === "today" && !taskToMove.startTime) {
-          const now = new Date()
-          taskToMove.startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-          taskToMove.endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-        }
-        if (destGroupId === "unscheduled") {
-          delete taskToMove.startTime
-          delete taskToMove.endTime
-        }
-        const updatedGroups = taskGroups.map((group) => {
-          if (group.id === sourceGroupId) {
-            return {
-              ...group,
-              tasks: group.tasks.filter((_: any, index: number) => index !== source.index),
-            }
-          }
-          if (group.id === destGroupId) {
-            const newTasks = [...group.tasks]
-            newTasks.splice(destination.index, 0, taskToMove)
-            return {
-              ...group,
-              tasks: newTasks,
-            }
-          }
-          return group
-        })
-        setTaskGroups(updatedGroups)
-      }
-    }
+  // タスクグループの展開/折りたたみを切り替える
+  const toggleTaskGroup = (groupId: string) => {
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group => (group.id === groupId ? { ...group, expanded: !group.expanded } : group))
+    )
   }
 
   // タスクの展開/折りたたみを切り替える
   const toggleTask = (groupId: string, taskId: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) =>
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group =>
         group.id === groupId
           ? {
             ...group,
-            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, expanded: !task.expanded } : task)),
+            tasks: group.tasks.map(task => (task.id === taskId ? { ...task, expanded: !task.expanded } : task)),
           }
-          : group,
-      ),
+          : group
+      )
     )
   }
 
   // タスクタイトルを更新
   const updateTaskTitle = (groupId: string, taskId: string, newTitle: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) =>
+    // UIの更新
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group =>
         group.id === groupId
           ? {
             ...group,
-            tasks: group.tasks.map((task) => (task.id === taskId ? { ...task, title: newTitle } : task)),
+            tasks: group.tasks.map(task => (task.id === taskId ? { ...task, title: newTitle } : task)),
           }
-          : group,
-      ),
+          : group
+      )
     )
-  }
 
-  // サブタスクのホバー状態
-  const [hoveredSubtask, setHoveredSubtask] = useState<{ groupId: string; taskId: string; subtaskId: string } | null>(null)
-
-  // サブタスクの完了状態を切り替える
-  const toggleSubtaskCompleted = (groupId: string, taskId: string, subtaskId: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) =>
-        group.id === groupId
-          ? {
-            ...group,
-            tasks: group.tasks.map((task) =>
-              task.id === taskId
-                ? {
-                  ...task,
-                  subtasks: task.subtasks.map((subtask) =>
-                    subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask,
-                  ),
-                }
-                : task,
-            ),
-          }
-          : group,
-      ),
-    )
+    // バックエンドの更新
+    updateTask(taskId, { title: newTitle })
   }
 
   // サブタスクタイトルを更新
   const updateSubtaskTitle = (groupId: string, taskId: string, subtaskId: string, newTitle: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) =>
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group =>
         group.id === groupId
           ? {
             ...group,
-            tasks: group.tasks.map((task) =>
+            tasks: group.tasks.map(task =>
               task.id === taskId
                 ? {
                   ...task,
-                  subtasks: task.subtasks.map((subtask) =>
-                    subtask.id === subtaskId ? { ...subtask, title: newTitle } : subtask,
+                  subtasks: task.subtasks.map(subtask =>
+                    subtask.id === subtaskId ? { ...subtask, title: newTitle } : subtask
                   ),
                 }
-                : task,
+                : task
             ),
           }
-          : group,
-      ),
-    )
-  }
-
-  // サブタスク削除
-  const deleteSubtask = (groupId: string, taskId: string, subtaskId: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) =>
-        group.id === groupId
-          ? {
-            ...group,
-            tasks: group.tasks.map((task) =>
-              task.id === taskId
-                ? {
-                  ...task,
-                  subtasks: task.subtasks.filter((subtask) => subtask.id !== subtaskId),
-                }
-                : task,
-            ),
-          }
-          : group,
-      ),
+          : group
+      )
     )
   }
 
   // タスクの完了状態を切り替える
   const toggleTaskStatus = (groupId: string, taskId: string) => {
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) => {
+    // 現在のタスクを取得
+    const currentTask = taskGroups.find(g => g.id === groupId)?.tasks.find(t => t.id === taskId)
+    if (!currentTask) return
+
+    // 新しいステータスを判定
+    const newTaskStatus = currentTask.status === "completed" ? "todo" : "completed"
+    const newDashboardStatus = convertToDashboardStatus(newTaskStatus)
+
+    // UIの更新
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group => {
         if (group.id === groupId) {
-          const updatedTasks = group.tasks.map((task) => {
+          // タスクの完了状態を切り替え
+          const updatedTasks = group.tasks.map(task => {
             if (task.id === taskId) {
-              const newStatus = task.status === "completed" ? "todo" : "completed"
               return {
                 ...task,
-                status: newStatus as "todo" | "in-progress" | "completed",
-                progress: newStatus === "completed" ? 100 : 0,
-                subtasks: task.subtasks.map((subtask) => ({
+                status: newTaskStatus as Task["status"],
+                progress: newTaskStatus === "completed" ? 100 : 0,
+                // サブタスクも同期して更新
+                subtasks: task.subtasks.map(subtask => ({
                   ...subtask,
-                  completed: newStatus === "completed",
+                  completed: newTaskStatus === "completed",
                 })),
               }
             }
             return task
           })
+
+          // 完了したタスクを下部に移動
           const sortedTasks = [...updatedTasks].sort((a, b) => {
             if (a.status === "completed" && b.status !== "completed") return 1
             if (a.status !== "completed" && b.status === "completed") return -1
             return 0
           })
+
           return { ...group, tasks: sortedTasks }
         }
         return group
-      }),
+      }) as TaskGroup[]
+    )
+
+    // バックエンドの更新
+    updateTask(taskId, { status: newDashboardStatus })
+  }
+
+  // サブタスクの完了状態を切り替える
+  const toggleSubtaskCompleted = (groupId: string, taskId: string, subtaskId: string) => {
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group =>
+        group.id === groupId
+          ? {
+            ...group,
+            tasks: group.tasks.map(task =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: task.subtasks.map(subtask =>
+                    subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask
+                  ),
+                  progress: calculateProgress(
+                    task.subtasks.map(subtask =>
+                      subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask
+                    )
+                  ),
+                }
+                : task
+            ),
+          }
+          : group
+      )
+    )
+  }
+
+  // 進捗率を計算
+  const calculateProgress = (subtasks: SubTask[]) => {
+    if (subtasks.length === 0) return 0
+    const completedCount = subtasks.filter(subtask => subtask.completed).length
+    return Math.round((completedCount / subtasks.length) * 100)
+  }
+
+  // 新しいタスクを追加
+  const addTask = (groupId: string) => {
+    const now = new Date()
+    const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+    const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+
+    const newDashboardTask: NewDashboardTask = {
+      title: "新しいタスク",
+      status: "pending",
+      project: "未分類",
+      startTime: groupId === "today" ? startTime : "",
+      endTime: groupId === "today" ? endTime : "",
+    }
+
+    addDashboardTask(newDashboardTask)
+  }
+
+  // 新しいサブタスクを追加
+  const addSubtask = (groupId: string, taskId: string) => {
+    setTaskGroups(prevGroups =>
+      prevGroups.map(group =>
+        group.id === groupId
+          ? {
+            ...group,
+            tasks: group.tasks.map(task =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  subtasks: [
+                    ...task.subtasks,
+                    {
+                      id: `subtask-${Date.now()}`,
+                      title: "新しいサブタスク",
+                      completed: false,
+                    },
+                  ],
+                }
+                : task
+            ),
+          }
+          : group
+      )
     )
   }
 
   // 未定のタスクを今日のタスクに移動
-  const moveToToday = (taskId: string) => {
-    const unscheduledGroup = taskGroups.find((group) => group.id === "unscheduled")
-    const todayGroup = taskGroups.find((group) => group.id === "today")
-    if (!unscheduledGroup || !todayGroup) return
-    const taskToMove = unscheduledGroup.tasks.find((task) => task.id === taskId)
-    if (!taskToMove) return
+  const moveToToday = useCallback((taskId: string) => {
+    // 現在のタスクを取得
+    const task = taskGroups.find(group => group.id === "unscheduled")?.tasks.find(task => task.id === taskId)
+    if (!task) return
+
+    // 開始時間と終了時間を設定
     const now = new Date()
     const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
     const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-    const updatedTask = { ...taskToMove, startTime, endTime }
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) => {
-        if (group.id === "today") {
-          return { ...group, tasks: [...group.tasks, updatedTask] }
-        } else if (group.id === "unscheduled") {
-          return { ...group, tasks: group.tasks.filter((task) => task.id !== taskId) }
-        }
-        return group
-      }),
-    )
-  }
+
+    // バックエンドの更新
+    updateTask(taskId, { startTime, endTime })
+
+    // UIに移動完了のフィードバックを表示
+    console.log(`タスク "${task.title}" を今日のタスクに移動しました`)
+
+    // Optional: 通知などを表示
+    // showNotification(`タスク "${task.title}" を今日のタスクに移動しました`);
+  }, [taskGroups, updateTask])
 
   // 今日のタスクを未定のタスクに移動
-  const moveToUnscheduled = (taskId: string) => {
-    const todayGroup = taskGroups.find((group) => group.id === "today")
-    const unscheduledGroup = taskGroups.find((group) => group.id === "unscheduled")
-    if (!todayGroup || !unscheduledGroup) return
-    const taskToMove = todayGroup.tasks.find((task) => task.id === taskId)
-    if (!taskToMove) return
-    const { startTime, endTime, ...updatedTask } = taskToMove
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) => {
-        if (group.id === "unscheduled") {
-          return { ...group, tasks: [...group.tasks, updatedTask as Task] }
-        } else if (group.id === "today") {
-          return { ...group, tasks: group.tasks.filter((task) => task.id !== taskId) }
+  const moveToUnscheduled = useCallback((taskId: string) => {
+    // 現在のタスクを取得
+    const task = taskGroups.find(group => group.id === "today")?.tasks.find(task => task.id === taskId)
+    if (!task) return
+
+    // バックエンドの更新
+    updateTask(taskId, { startTime: "", endTime: "" })
+
+    // UIに移動完了のフィードバックを表示
+    console.log(`タスク "${task.title}" を未定のタスクに移動しました`)
+
+    // Optional: 通知などを表示
+    // showNotification(`タスク "${task.title}" を未定のタスクに移動しました`);
+  }, [taskGroups, updateTask])
+
+  // ドラッグ&ドロップの処理
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination, type } = result
+
+    // ドロップ先がない場合（ドラッグがキャンセルされた場合）は何もしない
+    if (!destination) {
+      return
+    }
+
+    // 同じ位置にドロップされた場合は何もしない
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+      return
+    }
+
+    // タスクの並び替え
+    if (type === "task") {
+      // 同じグループ内でのタスクの並び替え
+      if (source.droppableId === destination.droppableId) {
+        const groupId = source.droppableId
+        const group = taskGroups.find(g => g.id === groupId)
+        if (!group) return
+
+        const reorderedTasks = reorder(group.tasks, source.index, destination.index)
+
+        setTaskGroups(prevGroups => prevGroups.map(g => (g.id === groupId ? { ...g, tasks: reorderedTasks } : g)))
+      } else {
+        // 異なるグループ間でのタスクの移動
+        const sourceGroupId = source.droppableId
+        const destGroupId = destination.droppableId
+
+        const sourceGroup = taskGroups.find(g => g.id === sourceGroupId)
+        const destGroup = taskGroups.find(g => g.id === destGroupId)
+
+        if (!sourceGroup || !destGroup) return
+
+        // 移動するタスクを取得
+        const taskToMove = sourceGroup.tasks[source.index]
+
+        // 今日のタスクに移動する場合は時間を設定
+        if (destGroupId === "today" && !taskToMove.startTime) {
+          moveToToday(taskToMove.id)
         }
-        return group
-      }),
+
+        // 未定のタスクに移動する場合は時間を削除
+        if (destGroupId === "unscheduled" && taskToMove.startTime) {
+          moveToUnscheduled(taskToMove.id)
+        }
+      }
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div>読み込み中...</div>
+        </div>
+      </div>
     )
   }
 
-  // サブタスクを追加
-  const addSubtask = (groupId: string, taskId: string) => {
-    const newSubtask: SubTask = {
-      id: generateId('subtask'),
-      title: "新しいサブタスク",
-      completed: false,
-    }
-    setTaskGroups((prevGroups) =>
-      prevGroups.map((group) =>
-        group.id === groupId
-          ? {
-            ...group,
-            tasks: group.tasks.map((task) =>
-              task.id === taskId ? { ...task, subtasks: [...task.subtasks, newSubtask] } : task,
-            ),
-          }
-          : group,
-      ),
+  if (error) {
+    return (
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-red-500">{error}</div>
+        </div>
+      </div>
     )
   }
 
@@ -659,7 +616,7 @@ export default function DashboardPage() {
             {/* タスクグループのリスト - ドラッグ&ドロップコンテキスト */}
             <DragDropContext onDragEnd={handleDragEnd}>
               <div className="space-y-6">
-                {taskGroups.map((group) => (
+                {taskGroups.map((group, groupIndex) => (
                   <Card key={group.id} className="overflow-hidden">
                     <CardHeader
                       className="p-4 bg-gray-50"
@@ -680,7 +637,7 @@ export default function DashboardPage() {
                         {/* ドラッグハンドルの余白（ダッシュボードではドラッグ不可） */}
                         <div className="w-6"></div>
 
-                        {/* チェックボックス（ダッシュボードでは非表示だが、余白は確保） */}
+                        {/* チェックボックスの余白 */}
                         <div className="w-6"></div>
 
                         {/* タスクグループタイトル */}
@@ -693,7 +650,6 @@ export default function DashboardPage() {
                               )
                             }}
                             prefix="## "
-                            className={group.completed ? "line-through text-gray-400" : ""}
                           />
                         </CardTitle>
 
@@ -706,54 +662,12 @@ export default function DashboardPage() {
                               variant="ghost"
                               size="sm"
                               className="h-8 w-8 p-0"
-                              onClick={() => deleteTask(group.id, group.tasks[0]?.id || "")}
-                              title="タスクグループ削除"
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                            {/* 音声入力ボタンをコメントアウト
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
-                              onClick={() => { }}
-                              title="音声入力"
-                            >
-                              <Mic className={iconStyle} />
-                            </Button>
-                            */}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
-                              onClick={() => { }}
-                              title="AI分解機能"
-                            >
-                              <SplitSquareVertical className={iconStyle} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
                               onClick={() => addTask(group.id)}
                               title="項目追加"
                             >
                               <Plus className={iconStyle} />
                             </Button>
-                            {/* ダッシュボードに追加ボタンをコメントアウト
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
-                              onClick={() => { }}
-                              title="ダッシュボードに追加"
-                            >
-                              <Clock className={iconStyle} />
-                            </Button>
-                            */}
-
-                            {/* 一時的に、更新ボタンをコメントアウト */}
-                            {/* <Button
                               variant="ghost"
                               size="sm"
                               className="h-8 w-8 p-0"
@@ -761,8 +675,7 @@ export default function DashboardPage() {
                               title="更新"
                             >
                               <RefreshCw className={`h-4 w-4 ${sortOrder !== "none" ? "text-[#31A9B8]" : iconStyle}`} />
-                            </Button> */}
-
+                            </Button>
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="他メニュー">
                               <MoreHorizontal className={iconStyle} />
                             </Button>
@@ -773,8 +686,8 @@ export default function DashboardPage() {
 
                     {group.expanded && (
                       <CardContent className="p-4">
-                        <Droppable droppableId={group.id} type="task" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
-                          {(provided: any, snapshot: any) => (
+                        <Droppable droppableId={group.id} type="task">
+                          {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
                             <div
                               className={`space-y-4 relative ${snapshot.isDraggingOver ? "bg-gray-50/50 rounded-lg p-2" : ""}`}
                               ref={provided.innerRef}
@@ -785,23 +698,19 @@ export default function DashboardPage() {
                             >
                               {group.tasks.map((task, taskIndex) => (
                                 <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
-                                  {(provided: any, snapshot: any) => (
+                                  {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
                                     <div
                                       ref={provided.innerRef}
                                       {...provided.draggableProps}
                                       style={{
                                         ...provided.draggableProps.style,
                                         opacity: snapshot.isDragging ? 0.8 : 1,
-                                        zIndex: snapshot.isDragging ? 10 : 1,
-                                        position: snapshot.isDragging ? "relative" : "static",
-                                        pointerEvents: snapshot.isDragging ? "none" : "auto",
                                       }}
-                                      className={snapshot.isDragging ? "" : ""}
                                     >
                                       <div
                                         className={`border rounded-md ${snapshot.isDragging ? "shadow-lg bg-gray-50" : ""}`}
                                       >
-                                        {/* 中タスク */}
+                                        {/* タスク */}
                                         <div
                                           className="p-3 bg-gray-50 flex items-center"
                                           onMouseEnter={() => setHoveredTask({ groupId: group.id, taskId: task.id })}
@@ -861,66 +770,20 @@ export default function DashboardPage() {
                                                   variant="ghost"
                                                   size="sm"
                                                   className="h-8 w-8 p-0"
-                                                  onClick={() => deleteTask(group.id, task.id)}
+                                                  onClick={() => deleteTask(task.id)}
                                                   title="タスク削除"
                                                 >
                                                   <Trash2 className="h-4 w-4 text-red-500" />
-                                                </Button>
-                                                {/* 音声入力ボタンをコメントアウト
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  className="h-8 w-8 p-0"
-                                                  onClick={() => { }}
-                                                  title="音声入力"
-                                                >
-                                                  <Mic className={iconStyle} />
-                                                </Button>
-                                                */}
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  className="h-8 w-8 p-0"
-                                                  onClick={() => { }}
-                                                  title="AI分解機能"
-                                                >
-                                                  <SplitSquareVertical className={iconStyle} />
                                                 </Button>
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
                                                   className="h-8 w-8 p-0"
                                                   onClick={() => addSubtask(group.id, task.id)}
-                                                  title="項目追加"
+                                                  title="サブタスク追加"
                                                 >
                                                   <Plus className={iconStyle} />
                                                 </Button>
-                                                {/* ダッシュボードに追加ボタンをコメントアウト
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  className="h-8 w-8 p-0"
-                                                  onClick={() => { }}
-                                                  title="ダッシュボードに追加"
-                                                >
-                                                  <Clock className={iconStyle} />
-                                                </Button>
-                                                */}
-
-                                                {/* 一時的に、更新ボタンをコメントアウト */}
-                                                {/* <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  className="h-8 w-8 p-0"
-                                                  onClick={() =>
-                                                    sortTasksByDueDate(sortOrder === "asc" ? "desc" : "asc")
-                                                  }
-                                                  title="更新"
-                                                >
-                                                  <RefreshCw className={iconStyle} />
-                                                </Button> */}
-
-
                                                 {group.id === "today" ? (
                                                   <Button
                                                     variant="ghost"
@@ -942,14 +805,6 @@ export default function DashboardPage() {
                                                     <ArrowUp className="h-4 w-4" />
                                                   </Button>
                                                 )}
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  className="h-8 w-8 p-0"
-                                                  title="他メニュー"
-                                                >
-                                                  <MoreHorizontal className={iconStyle} />
-                                                </Button>
                                               </div>
                                             </div>
 
@@ -964,7 +819,7 @@ export default function DashboardPage() {
                                                 </span>
                                               )}
 
-                                              {group.id === "today" && (
+                                              {task.startTime && task.endTime && (
                                                 <div className="text-xs text-gray-500 min-w-[80px] text-right">
                                                   {task.startTime} - {task.endTime}
                                                 </div>
@@ -973,7 +828,7 @@ export default function DashboardPage() {
                                           </div>
                                         </div>
 
-                                        {/* 小タスク（サブタスク） */}
+                                        {/* サブタスク */}
                                         {task.expanded && task.subtasks.length > 0 && (
                                           <div className="p-3 pl-10 space-y-2 border-t">
                                             {task.subtasks.map((subtask) => (
@@ -1015,55 +870,8 @@ export default function DashboardPage() {
                                                         updateSubtaskTitle(group.id, task.id, subtask.id, newTitle)
                                                       }
                                                       className={subtask.completed ? "line-through text-gray-400" : ""}
-                                                      isOverdue={
-                                                        !subtask.completed &&
-                                                        task.status !== "completed" &&
-                                                        isDateOverdue(task.dueDate)
-                                                      }
                                                     />
                                                   </span>
-
-                                                  {/* メニューアイコン - 常に領域を確保し、ホバー時のみ表示 */}
-                                                  <div className="flex items-center gap-1 w-32 relative">
-                                                    <div
-                                                      className={`absolute right-0 flex items-center gap-1 transition-opacity ${hoveredSubtask &&
-                                                        hoveredSubtask.groupId === group.id &&
-                                                        hoveredSubtask.taskId === task.id &&
-                                                        hoveredSubtask.subtaskId === subtask.id
-                                                        ? "opacity-100"
-                                                        : "opacity-0"
-                                                        }`}
-                                                    >
-                                                      <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="h-8 w-8 p-0"
-                                                        onClick={() => deleteSubtask(group.id, task.id, subtask.id)}
-                                                        title="サブタスク削除"
-                                                      >
-                                                        <Trash2 className="h-4 w-4 text-red-500" />
-                                                      </Button>
-                                                      {/* 音声入力ボタンをコメントアウト
-                                                      <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="h-8 w-8 p-0"
-                                                        onClick={() => { }}
-                                                        title="音声入力"
-                                                      >
-                                                        <Mic className={iconStyle} />
-                                                      </Button>
-                                                      */}
-                                                      <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="h-8 w-8 p-0"
-                                                        title="他メニュー"
-                                                      >
-                                                        <MoreHorizontal className={iconStyle} />
-                                                      </Button>
-                                                    </div>
-                                                  </div>
                                                 </div>
                                               </div>
                                             ))}
@@ -1101,7 +909,7 @@ export default function DashboardPage() {
           {/* AIコーチング */}
           <div className="w-96 border-l bg-gray-50 p-4">
             <div className="mb-4">
-              {/* <h2 className="text-lg font-semibold">AIコーチング</h2> */}
+              <h2 className="text-lg font-semibold">AIコーチング</h2>
             </div>
             <AIChat />
           </div>
