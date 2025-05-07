@@ -9,23 +9,30 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc]">
 
-      {/* ヘッダー : 実験的にコメントアウト
+      {/* ヘッダー : 実験的にコメントアウト */}
       <header className="flex items-center justify-between px-8 py-6 bg-white shadow-sm">
-        
+
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#31A9B8] text-white font-bold text-xl">C</div>
-          
+
           <span className="text-xl font-semibold">コミットコーチ</span>
         </div>
-        
+
         <div className="flex gap-4">
-          <Link href="/login" className="text-gray-700 hover:underline font-medium">ログイン</Link>
+          <Link href="/login">
+            <Button
+              variant="outline"
+              className="border-[#31A9B8] text-[#31A9B8] bg-white hover:bg-[#31A9B8] hover:text-white hover:border-[#31A9B8] font-medium"
+            >
+              ログイン
+            </Button>
+          </Link>
           <Link href="/register">
-            <Button className="bg-[#31A9B8] hover:bg-[#2691a1]">新規登録</Button>
+            <Button className="bg-[#31A9B8] hover:bg-[#2691a1] text-white font-medium">新規登録</Button>
           </Link>
         </div>
       </header>
-      */}
+
 
       {/* ヒーローセクション */}
       <section className="flex-1 bg-[#f1f5f9] py-20">

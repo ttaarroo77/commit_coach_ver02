@@ -24,6 +24,8 @@ import {
   GripVertical,
   RefreshCw,
 } from "lucide-react"
+import { useDashboardTasks } from '@/hooks/useDashboardTasks';
+import { v4 as uuidv4 } from 'uuid';
 
 interface SubTask {
   id: string
@@ -164,6 +166,16 @@ export default function ProjectTemplate({
   dueDate: initialDueDate,
   projectColor = "#31A9B8", // デフォルト色を設定
 }: ProjectTemplateProps) {
+  const {
+    tasks: dashboardTasks,
+    isLoading,
+    error,
+    addTask: addDashboardTask,
+    updateTask: updateDashboardTask,
+    deleteTask: deleteDashboardTask,
+    reorderTasks
+  } = useDashboardTasks();
+
   // 既存のコードの中で、ProjectTemplate関数の先頭付近に以下の状態変数を追加
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none")
 
@@ -193,10 +205,7 @@ export default function ProjectTemplate({
 
   // IDを生成する関数（クライアントサイドのみで実行）
   const generateId = (prefix: string) => {
-    if (typeof window === 'undefined') {
-      return `${prefix}-placeholder`;
-    }
-    return `${prefix}-${Date.now()}`;
+    return `${prefix}-${uuidv4()}`;
   };
 
   // プロジェクト全体の完了状態を更新
@@ -659,106 +668,89 @@ export default function ProjectTemplate({
     updateTaskCompletionStatus(groupId, taskId)
   }
 
-  // タスクをスケジュールに追加（ダッシュボードの今日のタスクに追加）
-  const addToSchedule = (groupId: string, taskId: string) => {
-    const task = taskGroups.find((g) => g.id === groupId)?.tasks.find((t) => t.id === taskId)
-    if (task && typeof window !== "undefined") {
-      // 現在時刻から開始時間と終了時間を設定
-      const now = new Date()
-      const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-      const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+  // スケジュール追加関数を更新
+  const addToSchedule = async (groupId: string, taskId: string) => {
+    const taskGroup = taskGroups.find(group => group.id === groupId);
+    const task = taskGroup?.tasks.find(t => t.id === taskId);
 
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
+    if (!task || !taskGroup) return;
+
+    try {
+      await addDashboardTask({
         title: task.title,
-        startTime,
-        endTime,
-        project: projectTitle,
-      }
-
-      // ローカルストレージに保存（実際の実装ではAPIやデータベースを使用）
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(`タスク「${task.title}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`)
+        description: task.title,
+        status: 'pending',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(), // 1時間後
+        projectId: groupId,
+        projectName: taskGroup.title,
+        priority: 'medium',
+      });
+    } catch (err) {
+      console.error('タスクの追加に失敗しました:', err);
     }
-  }
+  };
 
-  // サブタスクをスケジュールに追加
-  const addSubtaskToSchedule = (groupId: string, taskId: string, subtaskId: string) => {
-    const subtask = taskGroups
-      .find((g) => g.id === groupId)
-      ?.tasks.find((t) => t.id === taskId)
-      ?.subtasks.find((s) => s.id === subtaskId)
+  const addSubtaskToSchedule = async (groupId: string, taskId: string, subtaskId: string) => {
+    const taskGroup = taskGroups.find(group => group.id === groupId);
+    const task = taskGroup?.tasks.find(t => t.id === taskId);
+    const subtask = task?.subtasks.find(s => s.id === subtaskId);
 
-    if (subtask && typeof window !== "undefined") {
-      // 現在時刻から開始時間と終了時間を設定
-      const now = new Date()
-      const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-      const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+    if (!subtask || !task || !taskGroup) return;
 
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
+    try {
+      await addDashboardTask({
         title: subtask.title,
-        startTime,
-        endTime,
-        project: projectTitle,
-      }
-
-      // ローカルストレージに保存
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(`サブタスク「${subtask.title}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`)
+        description: `${task.title} - ${subtask.title}`,
+        status: 'pending',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(), // 1時間後
+        projectId: groupId,
+        projectName: taskGroup.title,
+        priority: 'medium',
+      });
+    } catch (err) {
+      console.error('サブタスクの追加に失敗しました:', err);
     }
-  }
+  };
 
-  // プロジェクトをスケジュールに追加
-  const addProjectToSchedule = () => {
-    if (typeof window !== "undefined") {
-      // 現在時刻から開始時間と終了時間を設定
-      const now = new Date()
-      const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-      const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
+  const addProjectToSchedule = async () => {
+    try {
+      await addDashboardTask({
         title: projectTitle,
-        startTime,
-        endTime,
-        project: "プロジェクト全体",
-      }
-
-      // ローカルストレージに保存
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(`プロジェクト「${projectTitle}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`)
+        description: 'プロジェクト全体',
+        status: 'pending',
+        startTime: new Date().toISOString(),
+        endTime: projectDueDate || new Date(Date.now() + 86400000).toISOString(), // 納期または1日後
+        projectId: 'project',
+        projectName: projectTitle,
+        priority: 'high',
+      });
+    } catch (err) {
+      console.error('プロジェクトの追加に失敗しました:', err);
     }
-  }
+  };
 
-  // タスクグループをスケジュールに追加
-  const addTaskGroupToSchedule = (groupId: string) => {
-    const group = taskGroups.find((g) => g.id === groupId)
-    if (group && typeof window !== "undefined") {
-      // 現在時刻から開始時間と終了時間を設定
-      const now = new Date()
-      const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
-      const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
+  const addTaskGroupToSchedule = async (groupId: string) => {
+    const taskGroup = taskGroups.find(group => group.id === groupId);
 
-      // ダッシュボードに追加するためのデータを作成
-      const dashboardTask = {
-        title: group.title,
-        startTime,
-        endTime,
-        project: projectTitle,
-      }
+    if (!taskGroup) return;
 
-      // ローカルストレージに保存
-      localStorage.setItem("dashboardTask", JSON.stringify(dashboardTask))
-
-      alert(
-        `タスクグループ「${group.title}」をダッシュボードに追加しました。ダッシュボードページを開くと表示されます。`,
-      )
+    try {
+      await addDashboardTask({
+        title: taskGroup.title,
+        description: 'タスクグループ全体',
+        status: 'pending',
+        startTime: new Date().toISOString(),
+        endTime: taskGroup.dueDate || new Date(Date.now() + 86400000).toISOString(), // 納期または1日後
+        projectId: groupId,
+        projectName: taskGroup.title,
+        priority: 'medium',
+      });
+    } catch (err) {
+      console.error('タスクグループの追加に失敗しました:', err);
     }
-  }
+  };
 
   // 音声機能を一時的にコメントアウト
   // 音声入力を開始

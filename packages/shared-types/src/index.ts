@@ -40,6 +40,23 @@ export const TaskSchema = z.object({
 
 export type Task = z.infer<typeof TaskSchema>;
 
+// DashboardTask
+export const DashboardTaskSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  status: z.enum(['pending', 'in_progress', 'completed']),
+  startTime: z.string(),
+  endTime: z.string(),
+  projectId: z.string(),
+  projectName: z.string(),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export type DashboardTask = z.infer<typeof DashboardTaskSchema>;
+
 // API Response
 export const ApiResponseSchema = z.object({
   data: z.any(),

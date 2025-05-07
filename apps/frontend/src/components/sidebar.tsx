@@ -7,12 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Menu, X, ChevronDown, ChevronRight, Home, User, Settings, LogOut, Plus, CheckSquare, FolderKanban, Users, BarChart3 } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { useRouter } from "next/navigation"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 
 export function Sidebar() {
@@ -21,8 +21,9 @@ export function Sidebar() {
   const [activePath, setActivePath] = useState(""); // 現在のパスを保存するステート
   const { user, signOut } = useAuth();
   const router = useRouter();
-  
+
   // プロジェクトリストの状態
+  // ここ、どうやった動的にできるか、分かってない
   const [projects, setProjects] = useState([
     {
       id: "web-app",
@@ -41,17 +42,17 @@ export function Sidebar() {
       name: "デザインプロジェクト",
       color: "#F5BE41",
       href: "/projects/design",
-    },
+    },we
   ])
 
   // 現在のURLからアクティブなプロジェクトを特定
   const [activeProject, setActiveProject] = useState("")
-  
+
   // クライアントサイドでの初期化処理をまとめて実行
   useEffect(() => {
     // 現在のパスを取得
     setActivePath(window.location.pathname);
-    
+
     // アクティブなプロジェクトを特定
     const path = window.location.pathname;
     const projectId = path.split("/projects/")[1];
@@ -67,29 +68,29 @@ export function Sidebar() {
         setSidebarOpen(false);
       }
     };
-    
+
     // 初期化時に一度実行
     handleResize();
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  
+
   const handleSignOut = async () => {
     await signOut();
     router.push('/login');
   };
-  
+
   // ユーザー名の取得（メールアドレスの@より前の部分）
   const getUserName = () => {
     if (!user?.email) return 'User';
     return user.email.split('@')[0];
   };
-  
+
   // イニシャルの取得（メールアドレスの最初の文字）
   const getInitials = () => {
     if (!user?.email) return 'U';
@@ -99,10 +100,9 @@ export function Sidebar() {
   return (
     <>
       {/* サイドバー */}
-      <div 
-        className={`fixed inset-y-0 left-0 z-50 w-56 transform bg-white border-r border-gray-100 transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:relative md:translate-x-0 md:w-56`}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-56 transform bg-white border-r border-gray-100 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:relative md:translate-x-0 md:w-56`}
       >
         <div className="flex h-full flex-col">
           {/* サイドバーヘッダー */}
@@ -117,7 +117,7 @@ export function Sidebar() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
+
           {/* サイドバーコンテンツ */}
           <div className="flex-1 overflow-auto py-3">
             {/* プロジェクトセクション */}
@@ -129,7 +129,7 @@ export function Sidebar() {
                 </Button>
               </div>
             </div>
-            
+
             {/* マイプロジェクトセクション */}
             <div className="space-y-1 px-3">
               <Button variant="ghost" size="sm" className="w-full justify-start">
@@ -142,9 +142,8 @@ export function Sidebar() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`w-full justify-start gap-2 ${
-                        activeProject === project.id ? `text-[${project.color}]` : "text-gray-700"
-                      }`}
+                      className={`w-full justify-start gap-2 ${activeProject === project.id ? `text-[${project.color}]` : "text-gray-700"
+                        }`}
                     >
                       <div className="h-2 w-2 rounded-full" style={{ backgroundColor: project.color }}></div>
                       <span>{project.name}</span>
@@ -157,7 +156,7 @@ export function Sidebar() {
                 </Button>
               </div>
             </div>
-            
+
             {/* ナビゲーションリンク */}
             <div className="mt-auto px-3">
               <div className="space-y-1">
@@ -182,7 +181,7 @@ export function Sidebar() {
               </div>
             </div>
           </div>
-          
+
           {/* サイドバーフッター */}
           <div className="border-t border-gray-100 px-3 py-2">
             <Link href="/" className="block">
@@ -194,11 +193,11 @@ export function Sidebar() {
           </div>
         </div>
       </div>
-      
+
       {/* モバイル用オーバーレイ */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden animate-fadeIn" 
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden animate-fadeIn"
           onClick={toggleSidebar}
           aria-hidden="true"
         />
