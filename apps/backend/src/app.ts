@@ -1,13 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
 import helmet from 'helmet';
 import compression from 'compression';
-import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
-import router from './routes';
-import { errorHandler, notFoundHandler } from './middleware/errorHandler';
-import { authRouter } from './routes/auth';
 import { TaskRoutes } from './routes/task.routes';
 import { ProjectRoutes } from './routes/project.routes';
 import { UserRoutes } from './routes/user.routes';
@@ -18,85 +12,78 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
 import { ValidationMiddleware } from './middlewares/validation.middleware';
 import { ErrorMiddleware } from './middlewares/error.middleware';
 
-// 環境変数の読み込み
-dotenv.config();
+export class App {
+  private app: express.Application;
+  private port: number;
 
-const app = express();
+  constructor(port: number) {
+    this.app = express();
+    this.port = port;
+    this.initializeMiddlewares();
+    this.initializeRoutes();
+    this.initializeErrorHandling();
+  }
 
-// セキュリティヘッダーの設定
-app.use(helmet());
+  private initializeMiddlewares() {
+    // セキュリティ対策
+    this.app.use(helmet());
 
-// CORSの設定
-app.use(
-  cors({
-    origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : '*',
-    credentials: true,
-  })
-);
+    // CORS設定
+    this.app.use(cors());
 
-// リクエストボディのパース
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+    // リクエストボディのパース
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
 
-// 圧縮
-app.use(compression());
+    // レスポンス圧縮
+    this.app.use(compression());
+  }
 
-// リクエストのログ
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+  private initializeRoutes() {
+    // ミドルウェアのインスタンス化
+    const authMiddleware = new AuthMiddleware();
+    const validationMiddleware = new ValidationMiddleware();
 
-// レート制限
-if (process.env.NODE_ENV === 'production') {
-  app.use(
-    '/api/',
-    rateLimit({
-      windowMs: 15 * 60 * 1000, // 15分
-      max: 100, // IPごとに100リクエストまで
-      standardHeaders: true,
-      legacyHeaders: false,
-      message: 'リクエスト数が多すぎます。しばらく待ってから再試行してください。',
-    })
-  );
+    // コントローラーのインスタンス化
+    const taskController = new TaskController();
+    const projectController = new ProjectController();
+    const userController = new UserController();
+
+    // ルーターのインスタンス化
+    const taskRoutes = new TaskRoutes(
+      taskController,
+      authMiddleware,
+      validationMiddleware,
+    );
+    const projectRoutes = new ProjectRoutes(
+      projectController,
+      authMiddleware,
+      validationMiddleware,
+    );
+    const userRoutes = new UserRoutes(
+      userController,
+      authMiddleware,
+      validationMiddleware,
+    );
+
+    // ルーターの登録
+    this.app.use('/api/tasks', taskRoutes.getRouter());
+    this.app.use('/api/projects', projectRoutes.getRouter());
+    this.app.use('/api/users', userRoutes.getRouter());
+  }
+
+  private initializeErrorHandling() {
+    const errorMiddleware = new ErrorMiddleware();
+    this.app.use(errorMiddleware.handleError);
+  }
+
+  public listen() {
+    this.app.listen(this.port, () => {
+      console.log(`🚀 サーバーが起動しました - ポート: ${this.port}`);
+    });
+  }
+
+  public getApp() {
+    return this.app;
+  }
 }
-
-// ルーティング
-app.use(router);
-app.use('/api/auth', authRouter);
-
-// ミドルウェアのインスタンス化
-const authMiddleware = new AuthMiddleware();
-const validationMiddleware = new ValidationMiddleware();
-
-// コントローラーのインスタンス化
-const taskController = new TaskController();
-const projectController = new ProjectController();
-const userController = new UserController();
-
-// ルーターのインスタンス化
-const taskRoutes = new TaskRoutes(
-  taskController,
-  authMiddleware,
-  validationMiddleware,
-);
-const projectRoutes = new ProjectRoutes(
-  projectController,
-  authMiddleware,
-  validationMiddleware,
-);
-const userRoutes = new UserRoutes(
-  userController,
-  authMiddleware,
-  validationMiddleware,
-);
-
-// ルーターの登録
-app.use('/api/tasks', taskRoutes.getRouter());
-app.use('/api/projects', projectRoutes.getRouter());
-app.use('/api/users', userRoutes.getRouter());
-
-// 404エラーハンドラー
-app.use(notFoundHandler);
-
-// エラーハンドラー
-app.use(errorHandler);
-
-export default app;
