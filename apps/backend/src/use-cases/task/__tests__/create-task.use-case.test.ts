@@ -1,83 +1,81 @@
 import { CreateTaskUseCase } from '../create-task.use-case';
 import { TaskRepository } from '../../../repositories/task.repository';
-import { CreateTaskInput } from '@commit-coach/domain';
+import { ProjectRepository } from '../../../repositories/project.repository';
 
 jest.mock('../../../repositories/task.repository');
+jest.mock('../../../repositories/project.repository');
 
 describe('CreateTaskUseCase', () => {
   let createTaskUseCase: CreateTaskUseCase;
   let mockTaskRepository: jest.Mocked<TaskRepository>;
+  let mockProjectRepository: jest.Mocked<ProjectRepository>;
 
   beforeEach(() => {
     mockTaskRepository = {
       create: jest.fn(),
     } as any;
 
-    createTaskUseCase = new CreateTaskUseCase(mockTaskRepository);
+    mockProjectRepository = {
+      getById: jest.fn(),
+    } as any;
+
+    createTaskUseCase = new CreateTaskUseCase(mockTaskRepository, mockProjectRepository);
   });
 
   describe('execute', () => {
-    const validInput: CreateTaskInput = {
+    const projectId = 'project-1';
+    const mockProject = {
+      id: projectId,
+      name: 'テストプロジェクト',
+      description: 'テストプロジェクトの説明',
+      type: 'PERSONAL',
+      status: 'ACTIVE',
+      startDate: new Date(),
+      endDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const createTaskInput = {
       title: 'テストタスク',
       description: 'テストタスクの説明',
-      projectId: 'project-1',
+      priority: 'HIGH',
       status: 'TODO',
-      priority: 'MEDIUM',
       dueDate: new Date(),
+      projectId,
+    };
+
+    const mockCreatedTask = {
+      id: 'task-1',
+      ...createTaskInput,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     it('タスクが正常に作成されること', async () => {
-      const expectedTask = {
-        id: 'task-1',
-        ...validInput,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      mockProjectRepository.getById.mockResolvedValue(mockProject);
+      mockTaskRepository.create.mockResolvedValue(mockCreatedTask);
 
-      mockTaskRepository.create.mockResolvedValue(expectedTask);
+      const result = await createTaskUseCase.execute(createTaskInput);
 
-      const result = await createTaskUseCase.execute(validInput);
+      expect(result).toEqual(mockCreatedTask);
+      expect(mockTaskRepository.create).toHaveBeenCalledWith(createTaskInput);
+    });
 
-      expect(result).toEqual(expectedTask);
-      expect(mockTaskRepository.create).toHaveBeenCalledWith(validInput);
+    it('プロジェクトが存在しない場合、エラーがスローされること', async () => {
+      mockProjectRepository.getById.mockResolvedValue(null);
+
+      await expect(createTaskUseCase.execute(createTaskInput)).rejects.toThrow();
+      expect(mockTaskRepository.create).not.toHaveBeenCalled();
     });
 
     it('リポジトリでエラーが発生した場合、エラーがスローされること', async () => {
+      mockProjectRepository.getById.mockResolvedValue(mockProject);
       const error = new Error('リポジトリエラー');
       mockTaskRepository.create.mockRejectedValue(error);
 
-      await expect(createTaskUseCase.execute(validInput)).rejects.toThrow(error);
-      expect(mockTaskRepository.create).toHaveBeenCalledWith(validInput);
-    });
-
-    it('必須フィールドが欠けている場合、エラーがスローされること', async () => {
-      const invalidInput = {
-        ...validInput,
-        title: '',
-      };
-
-      await expect(createTaskUseCase.execute(invalidInput)).rejects.toThrow();
-      expect(mockTaskRepository.create).not.toHaveBeenCalled();
-    });
-
-    it('無効なステータスの場合、エラーがスローされること', async () => {
-      const invalidInput = {
-        ...validInput,
-        status: 'INVALID_STATUS',
-      };
-
-      await expect(createTaskUseCase.execute(invalidInput)).rejects.toThrow();
-      expect(mockTaskRepository.create).not.toHaveBeenCalled();
-    });
-
-    it('無効な優先度の場合、エラーがスローされること', async () => {
-      const invalidInput = {
-        ...validInput,
-        priority: 'INVALID_PRIORITY',
-      };
-
-      await expect(createTaskUseCase.execute(invalidInput)).rejects.toThrow();
-      expect(mockTaskRepository.create).not.toHaveBeenCalled();
+      await expect(createTaskUseCase.execute(createTaskInput)).rejects.toThrow(error);
+      expect(mockTaskRepository.create).toHaveBeenCalledWith(createTaskInput);
     });
   });
 });

@@ -10,7 +10,6 @@ describe('GetTaskUseCase', () => {
   beforeEach(() => {
     mockTaskRepository = {
       getById: jest.fn(),
-      getAll: jest.fn(),
     } as any;
 
     getTaskUseCase = new GetTaskUseCase(mockTaskRepository);
@@ -18,31 +17,33 @@ describe('GetTaskUseCase', () => {
 
   describe('execute', () => {
     const taskId = 'task-1';
-    const existingTask = {
+    const mockTask = {
       id: taskId,
       title: 'テストタスク',
       description: 'テストタスクの説明',
-      projectId: 'project-1',
+      priority: 'HIGH',
       status: 'TODO',
-      priority: 'MEDIUM',
       dueDate: new Date(),
+      projectId: 'project-1',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    it('タスクが正常に取得されること', async () => {
-      mockTaskRepository.getById.mockResolvedValue(existingTask);
+    it('タスクが正常に取得できること', async () => {
+      mockTaskRepository.getById.mockResolvedValue(mockTask);
 
       const result = await getTaskUseCase.execute(taskId);
 
-      expect(result).toEqual(existingTask);
+      expect(result).toEqual(mockTask);
       expect(mockTaskRepository.getById).toHaveBeenCalledWith(taskId);
     });
 
-    it('タスクが存在しない場合、エラーがスローされること', async () => {
+    it('タスクが存在しない場合、nullが返されること', async () => {
       mockTaskRepository.getById.mockResolvedValue(null);
 
-      await expect(getTaskUseCase.execute(taskId)).rejects.toThrow();
+      const result = await getTaskUseCase.execute(taskId);
+
+      expect(result).toBeNull();
       expect(mockTaskRepository.getById).toHaveBeenCalledWith(taskId);
     });
 

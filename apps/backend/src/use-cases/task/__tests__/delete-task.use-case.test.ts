@@ -22,10 +22,10 @@ describe('DeleteTaskUseCase', () => {
       id: taskId,
       title: 'テストタスク',
       description: 'テストタスクの説明',
-      projectId: 'project-1',
+      priority: 'HIGH',
       status: 'TODO',
-      priority: 'MEDIUM',
       dueDate: new Date(),
+      projectId: 'project-1',
       createdAt: new Date(),
       updatedAt: new Date(),
     };

@@ -19,48 +19,46 @@ describe('UpdateTaskUseCase', () => {
 
   describe('execute', () => {
     const taskId = 'task-1';
-    const validInput: UpdateTaskInput = {
+    const existingTask = {
+      id: taskId,
+      title: 'テストタスク',
+      description: 'テストタスクの説明',
+      priority: 'HIGH',
+      status: 'TODO',
+      dueDate: new Date(),
+      projectId: 'project-1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const updateTaskInput = {
       title: '更新されたタスク',
       description: '更新されたタスクの説明',
+      priority: 'MEDIUM',
       status: 'IN_PROGRESS',
-      priority: 'HIGH',
       dueDate: new Date(),
     };
 
-    const existingTask = {
-      id: taskId,
-      title: '元のタスク',
-      description: '元のタスクの説明',
-      projectId: 'project-1',
-      status: 'TODO',
-      priority: 'MEDIUM',
-      dueDate: new Date(),
-      createdAt: new Date(),
+    const updatedTask = {
+      ...existingTask,
+      ...updateTaskInput,
       updatedAt: new Date(),
     };
 
     it('タスクが正常に更新されること', async () => {
       mockTaskRepository.getById.mockResolvedValue(existingTask);
-      mockTaskRepository.update.mockResolvedValue({
-        ...existingTask,
-        ...validInput,
-        updatedAt: new Date(),
-      });
+      mockTaskRepository.update.mockResolvedValue(updatedTask);
 
-      const result = await updateTaskUseCase.execute(taskId, validInput);
+      const result = await updateTaskUseCase.execute(taskId, updateTaskInput);
 
-      expect(result).toEqual({
-        ...existingTask,
-        ...validInput,
-        updatedAt: expect.any(Date),
-      });
-      expect(mockTaskRepository.update).toHaveBeenCalledWith(taskId, validInput);
+      expect(result).toEqual(updatedTask);
+      expect(mockTaskRepository.update).toHaveBeenCalledWith(taskId, updateTaskInput);
     });
 
     it('タスクが存在しない場合、エラーがスローされること', async () => {
       mockTaskRepository.getById.mockResolvedValue(null);
 
-      await expect(updateTaskUseCase.execute(taskId, validInput)).rejects.toThrow();
+      await expect(updateTaskUseCase.execute(taskId, updateTaskInput)).rejects.toThrow();
       expect(mockTaskRepository.update).not.toHaveBeenCalled();
     });
 
@@ -69,14 +67,14 @@ describe('UpdateTaskUseCase', () => {
       const error = new Error('リポジトリエラー');
       mockTaskRepository.update.mockRejectedValue(error);
 
-      await expect(updateTaskUseCase.execute(taskId, validInput)).rejects.toThrow(error);
-      expect(mockTaskRepository.update).toHaveBeenCalledWith(taskId, validInput);
+      await expect(updateTaskUseCase.execute(taskId, updateTaskInput)).rejects.toThrow(error);
+      expect(mockTaskRepository.update).toHaveBeenCalledWith(taskId, updateTaskInput);
     });
 
     it('無効なステータスの場合、エラーがスローされること', async () => {
       mockTaskRepository.getById.mockResolvedValue(existingTask);
       const invalidInput = {
-        ...validInput,
+        ...updateTaskInput,
         status: 'INVALID_STATUS',
       };
 
@@ -87,7 +85,7 @@ describe('UpdateTaskUseCase', () => {
     it('無効な優先度の場合、エラーがスローされること', async () => {
       mockTaskRepository.getById.mockResolvedValue(existingTask);
       const invalidInput = {
-        ...validInput,
+        ...updateTaskInput,
         priority: 'INVALID_PRIORITY',
       };
 
