@@ -9,8 +9,11 @@ import router from './routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { authRouter } from './routes/auth';
 import healthRoutes from './routes/health.routes';
+import { App } from './app';
+import { config } from '@commit-coach/config';
 
-const port = process.env.PORT || 3002;
+const port = config.port || 3000;
+const app = new App(port);
 
 async function startServer() {
   try {
