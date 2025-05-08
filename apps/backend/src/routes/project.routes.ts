@@ -1,25 +1,93 @@
 import { Router } from 'express';
-import * as projectController from '../controllers/project.controller';
-import { auth, isOwner } from '../middleware/auth';
+import { ProjectController } from '../controllers/project.controller';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { ValidationMiddleware } from '../middlewares/validation.middleware';
+import { projectSchema } from '@commit-coach/domain/schemas/project.schema';
 
-const router = Router();
+export class ProjectRoutes {
+  private router: Router;
+  private projectController: ProjectController;
+  private authMiddleware: AuthMiddleware;
+  private validationMiddleware: ValidationMiddleware;
 
-// 認証が必要なルート
-router.use(auth);
+  constructor(
+    projectController: ProjectController,
+    authMiddleware: AuthMiddleware,
+    validationMiddleware: ValidationMiddleware,
+  ) {
+    this.router = Router();
+    this.projectController = projectController;
+    this.authMiddleware = authMiddleware;
+    this.validationMiddleware = validationMiddleware;
+    this.initializeRoutes();
+  }
 
-// プロジェクト一覧の取得
-router.get('/', projectController.getProjects);
+  private initializeRoutes() {
+    // プロジェクトの作成
+    this.router.post(
+      '/',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(projectSchema.create),
+      this.projectController.create,
+    );
 
-// プロジェクトの作成
-router.post('/', projectController.createProject);
+    // プロジェクトの更新
+    this.router.put(
+      '/:id',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(projectSchema.update),
+      this.projectController.update,
+    );
 
-// プロジェクトの詳細取得 (所有権チェック付き)
-router.get('/:id', isOwner('projects'), projectController.getProject);
+    // プロジェクトの削除
+    this.router.delete(
+      '/:id',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(projectSchema.delete),
+      this.projectController.delete,
+    );
 
-// プロジェクトの更新 (所有権チェック付き)
-router.put('/:id', isOwner('projects'), projectController.updateProject);
+    // プロジェクトの取得
+    this.router.get(
+      '/:id',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(projectSchema.get),
+      this.projectController.get,
+    );
 
-// プロジェクトの削除 (所有権チェック付き)
-router.delete('/:id', isOwner('projects'), projectController.deleteProject);
+    // 全プロジェクトの取得
+    this.router.get(
+      '/',
+      this.authMiddleware.authenticate,
+      this.projectController.getAll,
+    );
 
-export default router;
+    // プロジェクトの統計情報取得
+    this.router.get(
+      '/:id/stats',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(projectSchema.getWithStats),
+      this.projectController.getWithStats,
+    );
+
+    // プロジェクトのステータス更新
+    this.router.patch(
+      '/:id/status',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(projectSchema.updateStatus),
+      this.projectController.updateStatus,
+    );
+
+    // プロジェクトのタイプ更新
+    this.router.patch(
+      '/:id/type',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(projectSchema.updateType),
+      this.projectController.updateType,
+    );
+  }
+
+  getRouter() {
+    return this.router;
+  }
+}

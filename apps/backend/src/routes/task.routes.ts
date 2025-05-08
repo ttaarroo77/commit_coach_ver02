@@ -1,41 +1,86 @@
 import { Router } from 'express';
 import { TaskController } from '../controllers/task.controller';
-import { auth, isOwner } from '../middleware/auth';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { ValidationMiddleware } from '../middlewares/validation.middleware';
+import { taskSchema } from '@commit-coach/domain/schemas/task.schema';
 
-const router = Router();
-const taskController = new TaskController();
+export class TaskRoutes {
+  private router: Router;
+  private taskController: TaskController;
+  private authMiddleware: AuthMiddleware;
+  private validationMiddleware: ValidationMiddleware;
 
-// 認証ミドルウェアを適用
-router.use(auth);
+  constructor(
+    taskController: TaskController,
+    authMiddleware: AuthMiddleware,
+    validationMiddleware: ValidationMiddleware,
+  ) {
+    this.router = Router();
+    this.taskController = taskController;
+    this.authMiddleware = authMiddleware;
+    this.validationMiddleware = validationMiddleware;
+    this.initializeRoutes();
+  }
 
-// タスクの作成
-router.post('/', (req, res) => taskController.createTask(req, res));
+  private initializeRoutes() {
+    // タスクの作成
+    this.router.post(
+      '/',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(taskSchema.create),
+      this.taskController.create,
+    );
 
-// プロジェクトのタスク一覧取得
-router.get('/project/:projectId', (req, res) => taskController.getTasksByProject(req, res));
+    // タスクの更新
+    this.router.put(
+      '/:id',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(taskSchema.update),
+      this.taskController.update,
+    );
 
-// グループのタスク一覧取得
-router.get('/group/:groupId', (req, res) => taskController.getTasksByGroup(req, res));
+    // タスクの削除
+    this.router.delete(
+      '/:id',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(taskSchema.delete),
+      this.taskController.delete,
+    );
 
-// タスクの詳細取得 (所有権チェック付き)
-router.get('/:id', isOwner('tasks'), (req, res) => taskController.getTaskById(req, res));
+    // タスクの取得
+    this.router.get(
+      '/:id',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(taskSchema.get),
+      this.taskController.get,
+    );
 
-// タスクの更新 (所有権チェック付き)
-router.put('/:id', isOwner('tasks'), (req, res) => taskController.updateTask(req, res));
+    // プロジェクトに紐づくタスクの取得
+    this.router.get(
+      '/project/:projectId',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(taskSchema.getByProject),
+      this.taskController.getByProjectId,
+    );
 
-// タスクの削除 (所有権チェック付き)
-router.delete('/:id', isOwner('tasks'), (req, res) => taskController.deleteTask(req, res));
+    // タスクのステータス更新
+    this.router.patch(
+      '/:id/status',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(taskSchema.updateStatus),
+      this.taskController.updateStatus,
+    );
 
-// タスクの順序更新 (所有権チェック付き)
-router.post('/:id/order', isOwner('tasks'), (req, res) => taskController.updateTaskOrder(req, res));
+    // タスクの優先度更新
+    this.router.patch(
+      '/:id/priority',
+      this.authMiddleware.authenticate,
+      this.validationMiddleware.validate(taskSchema.updatePriority),
+      this.taskController.updatePriority,
+    );
+  }
 
-// サブタスクの取得 (親タスクの所有権チェック付き)
-router.get('/:parentId/subtasks', isOwner('tasks', 'parentId'), (req, res) => taskController.getSubtasks(req, res));
-
-// タスクのステータス更新 (所有権チェック付き)
-router.patch('/:id/status', isOwner('tasks'), (req, res) => taskController.updateTaskStatus(req, res));
-
-// タスクの期限更新 (所有権チェック付き)
-router.patch('/:id/due-date', isOwner('tasks'), (req, res) => taskController.updateTaskDueDate(req, res));
-
-export default router;
+  getRouter() {
+    return this.router;
+  }
+}
