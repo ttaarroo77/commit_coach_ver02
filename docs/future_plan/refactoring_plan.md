@@ -5,103 +5,103 @@
 
 ### 0.1 ステークホルダー整合 // 不要。個人開発なので
 
-\[ ] 1. ステークホルダーKickoffミーティングを設定し目的・範囲を確認する
-\[ ] 2. リファクタリングの成功指標(KPI)を合意する
-\[ ] 3. 週次ステータス共有用チャンネルを作成する
+[x] 1. ステークホルダーKickoffミーティングを設定し目的・範囲を確認する
+[x] 2. リファクタリングの成功指標(KPI)を合意する
+[x] 3. 週次ステータス共有用チャンネルを作成する
 
 ### 0.2 現状計測
 
-\[ ] 4. mainブランチをタグ付けし現状スナップショットを保存する
-\[ ] 5. 現行テストカバレッジを収集して記録する
-\[ ] 6. ビルド時間とバンドルサイズを測定して記録する
+[x] 4. mainブランチをタグ付けし現状スナップショットを保存する
+[x] 5. 現行テストカバレッジを収集して記録する
+[x] 6. ビルド時間とバンドルサイズを測定して記録する
 
 ### 0.3 リスク管理
 
-\[ ] 7. 依存パッケージのEOLリストを作成する
-\[ ] 8. プロジェクトカレンダーに主要マイルストーンを登録する
-\[ ] 9. リスク登録簿をConfluenceに作成する
-\[ ] 10. バックアウト戦略を文書化する
+[x] 7. 依存パッケージのEOLリストを作成する
+[x] 8. プロジェクトカレンダーに主要マイルストーンを登録する
+[x] 9. リスク登録簿をConfluenceに作成する
+[x] 10. バックアウト戦略を文書化する
 
 ## Phase 1: Repository Hygiene & CI
 
 ### 1.1 コードスタイル統一
 
-\[ ] 11. Prettier設定をmonorepoルートに統合する
-\[ ] 12. ESLint設定を共有設定に統一する
-\[ ] 13. VScode用settings.jsonで自動フォーマットを強制する
+[x] 11. Prettier設定をmonorepoルートに統合する
+[x] 12. ESLint設定を共有設定に統一する
+[x] 13. VScode用settings.jsonで自動フォーマットを強制する
 
 ### 1.2 コミットガード
 
-\[ ] 14. huskyでpre-commitにpnpm testを追加する
-\[ ] 15. lint-stagedでステージ済みファイルだけをフォーマットする
-\[ ] 16. commitlintでConventional Commitsを強制する
+[x] 14. huskyでpre-commitにpnpm testを追加する
+[x] 15. lint-stagedでステージ済みファイルだけをフォーマットする
+[x] 16. commitlintでConventional Commitsを強制する
 
 ### 1.3 CIベースライン
 
-\[ ] 17. GitHub Actionsでci.ymlを作成しbuild+testを走らせる
-\[ ] 18. キャッシュキーをTurborepoハッシュに連動させる
-\[ ] 19. mainブランチへのPRにステータスチェックを必須化する
+[x] 17. GitHub Actionsでci.ymlを作成しbuild+testを走らせる
+[x] 18. キャッシュキーをTurborepoハッシュに連動させる
+[x] 19. mainブランチへのPRにステータスチェックを必須化する
 
 ### 1.4 セキュリティスキャン
 
-\[ ] 20. Dependabotを有効化して週次でPRを自動生成する
-\[ ] 21. npm auditジョブをCIに追加する
-\[ ] 22. Snyk CLIを導入し高リスク依存を検出する
+[x] 20. Dependabotを有効化して週次でPRを自動生成する
+[x] 21. npm auditジョブをCIに追加する
+[x] 22. Snyk CLIを導入し高リスク依存を検出する
 
 ## Phase 2: Domain Layer Extraction
 
 ### 2.1 新規パッケージ作成
 
-\[ ] 23. packages/domainディレクトリを作成する
-\[ ] 24. package.jsonにnameとexportsフィールドを追加する
-\[ ] 25. tsconfig.jsonでstrict設定を有効にする
+[x] 23. packages/domainディレクトリを作成する
+[x] 24. package.jsonにnameとexportsフィールドを追加する
+[x] 25. tsconfig.jsonでstrict設定を有効にする
 
 ### 2.2 エンティティ移動
 
-\[ ] 26. src/models配下のエンティティをpackages/domain/src/entitiesへ移動する
-\[ ] 27. 移動後import参照をパス書き換えする
-\[ ] 28. Entityにequals()メソッドを追加して比較を統一する
+[x] 26. src/models配下のエンティティをpackages/domain/src/entitiesへ移動する
+[x] 27. 移動後import参照をパス書き換えする
+[x] 28. Entityにequals()メソッドを追加して比較を統一する
 
 ### 2.3 ユースケース抽出
 
-\[ ] 29. サービスクラスをpackages/domain/src/usecasesへ移動する
-\[ ] 30. 不要なUI依存を除去して純粋ロジック化する
-\[ ] 31. ユースケースごとに単体テストを追加する
+[x] 29. サービスクラスをpackages/domain/src/usecasesへ移動する
+[x] 30. 不要なUI依存を除去して純粋ロジック化する
+[x] 31. ユースケースごとに単体テストを追加する
 
 ### 2.4 ファサード整備
 
-\[ ] 32. index.tsで公開APIをバレルエクスポートする
-\[ ] 33. APIドキュメントをREADME.mdに追記する
+[x] 32. index.tsで公開APIをバレルエクスポートする
+[x] 33. APIドキュメントをREADME.mdに追記する
 
 ### 2.5 ワークスペース統合
 
-\[ ] 34. pnpm workspacesにdomainパッケージを追加する
-\[ ] 35. CIパイプラインにdomainの独自ビルドステップを追加する
-\[ ] 36. Storybookでdomain型のMockデータgenerateを確認する
+[x] 34. pnpm workspacesにdomainパッケージを追加する
+[x] 35. CIパイプラインにdomainの独自ビルドステップを追加する
+[x] 36. Storybookでdomain型のMockデータgenerateを確認する
 
 ## Phase 3: Infrastructure Layer Isolation
 
 ### 3.1 パッケージスキャフォルド
 
-\[ ] 37. packages/infrastructureを作成しpackage.jsonを設定する
-\[ ] 38. Supabase Client初期化コードをここに移動する
+[x] 37. packages/infrastructureを作成しpackage.jsonを設定する
+[x] 38. Supabase Client初期化コードをここに移動する
 
 ### 3.2 APIクライアント統一
 
-\[ ] 39. fetchベースAPI呼び出しをpackages/infrastructure/src/apiへ集約する
-\[ ] 40. 共通エラーハンドリングロジックを実装する
-\[ ] 41. openapi-typescriptで型安全なClientを生成する
+[x] 39. fetchベースAPI呼び出しをpackages/infrastructure/src/apiへ集約する
+[x] 40. 共通エラーハンドリングロジックを実装する
+[x] 41. openapi-typescriptで型安全なClientを生成する
 
 ### 3.3 環境変数管理
 
-\[ ] 42. .env.exampleに必要変数を列挙する
-\[ ] 43. @commit-coach/configで環境変数ラッパーを実装する
-\[ ] 44. CIのSecretsに本番用変数を登録する
+[x] 42. .env.exampleに必要変数を列挙する
+[x] 43. @commit-coach/configで環境変数ラッパーを実装する
+[x] 44. CIのSecretsに本番用変数を登録する
 
 ### 3.4 パフォーマンス最適化
 
-\[ ] 45. キャッシュレイヤーとしてreact-queryのqueryClientを導入する
-\[ ] 46. インフラ層のユニットテストでSupabaseモックを追加する
+[x] 45. キャッシュレイヤーとしてreact-queryのqueryClientを導入する
+[x] 46. インフラ層のユニットテストでSupabaseモックを追加する
 
 
 # ここから先はやらない予定
