@@ -1,40 +1,137 @@
 import { Request, Response } from 'express';
-import { TaskService } from '../services/task.service';
+import { CreateTaskUseCase, UpdateTaskUseCase, DeleteTaskUseCase, GetTaskUseCase } from '@commit-coach/domain/usecases/task';
+import { CreateTaskInput, UpdateTaskInput } from '@commit-coach/domain/entities/task';
 import { ApiError } from '../middleware/errorHandler';
-import { CreateTaskInput, UpdateTaskInput, TaskStatus } from '../models/task.model';
+import { TaskService } from '../services/task.service';
+import { TaskStatus } from '../models/task.model';
 
 const taskService = new TaskService();
 
 export class TaskController {
-  private taskService: TaskService;
+  constructor(
+    private readonly createTaskUseCase: CreateTaskUseCase,
+    private readonly updateTaskUseCase: UpdateTaskUseCase,
+    private readonly deleteTaskUseCase: DeleteTaskUseCase,
+    private readonly getTaskUseCase: GetTaskUseCase,
+  ) {}
 
-  constructor() {
-    this.taskService = taskService;
+  /**
+   * タスクを作成する
+   */
+  async create(req: Request, res: Response): Promise<void> {
+    try {
+      const input: CreateTaskInput = req.body;
+      const task = await this.createTaskUseCase.execute(input);
+      res.status(201).json(task);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   }
 
-  // タスク作成
-  async createTask(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new ApiError(401, '認証が必要です');
+  /**
+   * タスクを更新する
+   */
+  async update(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const input: UpdateTaskInput = req.body;
+      const task = await this.updateTaskUseCase.execute(id, input);
+      res.json(task);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
-
-    // user_idはサービス層で追加されるので、ここでは除外
-    const validatedData = req.body as CreateTaskInput;
-    const task = await this.taskService.createTask(userId, validatedData);
-    res.status(201).json(task);
   }
 
-  // プロジェクトのタスク一覧取得
-  async getTasksByProject(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new ApiError(401, '認証が必要です');
+  /**
+   * タスクを削除する
+   */
+  async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      await this.deleteTaskUseCase.execute(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
+  }
 
-    const { projectId } = req.params;
-    const tasks = await this.taskService.getTasksByProject(userId, projectId);
-    res.json(tasks);
+  /**
+   * タスクを取得する
+   */
+  async get(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const task = await this.getTaskUseCase.execute(id);
+      res.json(task);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
+  /**
+   * すべてのタスクを取得する
+   */
+  async getAll(req: Request, res: Response): Promise<void> {
+    try {
+      const tasks = await this.getTaskUseCase.executeAll();
+      res.json(tasks);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * プロジェクトのタスクを取得する
+   */
+  async getByProject(req: Request, res: Response): Promise<void> {
+    try {
+      const { projectId } = req.params;
+      const tasks = await this.getTaskUseCase.executeByProjectId(projectId);
+      res.json(tasks);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * プロジェクト情報を含むタスクを取得する
+   */
+  async getWithProject(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const task = await this.getTaskUseCase.executeWithProject(id);
+      res.json(task);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
+  /**
+   * タスクのステータスを更新する
+   */
+  async updateStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const task = await this.getTaskUseCase.executeUpdateStatus(id, status);
+      res.json(task);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * タスクの優先度を更新する
+   */
+  async updatePriority(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { priority } = req.body;
+      const task = await this.getTaskUseCase.executeUpdatePriority(id, priority);
+      res.json(task);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   }
 
   // グループのタスク一覧取得
@@ -45,50 +142,8 @@ export class TaskController {
     }
 
     const { groupId } = req.params;
-    const tasks = await this.taskService.getTasksByGroup(userId, groupId);
+    const tasks = await this.getTaskUseCase.executeByGroupId(userId, groupId);
     res.json(tasks);
-  }
-
-  // タスクの詳細取得
-  async getTaskById(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new ApiError(401, '認証が必要です');
-    }
-
-    const { id } = req.params;
-    const task = await this.taskService.getTaskById(userId, id);
-
-    if (!task) {
-      throw new ApiError(404, 'タスクが見つかりません');
-    }
-
-    res.json(task);
-  }
-
-  // タスクの更新
-  async updateTask(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new ApiError(401, '認証が必要です');
-    }
-
-    const { id } = req.params;
-    const validatedData = req.body as UpdateTaskInput;
-    const task = await this.taskService.updateTask(userId, id, validatedData);
-    res.json(task);
-  }
-
-  // タスクの削除
-  async deleteTask(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new ApiError(401, '認証が必要です');
-    }
-
-    const { id } = req.params;
-    await this.taskService.deleteTask(userId, id);
-    res.status(204).send();
   }
 
   // タスクの順序更新
@@ -105,7 +160,7 @@ export class TaskController {
       throw new ApiError(400, '無効なリクエストです');
     }
 
-    await this.taskService.updateTaskOrder(userId, id, newOrder, projectId, groupId);
+    await this.getTaskUseCase.executeUpdateOrder(userId, id, newOrder, projectId, groupId);
     res.status(204).send();
   }
 
@@ -117,27 +172,8 @@ export class TaskController {
     }
 
     const { parentId } = req.params;
-    const subtasks = await this.taskService.getSubtasks(userId, parentId);
+    const subtasks = await this.getTaskUseCase.executeSubtasks(userId, parentId);
     res.json(subtasks);
-  }
-
-  // タスクのステータス更新
-  async updateTaskStatus(req: Request, res: Response) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new ApiError(401, '認証が必要です');
-    }
-
-    const { id } = req.params;
-    const { status } = req.body;
-
-    // TaskStatusの許容値をチェック
-    if (!Object.values(TaskStatus).includes(status)) {
-      throw new ApiError(400, '無効なステータスです');
-    }
-
-    const task = await this.taskService.updateTaskStatus(userId, id, status);
-    res.json(task);
   }
 
   // タスクの期限更新
@@ -154,9 +190,14 @@ export class TaskController {
       throw new ApiError(400, '無効な期限です');
     }
 
-    const task = await this.taskService.updateTaskDueDate(userId, id, dueDate);
+    const task = await this.getTaskUseCase.executeUpdateDueDate(userId, id, dueDate);
     res.json(task);
   }
 }
 
-export const taskController = new TaskController();
+export const taskController = new TaskController(
+  new CreateTaskUseCase(),
+  new UpdateTaskUseCase(),
+  new DeleteTaskUseCase(),
+  new GetTaskUseCase()
+);

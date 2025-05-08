@@ -4,6 +4,8 @@ import { ApiError } from '../middleware/errorHandler';
 import { ProjectService } from '../services/project.service';
 import { projectSchema, updateProjectSchema } from '../types/project.types';
 import { z } from 'zod';
+import { CreateProjectUseCase, UpdateProjectUseCase, DeleteProjectUseCase, GetProjectUseCase } from '@commit-coach/domain/usecases/project';
+import { CreateProjectInput, UpdateProjectInput } from '@commit-coach/domain/entities/project';
 
 const projectService = new ProjectService();
 
@@ -19,6 +21,121 @@ const createProjectSchema = z.object({
     .regex(/^#[0-9A-Fa-f]{6}$/)
     .optional(),
 });
+
+export class ProjectController {
+  constructor(
+    private readonly createProjectUseCase: CreateProjectUseCase,
+    private readonly updateProjectUseCase: UpdateProjectUseCase,
+    private readonly deleteProjectUseCase: DeleteProjectUseCase,
+    private readonly getProjectUseCase: GetProjectUseCase,
+  ) {}
+
+  /**
+   * プロジェクトを作成する
+   */
+  async create(req: Request, res: Response): Promise<void> {
+    try {
+      const input: CreateProjectInput = req.body;
+      const project = await this.createProjectUseCase.execute(input);
+      res.status(201).json(project);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * プロジェクトを更新する
+   */
+  async update(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const input: UpdateProjectInput = req.body;
+      const project = await this.updateProjectUseCase.execute(id, input);
+      res.json(project);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * プロジェクトを削除する
+   */
+  async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      await this.deleteProjectUseCase.execute(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * プロジェクトを取得する
+   */
+  async get(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const project = await this.getProjectUseCase.execute(id);
+      res.json(project);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
+  /**
+   * すべてのプロジェクトを取得する
+   */
+  async getAll(req: Request, res: Response): Promise<void> {
+    try {
+      const projects = await this.getProjectUseCase.executeAll();
+      res.json(projects);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * タスク統計情報を含むプロジェクトを取得する
+   */
+  async getWithStats(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const project = await this.getProjectUseCase.executeWithStats(id);
+      res.json(project);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
+  /**
+   * プロジェクトのステータスを更新する
+   */
+  async updateStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const project = await this.getProjectUseCase.executeUpdateStatus(id, status);
+      res.json(project);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  /**
+   * プロジェクトのタイプを更新する
+   */
+  async updateType(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { type } = req.body;
+      const project = await this.getProjectUseCase.executeUpdateType(id, type);
+      res.json(project);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+}
 
 /**
  * プロジェクト一覧を取得
