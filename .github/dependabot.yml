@@ -56,27 +56,23 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
     open-pull-requests-limit: 10
-    reviewers:
-      - "nakazawatarou"
     labels:
       - "dependencies"
-      - "root"
-    groups:
-      root-deps:
-        patterns:
-          - "*"
+      - "npm"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
 
   # GitHub Actionsの依存関係を維持
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "nakazawatarou"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
-      - "github-actions" 
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"

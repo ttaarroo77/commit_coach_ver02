@@ -2,58 +2,54 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, beginning-refactoring-ai-dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, beginning-refactoring-ai-dev ]
 
 jobs:
-  lint:
-    name: リントとタイプチェック
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - name: Node.js のセットアップ
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
-      - name: pnpm のインストール
+
+      - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8.9.0
-      - name: 依存関係のインストール
-        run: pnpm install
-      - name: ESLint の実行
-        run: pnpm lint
-      - name: TypeScript タイプチェックの実行
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
         run: pnpm typecheck
 
-  build:
-    name: ビルドテスト
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Node.js のセットアップ
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-      - name: pnpm のインストール
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8.9.0
-      - name: 依存関係のインストール
-        run: pnpm install
-      - name: ビルドの実行
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
         run: pnpm build
-      - name: ビルド成果物の保存
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: |
-            apps/frontend/.next
-            apps/backend/dist
-          retention-days: 1
 
   security:
     name: セキュリティスキャン
