@@ -153,6 +153,7 @@ export default function DashboardPage() {
 
   // タスクグループ
   const [taskGroups, setTaskGroups] = useState<TaskGroup[]>([
+    // 今日のタスク
     {
       id: "today",
       title: "今日のタスク",
@@ -165,7 +166,7 @@ export default function DashboardPage() {
           startTime: "09:00",
           endTime: "10:00",
           status: "completed",
-          project: "チーム管理",
+          project: "チーム管理", // ここも動的に連携してほしい
           priority: "中",
           progress: 100,
           expanded: false,
@@ -180,7 +181,7 @@ export default function DashboardPage() {
           startTime: "10:00",
           endTime: "13:00",
           status: "completed",
-          project: "ウェブアプリ開発",
+          project: "ウェブアプリ開発",// ここも動的に連携してほしい
           priority: "高",
           progress: 100,
           expanded: false,
@@ -196,7 +197,7 @@ export default function DashboardPage() {
           startTime: "13:00",
           endTime: "14:00",
           status: "completed",
-          project: "チーム管理",
+          project: "チーム管理",// ここも動的に連携してほしい
           priority: "低",
           progress: 100,
           expanded: false,
@@ -208,7 +209,7 @@ export default function DashboardPage() {
           startTime: "14:00",
           endTime: "16:00",
           status: "in-progress",
-          project: "ウェブアプリ開発",
+          project: "ウェブアプリ開発",// ここも動的に連携してほしい
           priority: "高",
           progress: 50,
           expanded: false,
@@ -224,7 +225,7 @@ export default function DashboardPage() {
           startTime: "16:00",
           endTime: "18:00",
           status: "todo",
-          project: "デザインプロジェクト",
+          project: "デザインプロジェクト",// ここも動的に連携してほしい
           priority: "中",
           progress: 0,
           expanded: false,
@@ -236,6 +237,7 @@ export default function DashboardPage() {
         },
       ],
     },
+    // 未定のタスク
     {
       id: "unscheduled",
       title: "未定のタスク",
@@ -246,7 +248,7 @@ export default function DashboardPage() {
           id: "6",
           title: "レスポンシブデザインの実装",
           status: "todo",
-          project: "ウェブアプリ開発",
+          project: "ウェブアプリ開発",// ここも動的に連携してほしい
           priority: "中",
           progress: 0,
           expanded: false,
@@ -259,7 +261,7 @@ export default function DashboardPage() {
           id: "7",
           title: "ユーザー設定画面の作成",
           status: "todo",
-          project: "ウェブアプリ開発",
+          project: "ウェブアプリ開発",// ここも動的に連携してほしい
           priority: "低",
           progress: 0,
           expanded: false,
@@ -273,7 +275,7 @@ export default function DashboardPage() {
           id: "8",
           title: "テスト計画書の作成",
           status: "todo",
-          project: "QA",
+          project: "QA",// ここも動的に連携してほしい
           priority: "高",
           progress: 0,
           expanded: false,

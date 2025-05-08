@@ -327,7 +327,7 @@ export default function ProjectsPage() {
    return (
       <div className="space-y-6">
          <Tabs defaultValue="webApp" onValueChange={setCurrentProject} className="w-full">
-            {/* <TabsList className="mb-4">
+            <TabsList className="mb-4">
                <TabsTrigger value="webApp" className="px-4">
                   ウェブアプリ開発
                </TabsTrigger>
@@ -337,7 +337,7 @@ export default function ProjectsPage() {
                <TabsTrigger value="design" className="px-4">
                   デザインプロジェクト
                </TabsTrigger>
-            </TabsList> */}
+            </TabsList>
 
             <TabsContent value="webApp" className="space-y-4">
                <ProjectTemplate {...projectsData.webApp} />
@@ -353,4 +353,4 @@ export default function ProjectsPage() {
          </Tabs>
       </div>
    )
-}
+} 
