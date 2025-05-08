@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Menu, X, ChevronDown, ChevronRight, Home, User, Settings, LogOut, Plus, CheckSquare, FolderKanban, Users, BarChart3 } from "lucide-react"
+import { Menu, X, ChevronDown, ChevronRight, Home, User, Settings, LogOut, Plus, CheckSquare, FolderKanban, Users, BarChart3, Folder } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { useRouter } from "next/navigation"
 import {
@@ -42,7 +42,7 @@ export function Sidebar() {
       name: "デザインプロジェクト",
       color: "#F5BE41",
       href: "/projects/design",
-    },we
+    },
   ])
 
   // 現在のURLからアクティブなプロジェクトを特定
@@ -120,42 +120,15 @@ export function Sidebar() {
 
           {/* サイドバーコンテンツ */}
           <div className="flex-1 overflow-auto py-3">
-            {/* プロジェクトセクション */}
-            <div className="px-3 mb-2">
-              <h2 className="text-xs font-semibold uppercase text-gray-500">プロジェクト</h2>
-              <div className="flex justify-end">
-                <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
-            {/* マイプロジェクトセクション */}
-            <div className="space-y-1 px-3">
-              <Button variant="ghost" size="sm" className="w-full justify-start">
-                <ChevronDown className="mr-2 h-4 w-4" />
-                <span>マイプロジェクト</span>
-              </Button>
-              <div className="ml-4 space-y-1">
-                {projects.map((project) => (
-                  <Link key={project.id} href={project.href} className="block">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`w-full justify-start gap-2 ${activeProject === project.id ? `text-[${project.color}]` : "text-gray-700"
-                        }`}
-                    >
-                      <div className="h-2 w-2 rounded-full" style={{ backgroundColor: project.color }}></div>
-                      <span>{project.name}</span>
-                    </Button>
-                  </Link>
-                ))}
-                <Button variant="ghost" size="sm" className="w-full justify-start text-gray-500">
-                  <Plus className="mr-2 h-4 w-4" />
-                  <span>新しいプロジェクト</span>
+            {/* プロジェクトセクション
+            <div className="px-3 mt-4 mb-2">
+              <Link href="/projects" className="block">
+                <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <span>プロジェクト一覧</span>
                 </Button>
-              </div>
-            </div>
+              </Link>
+            </div> */}
 
             {/* ナビゲーションリンク */}
             <div className="mt-auto px-3">
@@ -166,6 +139,15 @@ export function Sidebar() {
                     <span>ダッシュボード</span>
                   </Button>
                 </Link>
+
+                <Link href="/projects" className="block">
+                  <Button variant="ghost" size="sm" className="w-full justify-start">
+                    {/* <FolderKanban className="mr-2 h-4 w-4" /> */}
+                    <Folder className="mr-2 h-4 w-4" />
+                    <span>プロジェクト一覧</span>
+                  </Button>
+                </Link>
+
                 <Link href="/mypage" className="block">
                   <Button variant="ghost" size="sm" className="w-full justify-start">
                     <User className="mr-2 h-4 w-4" />
@@ -180,6 +162,7 @@ export function Sidebar() {
                 </Link>
               </div>
             </div>
+
           </div>
 
           {/* サイドバーフッター */}
