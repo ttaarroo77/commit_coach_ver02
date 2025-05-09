@@ -831,11 +831,11 @@ export default function ProjectTemplate({
 
   return (
     <>
-      <div className="flex h-screen">
+      <div className="flex h-screen relative">
         <Sidebar />
         <div className="flex flex-1 flex-col overflow-hidden">
           <main className="flex flex-1 overflow-hidden">
-            <div className="flex-1 overflow-auto p-6">
+            <div className="flex-1 overflow-auto p-6 relative z-20">
               <div
                 className="mb-6 flex items-center justify-between"
                 onMouseEnter={() => setHoveredProject(true)}

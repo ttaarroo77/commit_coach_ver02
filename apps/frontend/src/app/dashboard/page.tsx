@@ -29,6 +29,8 @@ import {
   SplitSquareVertical,
   RefreshCw,
 } from "lucide-react"
+import { AddToDashboardButton } from "@/components/dashboard/AddToDashboardButton"
+import { toast } from "@/components/ui/use-toast"
 
 interface SubTask {
   id: string
@@ -631,6 +633,30 @@ export default function DashboardPage() {
           : group,
       ),
     )
+  }
+
+  // handleAddToDashboard関数を追加
+  const handleAddToDashboard = async (itemId: string, itemType: 'task' | 'project') => {
+    try {
+      const response = await fetch('/api/dashboard/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: itemType, id: itemId })
+      })
+
+      if (!response.ok) throw new Error()
+
+      toast({
+        title: "追加成功",
+        description: "ダッシュボードに追加しました",
+      })
+    } catch {
+      toast({
+        title: "エラー",
+        description: "追加に失敗しました",
+        variant: "destructive"
+      })
+    }
   }
 
   return (
