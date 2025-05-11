@@ -48,6 +48,10 @@ knowledge_logs/
 knowledge_logs/**/*
 !knowledge_logs/metrics.md
 
+# logs
+logs/
+logs/**/*
+
 # Monorepo specific
 /backend/dist/
 /backend/node_modules/
