@@ -162,8 +162,12 @@ const getProjectColor = (project: string) => {
 }
 
 // 日付・時刻フォーマット用関数を追加
-const formatTimeDisplay = (date: Date) => {
-  return date.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
+const formatTimeDisplay = (date: Date): string => {
+  return date.toLocaleTimeString('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  })
 }
 
 const formatDateDisplay = (date: Date) => {
@@ -174,7 +178,7 @@ const formatDateDisplay = (date: Date) => {
 const iconStyle = "h-4 w-4 text-gray-300"
 
 export default function DashboardPage() {
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [currentTime, setCurrentTime] = useState<Date>(new Date())
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none")
 
   // IDを生成する関数（クライアントサイドのみで実行）
@@ -334,8 +338,12 @@ export default function DashboardPage() {
 
   // 現在時刻を更新
   useEffect(() => {
-    // 必要な処理があればここに記述
-  }, []);
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
 
   // タスクグループの展開/折りたたみを切り替える
   const toggleTaskGroup = (groupId: string) => {

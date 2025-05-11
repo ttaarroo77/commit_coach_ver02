@@ -1,7 +1,16 @@
 import { Request, Response } from 'express';
 import { ProjectController } from '../project.controller';
-import { CreateProjectUseCase, UpdateProjectUseCase, DeleteProjectUseCase, GetProjectUseCase } from '@commit-coach/domain/usecases/project';
-import { Project, ProjectType, ProjectStatus } from '@commit-coach/domain/entities/project';
+import { CreateProjectUseCase } from '../../use-cases/project/create-project.use-case';
+import { UpdateProjectUseCase } from '../../use-cases/project/update-project.use-case';
+import { DeleteProjectUseCase } from '../../use-cases/project/delete-project.use-case';
+import { GetProjectUseCase } from '../../use-cases/project/get-project.use-case';
+import { GetAllProjectsUseCase } from '../../use-cases/project/get-all-projects.use-case';
+
+jest.mock('../../use-cases/project/create-project.use-case');
+jest.mock('../../use-cases/project/update-project.use-case');
+jest.mock('../../use-cases/project/delete-project.use-case');
+jest.mock('../../use-cases/project/get-project.use-case');
+jest.mock('../../use-cases/project/get-all-projects.use-case');
 
 describe('ProjectController', () => {
   let projectController: ProjectController;
@@ -9,6 +18,7 @@ describe('ProjectController', () => {
   let mockUpdateProjectUseCase: jest.Mocked<UpdateProjectUseCase>;
   let mockDeleteProjectUseCase: jest.Mocked<DeleteProjectUseCase>;
   let mockGetProjectUseCase: jest.Mocked<GetProjectUseCase>;
+  let mockGetAllProjectsUseCase: jest.Mocked<GetAllProjectsUseCase>;
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
 
@@ -27,10 +37,10 @@ describe('ProjectController', () => {
 
     mockGetProjectUseCase = {
       execute: jest.fn(),
-      executeAll: jest.fn(),
-      executeWithStats: jest.fn(),
-      executeUpdateStatus: jest.fn(),
-      executeUpdateType: jest.fn(),
+    } as any;
+
+    mockGetAllProjectsUseCase = {
+      execute: jest.fn(),
     } as any;
 
     projectController = new ProjectController(
@@ -38,11 +48,12 @@ describe('ProjectController', () => {
       mockUpdateProjectUseCase,
       mockDeleteProjectUseCase,
       mockGetProjectUseCase,
+      mockGetAllProjectsUseCase
     );
 
     mockRequest = {
-      body: {},
       params: {},
+      body: {},
     };
 
     mockResponse = {
@@ -53,136 +64,195 @@ describe('ProjectController', () => {
   });
 
   describe('create', () => {
-    it('プロジェクトを作成できること', async () => {
-      const mockProject: Project = {
-        id: '1',
-        name: 'テストプロジェクト',
-        description: 'テスト説明',
-        type: ProjectType.PERSONAL,
-        status: ProjectStatus.ACTIVE,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    const createProjectInput = {
+      name: 'テストプロジェクト',
+      description: 'テストプロジェクトの説明',
+      type: 'PERSONAL',
+      status: 'ACTIVE',
+      startDate: new Date(),
+      endDate: new Date(),
+    };
 
-      mockRequest.body = {
-        name: 'テストプロジェクト',
-        description: 'テスト説明',
-        type: ProjectType.PERSONAL,
-        status: ProjectStatus.ACTIVE,
-      };
+    const mockCreatedProject = {
+      id: 'project-1',
+      ...createProjectInput,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      mockCreateProjectUseCase.execute.mockResolvedValue(mockProject);
+    it('プロジェクトが正常に作成されること', async () => {
+      mockRequest.body = createProjectInput;
+      mockCreateProjectUseCase.execute.mockResolvedValue(mockCreatedProject);
 
       await projectController.create(mockRequest as Request, mockResponse as Response);
 
-      expect(mockCreateProjectUseCase.execute).toHaveBeenCalledWith(mockRequest.body);
+      expect(mockCreateProjectUseCase.execute).toHaveBeenCalledWith(createProjectInput);
       expect(mockResponse.status).toHaveBeenCalledWith(201);
-      expect(mockResponse.json).toHaveBeenCalledWith(mockProject);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockCreatedProject);
     });
 
-    it('エラー時に400を返すこと', async () => {
-      mockRequest.body = {};
+    it('バリデーションエラーの場合、400エラーが返されること', async () => {
+      mockRequest.body = { ...createProjectInput, name: '' };
       mockCreateProjectUseCase.execute.mockRejectedValue(new Error('バリデーションエラー'));
 
       await projectController.create(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: 'バリデーションエラー' });
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'バリデーションエラー',
+      });
     });
   });
 
   describe('update', () => {
-    it('プロジェクトを更新できること', async () => {
-      const mockProject: Project = {
-        id: '1',
-        name: '更新されたプロジェクト',
-        description: '更新された説明',
-        type: ProjectType.TEAM,
-        status: ProjectStatus.ARCHIVED,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    const projectId = 'project-1';
+    const updateProjectInput = {
+      name: '更新されたプロジェクト',
+      description: '更新されたプロジェクトの説明',
+      type: 'TEAM',
+      status: 'COMPLETED',
+      startDate: new Date(),
+      endDate: new Date(),
+    };
 
-      mockRequest.params = { id: '1' };
-      mockRequest.body = {
-        name: '更新されたプロジェクト',
-        description: '更新された説明',
-        type: ProjectType.TEAM,
-        status: ProjectStatus.ARCHIVED,
-      };
+    const mockUpdatedProject = {
+      id: projectId,
+      ...updateProjectInput,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      mockUpdateProjectUseCase.execute.mockResolvedValue(mockProject);
+    it('プロジェクトが正常に更新されること', async () => {
+      mockRequest.params = { id: projectId };
+      mockRequest.body = updateProjectInput;
+      mockUpdateProjectUseCase.execute.mockResolvedValue(mockUpdatedProject);
 
       await projectController.update(mockRequest as Request, mockResponse as Response);
 
-      expect(mockUpdateProjectUseCase.execute).toHaveBeenCalledWith('1', mockRequest.body);
-      expect(mockResponse.json).toHaveBeenCalledWith(mockProject);
+      expect(mockUpdateProjectUseCase.execute).toHaveBeenCalledWith(projectId, updateProjectInput);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockUpdatedProject);
     });
 
-    it('エラー時に400を返すこと', async () => {
-      mockRequest.params = { id: '1' };
-      mockRequest.body = {};
-      mockUpdateProjectUseCase.execute.mockRejectedValue(new Error('更新エラー'));
+    it('プロジェクトが存在しない場合、404エラーが返されること', async () => {
+      mockRequest.params = { id: projectId };
+      mockRequest.body = updateProjectInput;
+      mockUpdateProjectUseCase.execute.mockRejectedValue(new Error('プロジェクトが見つかりません'));
 
       await projectController.update(mockRequest as Request, mockResponse as Response);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: '更新エラー' });
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'プロジェクトが見つかりません',
+      });
     });
   });
 
   describe('delete', () => {
-    it('プロジェクトを削除できること', async () => {
-      mockRequest.params = { id: '1' };
-      mockDeleteProjectUseCase.execute.mockResolvedValue();
+    const projectId = 'project-1';
+
+    it('プロジェクトが正常に削除されること', async () => {
+      mockRequest.params = { id: projectId };
+      mockDeleteProjectUseCase.execute.mockResolvedValue(undefined);
 
       await projectController.delete(mockRequest as Request, mockResponse as Response);
 
-      expect(mockDeleteProjectUseCase.execute).toHaveBeenCalledWith('1');
+      expect(mockDeleteProjectUseCase.execute).toHaveBeenCalledWith(projectId);
       expect(mockResponse.status).toHaveBeenCalledWith(204);
       expect(mockResponse.send).toHaveBeenCalled();
     });
 
-    it('エラー時に400を返すこと', async () => {
-      mockRequest.params = { id: '1' };
-      mockDeleteProjectUseCase.execute.mockRejectedValue(new Error('削除エラー'));
+    it('プロジェクトが存在しない場合、404エラーが返されること', async () => {
+      mockRequest.params = { id: projectId };
+      mockDeleteProjectUseCase.execute.mockRejectedValue(new Error('プロジェクトが見つかりません'));
 
       await projectController.delete(mockRequest as Request, mockResponse as Response);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: '削除エラー' });
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'プロジェクトが見つかりません',
+      });
     });
   });
 
   describe('get', () => {
-    it('プロジェクトを取得できること', async () => {
-      const mockProject: Project = {
-        id: '1',
-        name: 'テストプロジェクト',
-        description: 'テスト説明',
-        type: ProjectType.PERSONAL,
-        status: ProjectStatus.ACTIVE,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    const projectId = 'project-1';
+    const mockProject = {
+      id: projectId,
+      name: 'テストプロジェクト',
+      description: 'テストプロジェクトの説明',
+      type: 'PERSONAL',
+      status: 'ACTIVE',
+      startDate: new Date(),
+      endDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      mockRequest.params = { id: '1' };
+    it('プロジェクトが正常に取得できること', async () => {
+      mockRequest.params = { id: projectId };
       mockGetProjectUseCase.execute.mockResolvedValue(mockProject);
 
       await projectController.get(mockRequest as Request, mockResponse as Response);
 
-      expect(mockGetProjectUseCase.execute).toHaveBeenCalledWith('1');
+      expect(mockGetProjectUseCase.execute).toHaveBeenCalledWith(projectId);
       expect(mockResponse.json).toHaveBeenCalledWith(mockProject);
     });
 
-    it('プロジェクトが見つからない場合に404を返すこと', async () => {
-      mockRequest.params = { id: '1' };
-      mockGetProjectUseCase.execute.mockRejectedValue(new Error('プロジェクトが見つかりません'));
+    it('プロジェクトが存在しない場合、404エラーが返されること', async () => {
+      mockRequest.params = { id: projectId };
+      mockGetProjectUseCase.execute.mockResolvedValue(null);
 
       await projectController.get(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: 'プロジェクトが見つかりません' });
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'プロジェクトが見つかりません',
+      });
+    });
+  });
+
+  describe('getAll', () => {
+    const mockProjects = [
+      {
+        id: 'project-1',
+        name: 'テストプロジェクト1',
+        description: 'テストプロジェクト1の説明',
+        type: 'PERSONAL',
+        status: 'ACTIVE',
+        startDate: new Date(),
+        endDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 'project-2',
+        name: 'テストプロジェクト2',
+        description: 'テストプロジェクト2の説明',
+        type: 'TEAM',
+        status: 'COMPLETED',
+        startDate: new Date(),
+        endDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    it('プロジェクト一覧が正常に取得できること', async () => {
+      mockGetAllProjectsUseCase.execute.mockResolvedValue(mockProjects);
+
+      await projectController.getAll(mockRequest as Request, mockResponse as Response);
+
+      expect(mockGetAllProjectsUseCase.execute).toHaveBeenCalled();
+      expect(mockResponse.json).toHaveBeenCalledWith(mockProjects);
+    });
+
+    it('プロジェクトが存在しない場合、空配列が返されること', async () => {
+      mockGetAllProjectsUseCase.execute.mockResolvedValue([]);
+
+      await projectController.getAll(mockRequest as Request, mockResponse as Response);
+
+      expect(mockGetAllProjectsUseCase.execute).toHaveBeenCalled();
+      expect(mockResponse.json).toHaveBeenCalledWith([]);
     });
   });
 });

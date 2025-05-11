@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
 import { TaskController } from '../task.controller';
-import { CreateTaskUseCase, UpdateTaskUseCase, DeleteTaskUseCase, GetTaskUseCase } from '@commit-coach/domain/usecases/task';
-import { Task, TaskStatus, TaskPriority } from '@commit-coach/domain/entities/task';
+import { CreateTaskUseCase } from '../../use-cases/task/create-task.use-case';
+import { UpdateTaskUseCase } from '../../use-cases/task/update-task.use-case';
+import { DeleteTaskUseCase } from '../../use-cases/task/delete-task.use-case';
+import { GetTaskUseCase } from '../../use-cases/task/get-task.use-case';
+
+jest.mock('../../use-cases/task/create-task.use-case');
+jest.mock('../../use-cases/task/update-task.use-case');
+jest.mock('../../use-cases/task/delete-task.use-case');
+jest.mock('../../use-cases/task/get-task.use-case');
 
 describe('TaskController', () => {
   let taskController: TaskController;
@@ -27,23 +34,18 @@ describe('TaskController', () => {
 
     mockGetTaskUseCase = {
       execute: jest.fn(),
-      executeAll: jest.fn(),
-      executeByProjectId: jest.fn(),
-      executeWithProject: jest.fn(),
-      executeUpdateStatus: jest.fn(),
-      executeUpdatePriority: jest.fn(),
     } as any;
 
     taskController = new TaskController(
       mockCreateTaskUseCase,
       mockUpdateTaskUseCase,
       mockDeleteTaskUseCase,
-      mockGetTaskUseCase,
+      mockGetTaskUseCase
     );
 
     mockRequest = {
-      body: {},
       params: {},
+      body: {},
     };
 
     mockResponse = {
@@ -54,140 +56,150 @@ describe('TaskController', () => {
   });
 
   describe('create', () => {
-    it('タスクを作成できること', async () => {
-      const mockTask: Task = {
-        id: '1',
-        title: 'テストタスク',
-        description: 'テスト説明',
-        status: TaskStatus.TODO,
-        priority: TaskPriority.MEDIUM,
-        projectId: '1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    const createTaskInput = {
+      title: 'テストタスク',
+      description: 'テストタスクの説明',
+      priority: 'HIGH',
+      status: 'TODO',
+      dueDate: new Date(),
+      projectId: 'project-1',
+    };
 
-      mockRequest.body = {
-        title: 'テストタスク',
-        description: 'テスト説明',
-        status: TaskStatus.TODO,
-        priority: TaskPriority.MEDIUM,
-        projectId: '1',
-      };
+    const mockCreatedTask = {
+      id: 'task-1',
+      ...createTaskInput,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      mockCreateTaskUseCase.execute.mockResolvedValue(mockTask);
+    it('タスクが正常に作成されること', async () => {
+      mockRequest.body = createTaskInput;
+      mockCreateTaskUseCase.execute.mockResolvedValue(mockCreatedTask);
 
       await taskController.create(mockRequest as Request, mockResponse as Response);
 
-      expect(mockCreateTaskUseCase.execute).toHaveBeenCalledWith(mockRequest.body);
+      expect(mockCreateTaskUseCase.execute).toHaveBeenCalledWith(createTaskInput);
       expect(mockResponse.status).toHaveBeenCalledWith(201);
-      expect(mockResponse.json).toHaveBeenCalledWith(mockTask);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockCreatedTask);
     });
 
-    it('エラー時に400を返すこと', async () => {
-      mockRequest.body = {};
+    it('バリデーションエラーの場合、400エラーが返されること', async () => {
+      mockRequest.body = { ...createTaskInput, title: '' };
       mockCreateTaskUseCase.execute.mockRejectedValue(new Error('バリデーションエラー'));
 
       await taskController.create(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: 'バリデーションエラー' });
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'バリデーションエラー',
+      });
     });
   });
 
   describe('update', () => {
-    it('タスクを更新できること', async () => {
-      const mockTask: Task = {
-        id: '1',
-        title: '更新されたタスク',
-        description: '更新された説明',
-        status: TaskStatus.IN_PROGRESS,
-        priority: TaskPriority.HIGH,
-        projectId: '1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    const taskId = 'task-1';
+    const updateTaskInput = {
+      title: '更新されたタスク',
+      description: '更新されたタスクの説明',
+      priority: 'MEDIUM',
+      status: 'IN_PROGRESS',
+      dueDate: new Date(),
+    };
 
-      mockRequest.params = { id: '1' };
-      mockRequest.body = {
-        title: '更新されたタスク',
-        description: '更新された説明',
-        status: TaskStatus.IN_PROGRESS,
-        priority: TaskPriority.HIGH,
-      };
+    const mockUpdatedTask = {
+      id: taskId,
+      ...updateTaskInput,
+      projectId: 'project-1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      mockUpdateTaskUseCase.execute.mockResolvedValue(mockTask);
+    it('タスクが正常に更新されること', async () => {
+      mockRequest.params = { id: taskId };
+      mockRequest.body = updateTaskInput;
+      mockUpdateTaskUseCase.execute.mockResolvedValue(mockUpdatedTask);
 
       await taskController.update(mockRequest as Request, mockResponse as Response);
 
-      expect(mockUpdateTaskUseCase.execute).toHaveBeenCalledWith('1', mockRequest.body);
-      expect(mockResponse.json).toHaveBeenCalledWith(mockTask);
+      expect(mockUpdateTaskUseCase.execute).toHaveBeenCalledWith(taskId, updateTaskInput);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockUpdatedTask);
     });
 
-    it('エラー時に400を返すこと', async () => {
-      mockRequest.params = { id: '1' };
-      mockRequest.body = {};
-      mockUpdateTaskUseCase.execute.mockRejectedValue(new Error('更新エラー'));
+    it('タスクが存在しない場合、404エラーが返されること', async () => {
+      mockRequest.params = { id: taskId };
+      mockRequest.body = updateTaskInput;
+      mockUpdateTaskUseCase.execute.mockRejectedValue(new Error('タスクが見つかりません'));
 
       await taskController.update(mockRequest as Request, mockResponse as Response);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: '更新エラー' });
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'タスクが見つかりません',
+      });
     });
   });
 
   describe('delete', () => {
-    it('タスクを削除できること', async () => {
-      mockRequest.params = { id: '1' };
-      mockDeleteTaskUseCase.execute.mockResolvedValue();
+    const taskId = 'task-1';
+
+    it('タスクが正常に削除されること', async () => {
+      mockRequest.params = { id: taskId };
+      mockDeleteTaskUseCase.execute.mockResolvedValue(undefined);
 
       await taskController.delete(mockRequest as Request, mockResponse as Response);
 
-      expect(mockDeleteTaskUseCase.execute).toHaveBeenCalledWith('1');
+      expect(mockDeleteTaskUseCase.execute).toHaveBeenCalledWith(taskId);
       expect(mockResponse.status).toHaveBeenCalledWith(204);
       expect(mockResponse.send).toHaveBeenCalled();
     });
 
-    it('エラー時に400を返すこと', async () => {
-      mockRequest.params = { id: '1' };
-      mockDeleteTaskUseCase.execute.mockRejectedValue(new Error('削除エラー'));
+    it('タスクが存在しない場合、404エラーが返されること', async () => {
+      mockRequest.params = { id: taskId };
+      mockDeleteTaskUseCase.execute.mockRejectedValue(new Error('タスクが見つかりません'));
 
       await taskController.delete(mockRequest as Request, mockResponse as Response);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: '削除エラー' });
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'タスクが見つかりません',
+      });
     });
   });
 
   describe('get', () => {
-    it('タスクを取得できること', async () => {
-      const mockTask: Task = {
-        id: '1',
-        title: 'テストタスク',
-        description: 'テスト説明',
-        status: TaskStatus.TODO,
-        priority: TaskPriority.MEDIUM,
-        projectId: '1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    const taskId = 'task-1';
+    const mockTask = {
+      id: taskId,
+      title: 'テストタスク',
+      description: 'テストタスクの説明',
+      priority: 'HIGH',
+      status: 'TODO',
+      dueDate: new Date(),
+      projectId: 'project-1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      mockRequest.params = { id: '1' };
+    it('タスクが正常に取得できること', async () => {
+      mockRequest.params = { id: taskId };
       mockGetTaskUseCase.execute.mockResolvedValue(mockTask);
 
       await taskController.get(mockRequest as Request, mockResponse as Response);
 
-      expect(mockGetTaskUseCase.execute).toHaveBeenCalledWith('1');
+      expect(mockGetTaskUseCase.execute).toHaveBeenCalledWith(taskId);
       expect(mockResponse.json).toHaveBeenCalledWith(mockTask);
     });
 
-    it('タスクが見つからない場合に404を返すこと', async () => {
-      mockRequest.params = { id: '1' };
-      mockGetTaskUseCase.execute.mockRejectedValue(new Error('タスクが見つかりません'));
+    it('タスクが存在しない場合、404エラーが返されること', async () => {
+      mockRequest.params = { id: taskId };
+      mockGetTaskUseCase.execute.mockResolvedValue(null);
 
       await taskController.get(mockRequest as Request, mockResponse as Response);
 
       expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.json).toHaveBeenCalledWith({ message: 'タスクが見つかりません' });
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        error: 'タスクが見つかりません',
+      });
     });
   });
 });

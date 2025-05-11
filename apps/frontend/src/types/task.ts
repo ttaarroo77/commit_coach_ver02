@@ -10,20 +10,13 @@ export interface Subtask extends SubTask {
 
 export interface Task {
   id: string;
+  project_id: string;
   title: string;
-  description?: string;
-  status: 'todo' | 'in_progress' | 'done' | 'todo' | 'in-progress' | 'completed';
-  project_id?: string;
-  project?: string;
-  priority?: string;
-  progress: number;
-  subtasks: SubTask[];
-  expanded?: boolean;
-  dueDate?: string;
-  startTime?: string;
-  endTime?: string;
-  created_at?: string;
-  updated_at?: string;
+  description: string | null;
+  status: 'todo' | 'in_progress' | 'done';
+  due_date: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface TaskGroup {
