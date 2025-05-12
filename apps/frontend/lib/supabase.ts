@@ -1,54 +1,90 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './database.types';
+import { createClient } from "@supabase/supabase-js"
+import Cookies from "js-cookie"
 
-// 環境変数からSupabase URLとAnon Keyを取得
-let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// シングルトンパターンでクライアントを作成（クライアントサイド用）
+let supabaseClient: ReturnType<typeof createClient> | null = null
 
-// テスト環境の場合はダミー値を使用
-if (process.env.NODE_ENV === 'test') {
-  supabaseUrl = 'https://example.supabase.co';
-  supabaseAnonKey = 'dummy-anon-key';
-} else if (!supabaseUrl || !supabaseAnonKey) {
-  // テスト環境でない場合は環境変数の存在をチェック
-  console.error('環境変数エラー:', { supabaseUrl, supabaseAnonKey });
-  throw new Error('Supabase URLまたはAnon Keyが設定されていません。');
-}
+export const getSupabaseClient = () => {
+  if (supabaseClient) return supabaseClient
 
-console.log('Supabase設定:', { supabaseUrl });
+  // デモモードのチェック
+  let isDemoMode = false
+  if (typeof window !== "undefined") {
+    isDemoMode = Cookies.get("demo_mode") === "true"
+  }
 
-// Supabaseクライアントを作成
-export const supabase = createClient<Database>(
-  supabaseUrl,
-  supabaseAnonKey,
-  {
+  // デモモードの場合はダミークライアントを返す
+  if (isDemoMode) {
+    console.log("デモモード: Supabaseダミークライアントを使用します")
+    supabaseClient = createClient("https://example.supabase.co", "dummy-key", {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
+    return supabaseClient
+  }
+
+  // 環境変数を取得
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // 環境変数が設定されていない場合のエラーハンドリング
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn("Supabase環境変数が設定されていません。ダミークライアントを使用します。")
+
+    // ダミークライアントを返す（エラーを投げない）
+    supabaseClient = createClient("https://example.supabase.co", "dummy-key", {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
+    return supabaseClient
+  }
+
+  supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true,
-      storageKey: 'supabase.auth.token',
-      flowType: 'pkce',
-      debug: process.env.NODE_ENV === 'development'
     },
-    global: {
-      headers: {
-        'x-application-name': 'commit-coach',
+  })
+
+  return supabaseClient
+}
+
+// サーバーサイド用のクライアント
+export const createServerSupabaseClient = () => {
+  // デモモードのチェック（サーバーサイドでは環境変数を使用）
+  const isDemoMode = process.env.DEMO_MODE === "true"
+
+  // デモモードの場合はダミークライアントを返す
+  if (isDemoMode) {
+    console.log("デモモード: Supabaseダミークライアントを使用します（サーバー）")
+    return createClient("https://example.supabase.co", "dummy-key", {
+      auth: {
+        persistSession: false,
       },
-    },
+    })
   }
-);
 
-// 初期化時にセッション情報をコンソールに出力（デバッグ用）
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  supabase.auth.getSession().then(({ data, error }) => {
-    console.log('現在のセッション状態:', data);
-    if (error) {
-      console.error('セッション取得エラー:', error);
-    }
-  });
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // 認証状態の変化を監視
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log('認証状態変化:', event, session);
-  });
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn("Supabase環境変数が設定されていません。サーバーサイドでダミークライアントを使用します。")
+
+    // ダミークライアントを返す（エラーを投げない）
+    return createClient("https://example.supabase.co", "dummy-key", {
+      auth: {
+        persistSession: false,
+      },
+    })
+  }
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+    },
+  })
 }

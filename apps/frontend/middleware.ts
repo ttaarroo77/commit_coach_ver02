@@ -11,8 +11,8 @@ const authPaths = ["/login", "/register", "/forgot-password"]
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // デモモードのチェック（クッキーを使用）
-  const isDemoMode = request.cookies.get("demo_mode")?.value === "true"
+  // デモモードを常に有効にする
+  const isDemoMode = true
 
   // Supabaseクライアントを作成
   const supabase = createServerSupabaseClient()
@@ -22,10 +22,11 @@ export async function middleware(request: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // 認証済みかどうか
-  const isAuthenticated = !!session || isDemoMode
+  // 認証済みかどうか（デモモードが常に有効なので常にtrue）
+  const isAuthenticated = true
 
   // デバッグ情報をコンソールに出力
+  console.log(`デモモード: Supabaseダミークライアントを使用します（サーバー）`)
   console.log(`Path: ${pathname}, isDemoMode: ${isDemoMode}, isAuthenticated: ${isAuthenticated}`)
 
   // 保護されたパスへのアクセスで未認証の場合
@@ -36,7 +37,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 認証パスへのアクセスで認証済みの場合
-  if (authPaths.some((path) => pathname === path) && isAuthenticated) {
+  if (authPaths.some((path) => pathname === path)) {
     return NextResponse.redirect(new URL("/dashboard", request.url))
   }
 
