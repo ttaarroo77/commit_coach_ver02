@@ -1,30 +1,9 @@
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { createVitestConfig } from './vitest.config.shared';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-export default defineConfig({
-  plugins: [react()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/__tests__/test-utils.tsx'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/__tests__/',
-        '**/*.d.ts',
-        '**/*.test.tsx',
-        '**/*.spec.tsx',
-      ],
-    },
-    include: ['src/**/*.test.tsx', 'src/**/*.spec.tsx'],
-    exclude: ['node_modules', 'dist'],
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
-  },
-}); 
+// ルートディレクトリのパスを取得
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// 共通設定を使用して設定を作成
+export default createVitestConfig(__dirname);

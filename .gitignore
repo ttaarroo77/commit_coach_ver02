@@ -61,6 +61,15 @@ logs/**/*
 /packages/*/dist/
 /packages/*/node_modules/
 
+# プロジェクト固有のビルド成果物とキャッシュ
+apps/frontend/.next/
+apps/frontend_backend/.next/
+apps/backend/dist/
+apps/backend/coverage/
+.turbo/
+apps/frontend_backend/.turbo/
+apps/backend/.turbo/
+
 # IDE specific files
 .idea/
 .vscode/
