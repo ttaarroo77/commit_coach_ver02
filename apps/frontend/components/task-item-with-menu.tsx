@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { TrashIcon, PlusIcon, ClockIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon } from "@/components/client-icons"
@@ -40,6 +41,9 @@ export function TaskItemWithMenu({
   onToggleExpand,
   onTitleChange,
 }: TaskItemProps) {
+  // ローディング状態を追加
+  const [isDecomposing, setIsDecomposing] = useState(false);
+
   // isHovered 状態を削除
 
   // レベルに応じたプレフィックスを設定
@@ -119,6 +123,18 @@ export function TaskItemWithMenu({
     onToggleExpand?.()
   }
 
+  // 分解ボタンのクリックハンドラ
+  const handleBreakdown = async () => {
+    if (!onBreakdown) return;
+
+    setIsDecomposing(true);
+    try {
+      await onBreakdown(id, level, title);
+    } finally {
+      setIsDecomposing(false);
+    }
+  };
+
   return (
     <div
       className={cn("flex items-center py-2 hover:bg-gray-50 group", getIndentClass())}
@@ -167,9 +183,10 @@ export function TaskItemWithMenu({
             variant="ghost"
             size="sm"
             className="h-8 w-8 p-0 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-            onClick={() => onBreakdown?.(id, level, title)}
+            onClick={handleBreakdown}
+            disabled={isDecomposing}
           >
-            <BracesIcon />
+            <BracesIcon className={isDecomposing ? "animate-spin" : ""} />
           </Button>
         )}
 
