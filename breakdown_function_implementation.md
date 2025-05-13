@@ -22,8 +22,8 @@
 ## 1. アーキテクチャ設計
 
 * [x] 分解ロジックを **サービス層** (`lib/decompose-service.ts`) に切り出す
-* [ ] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
-* [ ] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
+* [x] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
+* [x] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
 
 ---
 
@@ -208,20 +208,20 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 ## 1. アーキテクチャ設計
 
 * [x] 分解ロジックを **サービス層** (`lib/decompose-service.ts`) に切り出す
-* [ ] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
-* [ ] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
+* [x] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
+* [x] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
 
 ## 2. コード実装
 
 ### 2‑1  共通フック
 
-* [ ] `hooks/use-decompose.ts` を作成
-* [ ] 引数: `(title: string, level: 1 | 2)` で戻り値 `Promise<string[]>`
+* [x] `hooks/use-decompose.ts` を作成
+* [x] 引数: `(title: string, level: 1 | 2)` で戻り値 `Promise<string[]>`
 
 ### 2‑2  モックサービス
 
-* [ ] `lib/decompose-service.ts` に `mockDecompose` を実装
-* [ ] 後で `openaiDecompose` に差し替えられるよう export 位置を計画
+* [x] `lib/decompose-service.ts` に `mockDecompose` を実装
+* [x] 後で `openaiDecompose` に差し替えられるよう export 位置を計画
 
 ### 2‑3  ボタンイベントの伝播
 
