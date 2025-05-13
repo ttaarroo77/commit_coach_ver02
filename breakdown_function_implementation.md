@@ -249,7 +249,7 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 
 ## 5. ドキュメント
 
-* [ ] `README_decompose.md` を作成し設計と将来 AI 差し替え手順を記載
+* [x] `README_decompose.md` を作成し設計と将来 AI 差し替え手順を記載
 
 ## 6. レビュー & マージ
 
