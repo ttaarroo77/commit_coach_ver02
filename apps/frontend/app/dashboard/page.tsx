@@ -815,7 +815,6 @@ export default function DashboardPage() {
                                                   completed={project.completed}
                                                   level={1}
                                                   expanded={project.expanded}
-                                                  hasChildren={project.tasks.length > 0}
                                                   startTime={project.startTime}
                                                   endTime={project.endTime}
                                                   onToggleExpand={() => toggleProject(group.id, project.id)}
@@ -856,7 +855,6 @@ export default function DashboardPage() {
                                                                     completed={task.completed}
                                                                     level={2}
                                                                     expanded={task.expanded}
-                                                                    hasChildren={task.subtasks.length > 0}
                                                                     startTime={task.startTime}
                                                                     endTime={task.endTime}
                                                                     onToggleExpand={() =>
@@ -912,6 +910,7 @@ export default function DashboardPage() {
                                                                                       title={subtask.title}
                                                                                       completed={subtask.completed}
                                                                                       level={3}
+                                                                                      expanded={false}
                                                                                       onToggleComplete={() =>
                                                                                         toggleSubtaskComplete(
                                                                                           group.id,
@@ -932,7 +931,7 @@ export default function DashboardPage() {
                                                                                         provided.dragHandleProps
                                                                                       }
                                                                                       /*
-                                                                                      // サブタスクの時間管理機能（現在は非表示）
+                                                                                      // サブタスク用の時間管理機能（現在は非表示）
                                                                                       // 必要になったら以下のコメントを解除して使用
                                                                                       // isSubtask={true}
                                                                                       // startTime={subtask.startTime}

@@ -12,7 +12,7 @@ interface HierarchicalTaskItemProps {
   title: string
   completed?: boolean
   level?: number
-  expanded?: boolean
+  expanded: boolean
   hasChildren?: boolean
   startTime?: string
   endTime?: string
@@ -35,7 +35,7 @@ export function HierarchicalTaskItem({
   title,
   completed = false,
   level = 1,
-  expanded = false,
+  expanded,
   hasChildren = false,
   startTime,
   endTime,
@@ -62,7 +62,7 @@ export function HierarchicalTaskItem({
       onMouseLeave={handleMouseLeave}
     >
       {/* 展開/折りたたみボタン */}
-      {hasChildren && onToggleExpand ? (
+      {level < 3 && onToggleExpand ? (
         <Button variant="ghost" size="sm" className="p-0 h-6 w-6 mr-2" onClick={onToggleExpand}>
           {expanded ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
         </Button>
