@@ -194,8 +194,8 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 
 ## 0. 事前準備
 
-* [ ] `feat/decompose-button` ブランチを切る
-* [ ] 最新 `main` をマージ & lint が緑であることを確認
+* [x] `feat/decompose-button` ブランチを切る
+* [x] 最新 `main` をマージ & lint が緑であることを確認
 
 ## 1. アーキテクチャ設計
 
