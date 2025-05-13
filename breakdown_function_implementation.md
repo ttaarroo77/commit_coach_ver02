@@ -225,20 +225,20 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 
 ### 2‑3  ボタンイベントの伝播
 
-* [ ] `components/task-item-with-menu.tsx` に `onBreakdown(id, level, title)` Props を追加
-* [ ] `{}` クリックでこのコールバックを呼ぶ
-* [ ] `task-group.tsx` でタスク → 親コンポへ引き上げる
+* [x] `components/task-item-with-menu.tsx` に `onBreakdown(id, level, title)` Props を追加
+* [x] `{}` クリックでこのコールバックを呼ぶ
+* [x] `task-group.tsx` でタスク → 親コンポへ引き上げる
 
 ### 2‑4  状態更新
 
-* [ ] `app/projects/page.tsx` に `handleBreakdown` を実装
-* [ ] `useDecompose` を await → 配列を state にマージ
-* [ ] Project → tasks 生成, Task → subtasks 生成 の両パスを実装
+* [x] `app/projects/page.tsx` に `handleBreakdown` を実装
+* [x] `useDecompose` を await → 配列を state にマージ
+* [x] Project → tasks 生成, Task → subtasks 生成 の両パスを実装
 
 ## 3. UI / UX
 
-* [ ] 生成後 **対象ノードを自動展開**して結果がすぐ見えるようにする
-* [ ] トーストで「6 個のタスクを追加しました」と通知
+* [x] 生成後 **対象ノードを自動展開**して結果がすぐ見えるようにする
+* [x] トーストで「6 個のタスクを追加しました」と通知
 * [ ] 分解中は `{}` アイコンを `animate-spin` に置き換えローディング示唆
 
 ## 4. テスト
