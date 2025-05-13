@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { HomeIcon, FolderIcon, LogOutIcon } from "@/components/client-icons"
+import { HomeIcon, FolderIcon, LogOutIcon, UserIcon, SettingsIcon } from "@/components/client-icons"
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -30,6 +30,24 @@ export function Sidebar() {
               <Button variant="ghost" className="h-9 w-full justify-start" data-active={pathname === "/projects"}>
                 <FolderIcon className="mr-2 h-4 w-4" />
                 <span>プロジェクト一覧</span>
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* 設定ナビゲーション */}
+        <div className="mt-auto px-3 py-4">
+          <div className="space-y-1">
+            <Link href="/mypage" className="block">
+              <Button variant="ghost" className="h-9 w-full justify-start" data-active={pathname === "/mypage"}>
+                <UserIcon className="mr-2 h-4 w-4" />
+                <span>マイページ</span>
+              </Button>
+            </Link>
+            <Link href="/settings" className="block">
+              <Button variant="ghost" className="h-9 w-full justify-start" data-active={pathname === "/settings"}>
+                <SettingsIcon className="mr-2 h-4 w-4" />
+                <span>設定</span>
               </Button>
             </Link>
             <Link href="/" className="block">

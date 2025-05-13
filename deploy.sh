@@ -1,4 +1,6 @@
 #!/bin/bash
+# ./deploy.sh
+
 # Integrated deploy script combining deploy_safe.sh and deploy_unsafe.sh
 
 # スクリプト名
