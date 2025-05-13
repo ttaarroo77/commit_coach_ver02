@@ -23,8 +23,10 @@ import { cn } from '@/lib/utils';
 // 共通のアイコンラッパー - hydrationエラーを修正
 function IconWrapper(props: LucideProps & { icon: React.ElementType }) {
   const { icon: Icon, className, ...rest } = props;
-  // aria-hiddenを含めず、クライアント側とサーバー側で一貫したレンダリングを確保
-  return <Icon className={cn('h-4 w-4', className)} {...rest} />;
+  const merged = cn('h-4 w-4', className);
+  // サーバー／クライアントで同一になるよう props を固定
+  // aria-hidden を明示的に付与し、SSR と CSR の差をなくす
+  return <Icon aria-hidden="true" className={merged} {...rest} />;
 }
 
 // 各アイコンコンポーネントをmemoizeして一貫性を確保

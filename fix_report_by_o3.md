@@ -1,112 +1,108 @@
-# fix_expand_button_for_added_items.md
+# fix_middleware_module_error.md
 **目的**
-- プロジェクト画面から追加した「## プロジェクト」や「### タスク」を **ダッシュボード上でも必ず展開／折りたたみ可能** にする
-- "展開 ▸ / 折りたたみ ▾" ボタンが表示されないバグを解消し、追加直後も UX を統一する
+- `Error: Cannot find the middleware module` を根本解決し、`apps/frontend` の Next.js サーバーを **正常起動** できるようにする
+- ついでに以前出た `next-font-manifest.json` 欠損エラーの再発も防ぐ
 
 ---
 
 ## 1. 現状と問題点
 
-| 階層 | 症状 | コード上の原因 |
+| 事象 | 影響 | 推定原因 |
 | --- | --- | --- |
-| **プロジェクト (`level = 1`)** | `hasChildren === false` の場合、`HierarchicalTaskItem` が <br>展開ボタンを描画しない → 追加直後はタスクが空なのでボタンが消える | `HierarchicalTaskItem` 内条件：<br>`hasChildren ? (<Button …/>) : <div className="w-6" />` |
-| **タスク (`level = 2`)** | 同上 — サブタスクが空のまま追加すると矢印非表示 | `hasChildren={task.subtasks.length > 0}` が原因 |
-| **折りたたみ状態** | 矢印がないため `toggleProject()` / `toggleTask()` が呼べず状態が変わらない | UI 起点のイベントが存在しない |
+| **Cannot find the middleware module** | アプリがビルド直後にクラッシュしページ表示不可 | ① monorepo 配下の *ルート外* に `middleware.ts` が存在<br>② `next.config.mjs` に *matcher* だけ残り、ビルド対象ファイルが無い<br>③ `middleware.ts` はあるが **export / config** が不正 |
+| **next-font-manifest.json not found**（*過去*） | dev サーバー起動不可 | `.next/` キャッシュと実ファイル不整合 — これは **キャッシュ削除で収束済み** |
+
+> **ブランチ**: [`fix/caret-always-visible`](https://github.com/ttaarroo77/commit_coach_ver02/tree/fix/caret-always-visible)
+> `apps/frontend/middleware.ts` の有無／中身を必ず確認すること。
 
 ---
 
-## 2. 手順概要
+## 2. 対処方針
 
-1. **UI コンポーネントを改修**
-   - caret ボタンを「子が無くても表示」し、押下時に `expanded` をトグル
-2. **呼び出し側 props の整理**
-   - `hasChildren` を削除 or optional 化し、`level < 3` なら常時 caret を描画
-3. **追加直後のデータ整合**
-   - `addProjectToDashboard` / `addTaskToProject` で `expanded: true` を保証
-4. **回帰テスト**（プロジェクト追加→折りたたみ→リロードで状態維持）
+1. **Middleware の配置と export を正す**
+   - Next.js は “プロジェクトルート直下” だけを探す
+   - monorepo なら *各アプリのルート（`apps/frontend/`）* に置き、`basePath` を加味しない
+2. **不要なら middleware を撤去**
+   - 当面使わない認証リダイレクトなどならファイルごと削除し `next.config.mjs` の `matcher` を除去
+3. **キャッシュを消して再ビルド**
+   - `.next/` を削除 → `pnpm dev` で再生成
+4. **Font Manifest 再発防止**
+   - `next/font` で Google Font を使うと manifest が生成される
+   - import ミスや font オプション typo があると発生 → ESLint で static import を強制
 
 ---
 
-## 3. 詳細チェックリスト ✅
+## 3. チェックリスト ✅
 
-### 3-1. `HierarchicalTaskItem.tsx` の改修
+### 3-1. middleware の確認・修正
 
-- [x] **プロパティ整理**
-  ```diff
-  - expanded?: boolean
-  - hasChildren?: boolean
-  + expanded: boolean           // 必須に
+- [ ] `apps/frontend/middleware.ts` が存在するか確認
+- [ ] **使う場合**
+  ```ts
+  // apps/frontend/middleware.ts
+  import { NextResponse } from 'next/server'
+  import type { NextRequest } from 'next/server'
+
+  export function middleware(req: NextRequest) {
+    // 例: 未ログインなら /login へ
+    // if (!req.cookies.get('sb-access-token')) return NextResponse.redirect(new URL('/login', req.url))
+    return NextResponse.next()
+  }
+
+  // ここを忘れると再びエラー
+  export const config = { matcher: ['/((?!_next|favicon.ico).*)'] }
 ````
 
-* [x] **caret 描画ロジックを変更**
+* [ ] **不要なら** `middleware.ts` を削除 → `next.config.mjs` から `experimental: { middlewareSourceMaps: … }` 等も消す
+* [ ] ESLint に `no-empty-export` ルールがある場合 disable or export 有効化
 
-  ```diff
-  - {hasChildren ? (
-  + {level < 3 ? (
-        <Button onClick={onToggleExpand} …>
-          {expanded ? <ChevronDown …/> : <ChevronRight …/>}
-        </Button>
-    ) : (
-        <div className="w-6 mr-1" />
-    )}
+### 3-2. monorepo 設定
+
+* [ ] `package.json` の `next` スクリプトが `apps/frontend` をカレントに起動しているか確認
+
+  ```json
+  "scripts": { "dev": "next --turbo --root apps/frontend" }
+  ```
+* [ ] ルートに *誤って* `middleware.ts` が居ないか検索
+
+  ```bash
+  git ls-files | grep middleware.ts
   ```
 
-  > *レベルが 1 または 2 なら「子が無くても常時表示」*
-* [x] **インデント調整** — caret 分のスペースが既にあるのでレイアウト崩れなし
+### 3-3. キャッシュクリア & 動作確認
 
-### 3-2. 呼び出し側の修正
+* [ ] `rm -rf apps/frontend/.next`
+* [ ] `pnpm dev -F frontend`
+* [ ] ブラウザで `localhost:3000` → 500 エラーが消えているか
+* [ ] `pages/api` が 200 で応答するか (middleware の副作用チェック)
 
-#### `app/dashboard/page.tsx`
+### 3-4. Font Manifest 再チェック
 
-* [x] `<HierarchicalTaskItem …>` で **`expanded={project.expanded}` のみ渡す**
-
-  ```diff
-  - hasChildren={project.tasks.length > 0}
-  + expanded={project.expanded}
-  ```
-* [x] タスクも同様に変更
-
-#### `app/projects/page.tsx`
-
-* [x] ページ内プレビューでも同じ変更を適用
-
-### 3-3. 追加ロジックの安全装置
-
-* [x] `addProjectToDashboard()` と `addTaskToProject()` にて
-
-  ```ts
-  expanded: true                   // ← 既にあるが念のため確認
-  ```
-* [x] `toggleProject()` / `toggleTask()` は既存のまま動作確認
-
-### 3-4. 回帰テスト
-
-| テスト       | 手順                   | 期待値                                           |
-| --------- | -------------------- | --------------------------------------------- |
-| **UI**    | 「新しいプロジェクトを追加」→ 矢印表示 | caret が出現し、クリックで折りたたみ                         |
-| **データ保持** | 折りたたんだ状態でリロード        | 折りたたまれたまま（localStorage の `expanded:false` 反映） |
-| **タスク追加** | 折りたたみ状態で「＋タスク」       | 自動で展開し caret も維持                              |
+* [ ] `grep -R "next/font" apps/frontend` で font import を一覧
+* [ ] すべて `const inter = Inter({ subsets: ['latin'] })` のように **オブジェクト引数**になっているか
+* [ ] キャッシュを削除した状態で `pnpm dev` → manifest エラー再発しないことを確認
 
 ---
 
-## 4. 事故りそうな部分と対策
+## 4. 事故りそうなポイント & 対策
 
-| リスク                                          | 対策                                     |
-| -------------------------------------------- | -------------------------------------- |
-| 旧コンポーネント呼び出しが `expanded` を渡さず TypeScript エラー | `expanded` を **必須 prop** に昇格し、ビルドで検知   |
-| 空プロジェクトで caret を押しても何も見えず UX 混乱              | 折りたたみ時のみ背景色を変え「空です」プレースホルダを表示          |
-| 既存 `hasChildren` 依存コードとの衝突                   | grep で `hasChildren=` を洗い出し、一括置換 or 削除 |
+| リスク                               | 対策                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------ |
+| **middleware 削除で認証が無効**           | 代替として `route.ts` (Edge Functions) か `@supabase/auth-helpers/nextjs` でガード |
+| **config.matcher が多すぎてパフォーマンス低下** | 必要最小限のパスに限定；API ルートを除外 (`/api/(.*)` を否 matcher)                          |
+| **monorepo ルートで二重ビルド**            | root `middleware.ts` が残っていると再発 → CI で `pnpm turbo run lint` 時に検知         |
 
 ---
 
 ## 5. 次のアクション
 
-1. **ブランチ** `fix/caret-always-visible` を切る
-2. チェックリストを順に実装 → `pnpm typecheck && pnpm lint`
-3. Manual QA：プロジェクト/タスク追加 → caret 動作確認
-4. GitHub PR → Vercel Preview → マージ
+1. **fix/middleware-module** ブランチを切る
+2. チェックリスト実行 → commit (lint/format pass)
+3. GitHub PR → Vercel Preview & Playwright smoke test
+4. main へマージ後 **タグ `v0.3.1`** としてリリース
 
 ---
 
-> **備考**
-> 商品版では「子要素 0 のときは淡色 caret + ツールチップ "タスクを追加して展開可能に"」など、ガイダンスを追加するとさらに UX が上がります。
+> **メモ**
+> 以前の `next-font-manifest.json` エラーは「古い .next キャッシュ＋ font import typo」の複合。<br>
+> 今回の再ビルドで manifest も再生成されるため同時にクリーンアップされる。

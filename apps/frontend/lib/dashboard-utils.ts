@@ -1,5 +1,7 @@
 // lib- > dashboard-utils.ts
 
+import { genId, genUniqueId } from './generate-id';
+
 // ダッシュボードに追加するタスクの型定義
 export interface SubTask {
   id: string
@@ -58,7 +60,49 @@ export const getDashboardData = (): TaskGroup[] => {
   }
 
   try {
-    return JSON.parse(storedData)
+    const parsedData = JSON.parse(storedData) as TaskGroup[]
+
+    // 重複IDをフィルタリング
+    return parsedData.map(group => {
+      // プロジェクトの重複を除去
+      const uniqueProjects = new Map<string, Project>();
+      group.projects.forEach(p => {
+        if (!uniqueProjects.has(p.id)) uniqueProjects.set(p.id, p);
+      });
+
+      // 重複のないプロジェクト配列を作成
+      const deduplicatedProjects = Array.from(uniqueProjects.values()).map(project => {
+        // タスクの重複を除去
+        const uniqueTasks = new Map<string, Task>();
+        project.tasks.forEach(t => {
+          if (!uniqueTasks.has(t.id)) uniqueTasks.set(t.id, t);
+        });
+
+        // 重複のないタスク配列を作成
+        const deduplicatedTasks = Array.from(uniqueTasks.values()).map(task => {
+          // サブタスクの重複を除去
+          const uniqueSubtasks = new Map<string, SubTask>();
+          task.subtasks.forEach(st => {
+            if (!uniqueSubtasks.has(st.id)) uniqueSubtasks.set(st.id, st);
+          });
+
+          return {
+            ...task,
+            subtasks: Array.from(uniqueSubtasks.values())
+          };
+        });
+
+        return {
+          ...project,
+          tasks: deduplicatedTasks
+        };
+      });
+
+      return {
+        ...group,
+        projects: deduplicatedProjects
+      };
+    });
   } catch (error) {
     console.error("ダッシュボードデータの解析に失敗しました", error)
     return getDefaultDashboardData()
@@ -257,6 +301,23 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
   const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
   const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
 
+  // ダッシュボードデータを取得
+  const dashboardData = getDashboardData()
+  const group = dashboardData.find((g) => g.id === groupId)
+
+  if (!group) return;
+
+  // 既存のプロジェクトIDを収集
+  const existingProjectIds = group.projects.map(p => p.id);
+
+  // IDの重複をチェック
+  let uniqueProjectId = projectId;
+  if (existingProjectIds.includes(projectId)) {
+    // 重複する場合は新しいIDを生成
+    uniqueProjectId = genUniqueId('project', existingProjectIds);
+    console.log(`ID重複を検出: "${projectId}"を"${uniqueProjectId}"に変更しました`);
+  }
+
   // プロジェクト一覧からプロジェクトデータを取得（実際の実装ではAPIやデータベースから取得）
   let projectData: Project | null = null
 
@@ -271,7 +332,7 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
 
         // ダッシュボード用のプロジェクトデータを作成
         projectData = {
-          id: projectId,
+          id: uniqueProjectId, // 一意のIDを使用
           title: sourceProject.projectTitle || projectTitle,
           completed: false,
           expanded: true,
@@ -287,9 +348,13 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
           sourceProject.taskGroups.forEach((taskGroup) => {
             if (taskGroup.tasks && Array.isArray(taskGroup.tasks)) {
               taskGroup.tasks.forEach((task) => {
+                // 既存のタスクIDを収集
+                const existingTaskIds = projectData?.tasks.map(t => t.id) || [];
+                const uniqueTaskId = genUniqueId('task', existingTaskIds);
+
                 // タスクを追加
                 const newTask: Task = {
-                  id: task.id,
+                  id: uniqueTaskId, // 一意のIDを使用
                   title: task.title,
                   completed: task.completed || false,
                   expanded: false, // 初期状態では折りたたむ
@@ -301,11 +366,19 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
 
                 // サブタスクを追加
                 if (task.subtasks && Array.isArray(task.subtasks)) {
-                  newTask.subtasks = task.subtasks.map((subtask) => ({
-                    id: subtask.id,
-                    title: subtask.title,
-                    completed: subtask.completed || false,
-                  }))
+                  // 既存のサブタスクIDを収集
+                  const existingSubtaskIds: string[] = [];
+
+                  newTask.subtasks = task.subtasks.map((subtask) => {
+                    const uniqueSubtaskId = genUniqueId('subtask', existingSubtaskIds);
+                    existingSubtaskIds.push(uniqueSubtaskId);
+
+                    return {
+                      id: uniqueSubtaskId, // 一意のIDを使用
+                      title: subtask.title,
+                      completed: subtask.completed || false,
+                    };
+                  });
 
                   // サブタスクの完了状態に基づいてタスクの進捗を計算
                   if (newTask.subtasks.length > 0) {
@@ -330,7 +403,7 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
   // プロジェクトデータが取得できなかった場合は新規作成
   if (!projectData) {
     projectData = {
-      id: projectId || `project-${Date.now()}`,
+      id: uniqueProjectId, // 一意のIDを使用
       title: projectTitle,
       completed: false,
       expanded: true,
@@ -342,15 +415,14 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
     }
   }
 
-  const dashboardData = getDashboardData()
-  const updatedData = dashboardData.map((group) => {
-    if (group.id === groupId) {
+  const updatedData = dashboardData.map((g) => {
+    if (g.id === groupId) {
       return {
-        ...group,
-        projects: [...group.projects, projectData!],
+        ...g,
+        projects: [...g.projects, projectData!],
       }
     }
-    return group
+    return g
   })
 
   saveDashboardData(updatedData)
