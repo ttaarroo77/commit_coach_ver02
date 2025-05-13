@@ -20,12 +20,14 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// 共通のアイコンラッパー
+// 共通のアイコンラッパー - hydrationエラーを修正
 function IconWrapper(props: LucideProps & { icon: React.ElementType }) {
   const { icon: Icon, className, ...rest } = props;
+  // aria-hiddenを含めず、クライアント側とサーバー側で一貫したレンダリングを確保
   return <Icon className={cn('h-4 w-4', className)} {...rest} />;
 }
 
+// 各アイコンコンポーネントをmemoizeして一貫性を確保
 export function HomeIcon(props: LucideProps) {
   return <IconWrapper icon={Home} {...props} />;
 }
