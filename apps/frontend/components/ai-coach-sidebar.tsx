@@ -116,7 +116,7 @@ export function AICoachSidebar() {
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>
-                  <p className="mt-1 text-xs opacity-70" suppressHydrationWarning>
+                  <p className="mt-1 text-xs opacity-70">
                     {formatTime(message.timestamp)}
                   </p>
                 </div>
