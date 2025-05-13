@@ -60,10 +60,12 @@ export type DashboardTask = z.infer<typeof DashboardTaskSchema>;
 // API Response
 export const ApiResponseSchema = z.object({
   data: z.any(),
-  error: z.object({
-    code: z.string(),
-    message: z.string(),
-  }).optional(),
+  error: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+    })
+    .optional(),
 });
 
 export type ApiResponse<T> = {
@@ -74,4 +76,4 @@ export type ApiResponse<T> = {
   };
 };
 
-export * from './types'; 
+export * from './types';

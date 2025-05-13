@@ -1,264 +1,166 @@
-# タスク分解機能の実装ガイド：
+# supabase_integration_roadmap.md
+> **目的**
 
-### 目的
 
-* **`{}` 分解ボタン** を押したとき、
-  1 階層下のリストを *即座に* 生成して UI に反映できるようにする。
-* 将来 **AI コーチング** で本格的な分解ロジックを差し替えられるよう、**フック化** & **非同期モック**で実装する。
-
----
-
-## 実装サマリー
-
-| やること                               | 触るファイル                                                              | 役割                                        |
-| ---------------------------------- | ------------------------------------------------------------------- | ----------------------------------------- |
-| 1. **共通フック** `useDecompose.ts` 追加  | `hooks/use-decompose.ts`                                            | 分解 API（モック or AI 呼び出し）を呼んで配列を返す           |
-| 2. **TaskGroup / Task に dispatch** | `components/task-group.tsx`<br>`components/task-item-with-menu.tsx` | `{}` クリック → `onBreakdown(id, level)` をコール |
-| 3. **ProjectsPage で state 生成**     | `app/projects/page.tsx`                                             | 返ってきた配列を state に組み込み／再レンダー                |
-| 4. **後で AI に差し替えられるようモック層を DI**    | `lib/decompose-service.ts`                                          | 今は固定サンプル、あとで OpenAI や自社モデルに切替             |
+> いま **Mock JSON in-memory** で動いている「ダッシュボード / プロジェクト」機能を **Supabase (PostgreSQL + Realtime + Auth)** に載せ替え、
+> - **新規プロジェクト／タスク／サブタスク** をリアルタイム作成
+> - 既存ダミーデータも “最初のシード” として取り込む
+> - 将来的な **AI‐コーチ／分解 { } 機能** が DB 上で履歴管理できる
+> を最短で実現するロードマップ。
 
 ---
 
-## 1. アーキテクチャ設計
+## 1. 現状 & 課題
 
-* [x] 分解ロジックを **サービス層** (`lib/decompose-service.ts`) に切り出す
-* [x] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
-* [x] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
-
----
-
-## 2. フックを作る（hooks/use-decompose.ts）
-
-```ts
-import { mockDecompose } from "@/lib/decompose-service";
-
-/**
- * level = 1 (Project) | 2 (Task) – 今回は2階層のみ
- */
-export async function useDecompose(
-  title: string,
-  level: 1 | 2,
-): Promise<string[]> {
-  // ここを将来 AI 呼び出しに差し替える
-  return mockDecompose(title, level);
-}
-```
+| 項目 | 状況 | ボトルネック |
+|------|------|--------------|
+| **State 管理** | useState だけ。LocalStorage 保存あり | マルチデバイス同期不可 |
+| **データ構造** | `/lib/dashboard-utils.ts` に TS 型 + モック |   |
+| **Auth** | Supabase client だけ入っているが未配線 | ルートガード無し |
+| **SSR** | App Router (next 14) | DB フェッチをまだ Server Action 化していない |
 
 ---
 
-## 3. `task-item-with-menu.tsx` にハンドラを注入
+## 2. ハイレベル戦略
 
-```tsx
-// 既存 props に追加
-onBreakdown?: (id: string, level: number, title: string) => void;
+1. **DB スキーマ確定**
+   `projects` → `tasks` → `subtasks` を **階層テーブル or JSONB** で表現。
+2. **Supabase Client Hooks** で CRUD API を置換。
+3. **Server Actions + SWR** で **“Optimistic UI”** 化。
+4. 旧ローカルデータを **Seed Script** で投入し、以降は LocalStorage fallback を削除。
+5. E2E テストを追加し “Hydration error” を regression させない。
 
-// ボタン onClick を変更
-<Button
-  … onClick={() => onBreakdown?.(id, level, title)}
+---
+
+## 3. フェーズ別ロードマップ（概要）
+
+| Phase | スコープ | Exit Criteria |
+|-------|---------|---------------|
+| **0** | Supabase プロジェクト作成 & .env 設定 | `healthcheck.ts` で ping OK |
+| **1** | DB スキーマ & 型生成 | `supabase gen types typescript` が pass |
+| **2** | **Read** 置換（SSR） | `/projects` が DB 読み込みで描画 |
+| **3** | **Write** 置換（Client Mutations） | 追加 / 削除 / 分解 が DB 反映 |
+| **4** | Realtime Sync | 別タブでも UI が自動更新 |
+| **5** | Auth + RLS | ユーザごとの行レベルセキュリティ完成 |
+| **6** | Seed & Clean-up | モック util を削除し、CI green |
+
+---
+
+## 4. 詳細チェックリスト
+
+### ☐ Phase-0: インフラ準備
+- [ ] Supabase プロジェクトを **org/team** に作成
+- [ ] `anon` / `service_role` key を `apps/frontend/.env.local` へ
+- [ ] **`@supabase/cli`** を devDeps 追加 → `supabase link --project-ref ...`
+
+### ☐ Phase-1: スキーマ定義
+```sql
+create table profiles (
+  id uuid primary key references auth.users,
+  username text
+);
+
+create table projects (
+  id uuid default uuid_generate_v4() primary key,
+  owner uuid references profiles(id),
+  title text not null,
+  position int,
+  inserted_at timestamptz default now()
+);
+
+create table tasks (
+  id uuid default uuid_generate_v4() primary key,
+  project_id uuid references projects(id) on delete cascade,
+  title text,
+  position int,
+  expanded boolean default false,
+  progress int default 0
+);
+
+create table subtasks (
+  id uuid default uuid_generate_v4() primary key,
+  task_id uuid references tasks(id) on delete cascade,
+  title text,
+  completed boolean default false,
+  position int
+);
+````
+
+* [ ] `supabase db push`
+* [ ] **RLS OFF** → 後段で有効化
+
+### ☐ Phase-2: 型生成 & SDK
+
+* [ ] `supabase gen types typescript --local > lib/database.types.ts`
+* [ ] **DB Client ラッパ** `lib/supabase.server.ts` / `lib/supabase.client.ts`
+
+### ☐ Phase-3: Read パス置換
+
+* [ ] `/app/projects/page.tsx`
+
+  * [ ] `getProjects(userId)` *Server Action* で fetch
+  * [ ] `use suspense()` で CSR fallback
+* [ ] `/app/dashboard/page.tsx` 同様
+
+### ☐ Phase-4: Write パス置換
+
+* [ ] `addProjectToDashboard()` ⇒ `insert into projects …`
+* [ ] `addTaskToProject()` ⇒ `insert into tasks …`
+* [ ] `addSubtaskToTask()` ⇒ `insert into subtasks …`
+* [ ] 削除系も同様に supabase RPC or delete query
+* [ ] **React-Query / useSWRMutation** で Optimistic Update
+
+### ☐ Phase-5: Realtime
+
+* [ ] `supabase.channel('db-changes')` で `on('postgres_changes', …)` 監視
+* [ ] `useEffect` → `queryClient.invalidateQueries(['projects'])`
+
+### ☐ Phase-6: Auth & RLS
+
+* [ ] `auth.users` の UUID を `owner` 列に格納
+* [ ] `alter table … enable row level security;`
+* [ ] ポリシー:
+
+  ```sql
+  create policy "own rows" on projects
+    for all using (owner = auth.uid());
+  ```
+* [ ] Next.js Middleware で `supabase.auth.getUser()` & redirect
+
+### ☐ Phase-7: Seed & Clean-up
+
+* [ ] `scripts/seedFromMock.ts` で旧 JSON を insert
+* [ ] `lib/dashboard-utils.ts` / LocalStorage ロジックを削除
+* [ ] `pnpm test:e2e` (Playwright) パス
+
+---
+
+## 5. リスク & 対策
+
+| リスク                  | 具体例                                | 対策                                    |
+| -------------------- | ---------------------------------- | ------------------------------------- |
+| **Hydration 再発**     | Server Action → Client cache ミスマッチ | `cache:` option + `suspense`          |
+| **Realtime flood**   | 1000+ 変更で再レンダ連鎖                    | `debounce` & `batch` in listener      |
+| **RLS ブロック**         | 書き込みが 403                          | Service Role key を *server only* 利用   |
+| **位置 (position) 競合** | DnD 並び替え同時編集                       | `rpc(reorder_project, …)` で atomic 更新 |
+
+---
+
+## 6. マイルストーン & 期日イメージ
+
+| 日付        | Deliverable                               |
+| --------- | ----------------------------------------- |
+| **Day-0** | Supabase project & CLI link               |
+| **+2d**   | スキーマ Push / 型生成                           |
+| **+5d**   | Read パス (Phase-3) 完了 → `/projects` SSR OK |
+| **+8d**   | Write パス & Optimistic コメント動作              |
+| **+10d**  | Realtime 同期デモ                             |
+| **+12d**  | Auth + RLS ON                             |
+| **+14d**  | Seed 書き換え / Mock util 削除 → PR Merge 🚀    |
+
+---
+
+> **備考**
 >
-  <Braces className="h-4 w-4" />
-</Button>
-```
-
----
-
-## 4. `task-group.tsx` で Task クリックを親に伝播
-
-```tsx
-<TaskItemWithMenu
-  …
-  onBreakdown={(taskId, lvl, tTitle) =>
-    onBreakdown?.(taskId, lvl, tTitle, /* parentId = */ id)
-  }
-/>
-```
-
----
-
-## 5. `ProjectsPage` で分岐ロジック
-
-```tsx
-import { useDecompose } from "@/hooks/use-decompose";
-
-// 分解コールバック
-const handleBreakdown = async (
-  nodeId: string,
-  level: number,
-  title: string,
-  parentId?: string,
-) => {
-  const items = await useDecompose(title, level as 1 | 2);
-
-  setProjects((prev) =>
-    prev.map((p) => {
-      if (level === 1 && p.id === nodeId) {
-        // Project → 新 Task 生成
-        return {
-          ...p,
-          tasks: items.map((t, i) => ({
-            id: `task-${Date.now()}-${i}`,
-            title: t,
-            completed: false,
-            expanded: false,
-            subtasks: [],
-          })),
-        };
-      }
-      if (level === 2) {
-        // Task → SubTasks
-        return {
-          ...p,
-          tasks: p.tasks.map((tk) =>
-            tk.id === nodeId
-              ? {
-                  ...tk,
-                  expanded: true,
-                  subtasks: items.map((s, i) => ({
-                    id: `sub-${Date.now()}-${i}`,
-                    title: s,
-                    completed: false,
-                  })),
-                }
-              : tk,
-          ),
-        };
-      }
-      return p;
-    }),
-  );
-};
-```
-
-* `TaskGroup` と `TaskItemWithMenu` の `onBreakdown` prop に **`handleBreakdown`** を渡すだけで連動。
-
----
-
-## 6. モックサービス（lib/decompose-service.ts）
-
-```ts
-export const mockDecompose = (title: string, level: 1 | 2): string[] => {
-  // 後で AI に差し替える箇所
-  if (level === 1) {
-    return [
-      "市場・テーマ選定",
-      "ブログ基盤構築",
-      "コンテンツ制作・SEO最適化",
-      "集客チャネル拡大",
-      "収益化 & LTV 向上",
-      "計測・改善・自動化",
-    ];
-  }
-  // level 2 → 任意のサブタスク
-  return [
-    `「${title}」キックオフ`,
-    `要件取りまとめ`,
-    `工数見積もり`,
-    `ステークホルダー承認`,
-  ];
-};
-```
-
----
-
-## 7. 将来 AI に差し替える場合
-
-1. **OpenAI**
-
-   ```ts
-   import OpenAI from "openai";
-   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-   export const decomposeAI = async (title: string, level: 1 | 2) => {
-     const prompt = `「${title}」を${level === 1 ? "タスク" : "サブタスク"}に6つ分解して箇条書きで出力`;
-     const res = await openai.chat.completions.create({ … });
-     return parseBullets(res.choices[0].message.content);
-   };
-   ```
-2. **lib/decompose-service.ts** を `export const decompose = isProd ? decomposeAI : mockDecompose;` に変更するだけで OK。
-
----
-
-### ✔️ これで `{}` ボタンを押すと
-
-* **Project** → 即時 Task 群が生成されリストに追加
-* **Task** → SubTask が生成 & Task が展開状態で表示
-
-今後 AI 呼び出しに切り替えても **UI 側の改変は不要** です。
-
-
-
-
-
-
-# 実装チェックリスト
-
-> **目的**: Projects 画面の「{ } 分解」ボタンを押した際、
->
-> * プロジェクト → 直下のタスク群
-> * タスク → 直下のサブタスク群
->   を即時に生成して UI に反映させる。さらに将来 AI コーチングで
->   本ロジックを差し替えられるよう拡張ポイントを用意する。
-
----
-
-## 0. 事前準備
-
-* [x] `feat/decompose-button` ブランチを切る
-* [x] 最新 `main` をマージ & lint が緑であることを確認
-
-## 1. アーキテクチャ設計
-
-* [x] 分解ロジックを **サービス層** (`lib/decompose-service.ts`) に切り出す
-* [x] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
-* [x] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
-
-## 2. コード実装
-
-### 2‑1  共通フック
-
-* [x] `hooks/use-decompose.ts` を作成
-* [x] 引数: `(title: string, level: 1 | 2)` で戻り値 `Promise<string[]>`
-
-### 2‑2  モックサービス
-
-* [x] `lib/decompose-service.ts` に `mockDecompose` を実装
-* [x] 後で `openaiDecompose` に差し替えられるよう export 位置を計画
-
-### 2‑3  ボタンイベントの伝播
-
-* [x] `components/task-item-with-menu.tsx` に `onBreakdown(id, level, title)` Props を追加
-* [x] `{}` クリックでこのコールバックを呼ぶ
-* [x] `task-group.tsx` でタスク → 親コンポへ引き上げる
-
-### 2‑4  状態更新
-
-* [x] `app/projects/page.tsx` に `handleBreakdown` を実装
-* [x] `useDecompose` を await → 配列を state にマージ
-* [x] Project → tasks 生成, Task → subtasks 生成 の両パスを実装
-
-## 3. UI / UX
-
-* [x] 生成後 **対象ノードを自動展開**して結果がすぐ見えるようにする
-* [x] トーストで「6 個のタスクを追加しました」と通知
-* [x] 分解中は `{}` アイコンを `animate-spin` に置き換えローディング示唆
-
-## 4. テスト
-
-* [x] **Unit**: `use-decompose` がモック配列を返す
-* [x] **Integration**: `handleBreakdown` が state のネストを正しく増やす
-* [x] **E2E (Playwright)**: ユーザがボタンクリック → 新タスクが DOM に現れる
-
-## 5. ドキュメント
-
-* [x] `README_decompose.md` を作成し設計と将来 AI 差し替え手順を記載
-
-## 6. レビュー & マージ
-
-* [x] PR に SS / GIF を添付して UX を共有
-* [x] CI 緑 + Reviewer OK → `main` へマージ
-* [x] タグ `v0.3.0` を打ち、Vercel で preview を確認
-
----
-
-### 備考
-
-* 今はモックで固定配列。**OpenAI 連携**は別チケット (`AI‑101`) で実装。
+> * **setting / mypage** は *profiles* テーブルと 1:1 で紐付け、後続 Sprint で CRUD UI を作成。
+> * Supabase Edge Functions を使った **AI 分解ログ保存** は次フェーズで検討。
