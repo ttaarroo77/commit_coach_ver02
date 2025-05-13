@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { Trash2, ChevronDown, ChevronRight, Plus } from "lucide-react"
+import { TrashIcon, ChevronDownIcon, ChevronRightIcon, PlusIcon } from "@/components/client-icons"
 import { EditableText } from "@/components/editable-text"
 import { EditableTime } from "@/components/editable-time"
 
@@ -25,7 +25,7 @@ interface HierarchicalTaskItemProps {
   dragHandleProps?: any
   className?: string
   // サブタスク用の時間管理フラグ（コメントアウト）
-  /* 
+  /*
   isSubtask?: boolean
   */
 }
@@ -64,7 +64,7 @@ export function HierarchicalTaskItem({
       {/* 展開/折りたたみボタン */}
       {hasChildren && onToggleExpand ? (
         <Button variant="ghost" size="sm" className="p-0 h-6 w-6 mr-2" onClick={onToggleExpand}>
-          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          {expanded ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
         </Button>
       ) : (
         <div className="w-8"></div>
@@ -88,15 +88,15 @@ export function HierarchicalTaskItem({
         </div>
       )}
 
-      {/* 
+      {/*
 // サブタスク用の時間表示（現在は非表示）
 // isSubtask が true の場合でも時間編集を可能にするコード
 // 必要になったら以下のコメントを解除して使用
 // {isSubtask && onTimeChange && (
 //   <div className="ml-2">
-//     <EditableTime 
-//       startTime={startTime} 
-//       endTime={endTime} 
+//     <EditableTime
+//       startTime={startTime}
+//       endTime={endTime}
 //       onTimeChange={onTimeChange}
 //       className="text-xs opacity-75" // サブタスク用のスタイル
 //     />
@@ -108,12 +108,12 @@ export function HierarchicalTaskItem({
       <div className={`flex items-center gap-1 transition-opacity ${isHovered ? "opacity-100" : "opacity-0"}`}>
         {onAddChild && (
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onAddChild} title="項目追加">
-            <Plus className="h-4 w-4 text-gray-400" />
+            <PlusIcon className="h-4 w-4 text-gray-400" />
           </Button>
         )}
         {onDelete && (
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onDelete} title="削除">
-            <Trash2 className="h-4 w-4 text-red-500" />
+            <TrashIcon className="h-4 w-4 text-red-500" />
           </Button>
         )}
       </div>

@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { Button } from "@/components/ui/button"
-import { Trash2, Plus, Clock, Braces, ChevronDown, ChevronRight } from "lucide-react"
+import { TrashIcon, PlusIcon, ClockIcon, BracesIcon, ChevronDownIcon, ChevronRightIcon } from "@/components/client-icons"
 import { addProjectToDashboard, addTaskToDashboard, addSubtaskToDashboard } from "@/lib/dashboard-utils"
 import { toast } from "@/components/ui/use-toast"
 import { EditableText } from "./editable-text"
@@ -133,7 +133,7 @@ export function TaskItemWithMenu({
           onClick={handleToggleExpand}
           aria-label={expanded ? "折りたたむ" : "展開する"}
         >
-          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          {expanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
         </Button>
       )}
 
@@ -158,7 +158,7 @@ export function TaskItemWithMenu({
           className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
           onClick={onDelete}
         >
-          <Trash2 className="h-4 w-4" />
+          <TrashIcon />
         </Button>
 
         {/* タスク分解ボタン - レベル3（サブタスク）以外に表示 */}
@@ -169,7 +169,7 @@ export function TaskItemWithMenu({
             className="h-8 w-8 p-0 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
             onClick={onBreakdown}
           >
-            <Braces className="h-4 w-4" />
+            <BracesIcon />
           </Button>
         )}
 
@@ -181,7 +181,7 @@ export function TaskItemWithMenu({
             className="h-8 w-8 p-0 text-green-500 hover:text-green-700 hover:bg-green-50"
             onClick={handleAddSubtask}
           >
-            <Plus className="h-4 w-4" />
+            <PlusIcon />
           </Button>
         )}
 
@@ -192,7 +192,7 @@ export function TaskItemWithMenu({
           className="h-8 w-8 p-0 text-purple-500 hover:text-purple-700 hover:bg-purple-50"
           onClick={handleAddToDashboard}
         >
-          <Clock className="h-4 w-4" />
+          <ClockIcon />
         </Button>
       </div>
     </div>

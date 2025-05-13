@@ -3,13 +3,14 @@
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Send, X } from "lucide-react"
+import { SendIcon, XIcon } from "@/components/client-icons"
+import { formatTime } from "@/lib/date-utils"
 
 interface Message {
   id: string
   role: "user" | "assistant"
   content: string
-  timestamp: string
+  timestamp: string // ISO形式の文字列
 }
 
 interface AICoachProps {
@@ -23,7 +24,7 @@ export function AICoach({ isOpen, onClose }: AICoachProps) {
       id: "1",
       role: "assistant",
       content: "何かお手伝いできることはありますか？タスクの分解や優先順位付けのお手伝いができます。",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toISOString(),
     },
   ])
   const [input, setInput] = useState("")
@@ -41,7 +42,7 @@ export function AICoach({ isOpen, onClose }: AICoachProps) {
       id: Date.now().toString(),
       role: "user",
       content: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toISOString(),
     }
 
     setMessages((prev) => [...prev, userMessage])
@@ -63,7 +64,7 @@ export function AICoach({ isOpen, onClose }: AICoachProps) {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: randomResponse,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toISOString(),
       }
       setMessages((prev) => [...prev, aiResponse])
     }, 1000)
@@ -79,7 +80,7 @@ export function AICoach({ isOpen, onClose }: AICoachProps) {
           <h3 className="font-medium">AIコミットコーチ</h3>
         </div>
         <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
-          <X className="h-4 w-4" />
+          <XIcon />
         </Button>
       </div>
 
@@ -99,7 +100,9 @@ export function AICoach({ isOpen, onClose }: AICoachProps) {
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
-                <p className="mt-1 text-xs opacity-70">{message.timestamp}</p>
+                <p className="mt-1 text-xs opacity-70" suppressHydrationWarning>
+                  {formatTime(message.timestamp)}
+                </p>
               </div>
             </div>
           ))}
@@ -127,7 +130,7 @@ export function AICoach({ isOpen, onClose }: AICoachProps) {
             onClick={handleSendMessage}
             disabled={!input.trim()}
           >
-            <Send className="h-4 w-4" />
+            <SendIcon />
           </Button>
         </div>
       </div>

@@ -3,13 +3,14 @@
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Send, X, ChevronLeft, ChevronRight } from "lucide-react"
+import { SendIcon, XIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/client-icons"
+import { formatTime } from "@/lib/date-utils"
 
 interface Message {
   id: string
   role: "user" | "assistant"
   content: string
-  timestamp: string
+  timestamp: string // ISO形式の文字列
 }
 
 export function AICoachSidebar() {
@@ -19,7 +20,7 @@ export function AICoachSidebar() {
       id: "1",
       role: "assistant",
       content: "何かお手伝いできることはありますか？タスクの分解や優先順位付けのお手伝いができます。",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toISOString(),
     },
   ])
   const [input, setInput] = useState("")
@@ -37,7 +38,7 @@ export function AICoachSidebar() {
       id: Date.now().toString(),
       role: "user",
       content: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toISOString(),
     }
 
     setMessages((prev) => [...prev, userMessage])
@@ -59,30 +60,32 @@ export function AICoachSidebar() {
         id: (Date.now() + 1).toString(),
         content: randomResponse,
         role: "assistant",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toISOString(),
       }
       setMessages((prev) => [...prev, aiResponse])
     }, 1000)
   }
 
   return (
-    <div className="fixed right-0 top-0 h-screen z-10 flex">
+    <div className="fixed right-0 top-0 z-10 h-screen">
       {/* トグルボタン */}
-      <div className="flex items-center">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsOpen(!isOpen)}
-          className="h-10 w-6 rounded-l-md rounded-r-none border border-r-0 border-gray-200 bg-white shadow-sm"
-        >
-          {isOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
-      </div>
+      {!isOpen && (
+        <div className="flex items-center justify-center h-12 w-12 bg-[#31A9B8] text-white rounded-l-lg absolute top-20 -left-12">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(true)}
+            className="h-10 w-6 rounded-none text-white hover:bg-[#2a8f9c]"
+          >
+            <ChevronLeftIcon />
+          </Button>
+        </div>
+      )}
 
-      {/* サイドバー本体 */}
+      {/* サイドバーコンテンツ */}
       <div
-        className={`flex flex-col bg-white border-l border-gray-200 shadow-lg transition-all duration-300 ease-in-out ${
-          isOpen ? "w-80" : "w-0 opacity-0 overflow-hidden"
+        className={`flex flex-col h-full bg-white border-l shadow-lg transition-all duration-300 ease-in-out ${
+          isOpen ? "w-80" : "w-0 opacity-0"
         }`}
       >
         <div className="flex items-center justify-between p-3 border-b">
@@ -91,7 +94,7 @@ export function AICoachSidebar() {
             <h3 className="font-medium">AIコミットコーチ</h3>
           </div>
           <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8">
-            <X className="h-4 w-4" />
+            <XIcon />
           </Button>
         </div>
 
@@ -113,7 +116,9 @@ export function AICoachSidebar() {
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>
-                  <p className="mt-1 text-xs opacity-70">{message.timestamp}</p>
+                  <p className="mt-1 text-xs opacity-70" suppressHydrationWarning>
+                    {formatTime(message.timestamp)}
+                  </p>
                 </div>
               </div>
             ))}
@@ -141,7 +146,7 @@ export function AICoachSidebar() {
               onClick={handleSendMessage}
               disabled={!input.trim()}
             >
-              <Send className="h-4 w-4" />
+              <SendIcon />
             </Button>
           </div>
         </div>

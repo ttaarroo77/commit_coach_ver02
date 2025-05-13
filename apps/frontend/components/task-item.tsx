@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { MoreHorizontal, Clock } from "lucide-react"
+import { MoreHorizontalIcon, ClockIcon } from "@/components/client-icons"
 
 interface TaskItemProps {
   task: {
@@ -43,12 +43,12 @@ export function TaskItem({ task }: TaskItemProps) {
           </div>
           {task.time && (
             <div className="ml-2 flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs text-red-800">
-              <Clock className="h-3 w-3" />
+              <ClockIcon className="h-3 w-3" />
               {task.time}
             </div>
           )}
           <Button variant="ghost" size="icon" className="ml-2">
-            <MoreHorizontal className="h-4 w-4" />
+            <MoreHorizontalIcon />
           </Button>
         </div>
       </CardContent>
