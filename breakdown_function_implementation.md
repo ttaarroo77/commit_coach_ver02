@@ -19,7 +19,15 @@
 
 ---
 
-## 1. フックを作る（hooks/use-decompose.ts）
+## 1. アーキテクチャ設計
+
+* [x] 分解ロジックを **サービス層** (`lib/decompose-service.ts`) に切り出す
+* [ ] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
+* [ ] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
+
+---
+
+## 2. フックを作る（hooks/use-decompose.ts）
 
 ```ts
 import { mockDecompose } from "@/lib/decompose-service";
@@ -38,7 +46,7 @@ export async function useDecompose(
 
 ---
 
-## 2. `task-item-with-menu.tsx` にハンドラを注入
+## 3. `task-item-with-menu.tsx` にハンドラを注入
 
 ```tsx
 // 既存 props に追加
@@ -54,7 +62,7 @@ onBreakdown?: (id: string, level: number, title: string) => void;
 
 ---
 
-## 3. `task-group.tsx` で Task クリックを親に伝播
+## 4. `task-group.tsx` で Task クリックを親に伝播
 
 ```tsx
 <TaskItemWithMenu
@@ -67,7 +75,7 @@ onBreakdown?: (id: string, level: number, title: string) => void;
 
 ---
 
-## 4. `ProjectsPage` で分岐ロジック
+## 5. `ProjectsPage` で分岐ロジック
 
 ```tsx
 import { useDecompose } from "@/hooks/use-decompose";
@@ -125,7 +133,7 @@ const handleBreakdown = async (
 
 ---
 
-## 5. モックサービス（lib/decompose-service.ts）
+## 6. モックサービス（lib/decompose-service.ts）
 
 ```ts
 export const mockDecompose = (title: string, level: 1 | 2): string[] => {
@@ -152,7 +160,7 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 
 ---
 
-## 6. 将来 AI に差し替える場合
+## 7. 将来 AI に差し替える場合
 
 1. **OpenAI**
 
@@ -199,7 +207,7 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 
 ## 1. アーキテクチャ設計
 
-* [ ] 分解ロジックを **サービス層** (`lib/decompose-service.ts`) に切り出す
+* [x] 分解ロジックを **サービス層** (`lib/decompose-service.ts`) に切り出す
 * [ ] UI からは **React Hook** (`hooks/use-decompose.ts`) 経由で呼ぶ図を設計
 * [ ] モック実装と将来 AI 実装を **Strategy Pattern** で差し替え可能にする
 
