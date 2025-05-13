@@ -26,7 +26,7 @@ interface TaskGroupProps {
   defaultExpanded?: boolean
   onDelete?: () => void
   onAddTask?: () => void
-  onBreakdown?: () => void
+  onBreakdown?: (id: string, level: number, title: string, parentId?: string) => void
   onToggleExpand?: () => void
   // タスク ID を受け取って親へ渡す
   onAddSubtask?: (taskId: string) => void
@@ -105,7 +105,7 @@ export function TaskGroup({
         onToggle={toggleCompleted}
         onDelete={onDelete}
         onAddSubtask={handleAddTask}
-        onBreakdown={onBreakdown}
+        onBreakdown={() => onBreakdown?.(id, 1, title)}
         onToggleExpand={toggleExpanded}
         onTitleChange={onTitleChange}
       />
@@ -125,7 +125,7 @@ export function TaskGroup({
                 projectTitle={title}
                 onDelete={() => console.log(`タスク削除: ${task.id}`)}
                 onAddSubtask={() => onAddSubtask?.(task.id)}
-                onBreakdown={() => console.log(`タスク分解: ${task.id}`)}
+                onBreakdown={() => onBreakdown?.(task.id, 2, task.title, id)}
                 onToggleExpand={() => onToggleTaskExpand?.(task.id)}
                 onTitleChange={(newTitle) => onTaskTitleChange?.(task.id, newTitle)}
               />

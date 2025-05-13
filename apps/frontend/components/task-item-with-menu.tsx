@@ -20,7 +20,7 @@ interface TaskItemProps {
   onToggle?: () => void
   onDelete?: () => void
   onAddSubtask?: () => void
-  onBreakdown?: () => void
+  onBreakdown?: (id: string, level: number, title: string) => void
   onToggleExpand?: () => void // 展開状態切り替え関数を追加
   onTitleChange?: (newTitle: string) => void // タイトル変更ハンドラを追加
 }
@@ -167,7 +167,7 @@ export function TaskItemWithMenu({
             variant="ghost"
             size="sm"
             className="h-8 w-8 p-0 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-            onClick={onBreakdown}
+            onClick={() => onBreakdown?.(id, level, title)}
           >
             <BracesIcon />
           </Button>

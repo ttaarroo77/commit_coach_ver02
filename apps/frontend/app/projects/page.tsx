@@ -1,4 +1,4 @@
-// app/projects/page.tsx	
+// app/projects/page.tsx
 
 
 "use client"
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { TaskGroup } from "@/components/task-group"
 import { AICoachSidebar } from "@/components/ai-coach-sidebar"
+import { useDecompose } from "@/hooks/use-decompose"
+import { toast } from "@/components/ui/use-toast"
 
 // モックデータを拡張して、expanded プロパティを追加
 const mockProjects = [
@@ -195,6 +197,79 @@ export default function ProjectsPage() {
     )
   }
 
+  // タスク分解ハンドラ
+  const handleBreakdown = async (
+    nodeId: string,
+    level: number,
+    title: string,
+    parentId?: string
+  ) => {
+    try {
+      const items = await useDecompose(title, level as 1 | 2);
+
+      setProjects((prev) =>
+        prev.map((p) => {
+          if (level === 1 && p.id === nodeId) {
+            // Project → 新Task生成
+            const newTasks = items.map((t, i) => ({
+              id: `task-${Date.now()}-${i}`,
+              title: t,
+              completed: false,
+              expanded: false,
+              subtasks: [],
+            }));
+
+            toast({
+              title: "タスク分解完了",
+              description: `${items.length}個のタスクを追加しました`,
+            });
+
+            return {
+              ...p,
+              expanded: true, // 自動展開
+              tasks: [...p.tasks, ...newTasks],
+            };
+          }
+          if (level === 2) {
+            // Task → SubTasks
+            return {
+              ...p,
+              tasks: p.tasks.map((tk) => {
+                if (tk.id === nodeId) {
+                  const newSubtasks = items.map((s, i) => ({
+                    id: `sub-${Date.now()}-${i}`,
+                    title: s,
+                    completed: false,
+                  }));
+
+                  toast({
+                    title: "サブタスク分解完了",
+                    description: `${items.length}個のサブタスクを追加しました`,
+                  });
+
+                  return {
+                    ...tk,
+                    expanded: true, // 自動展開
+                    subtasks: [...tk.subtasks, ...newSubtasks],
+                  };
+                }
+                return tk;
+              }),
+            };
+          }
+          return p;
+        })
+      );
+    } catch (error) {
+      console.error("タスク分解エラー:", error);
+      toast({
+        title: "エラー",
+        description: "タスク分解に失敗しました",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -208,7 +283,7 @@ export default function ProjectsPage() {
             </div>
 
             <div className="space-y-4">
-              {/* プロジェク��リスト */}
+              {/* プロジェクトリスト */}
               {projects.map((project) => (
                 <TaskGroup
                   key={project.id}
@@ -226,7 +301,7 @@ export default function ProjectsPage() {
                   onSubtaskTitleChange={(taskId, subtaskId, newTitle) =>
                     handleSubtaskTitleChange(project.id, taskId, subtaskId, newTitle)
                   }
-                  onBreakdown={() => console.log(`プロジェクト分解: ${project.id}`)}
+                  onBreakdown={handleBreakdown}
                 />
               ))}
 
