@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 // 共通のアイコンラッパー
 function IconWrapper(props: LucideProps & { icon: React.ElementType }) {
   const { icon: Icon, className, ...rest } = props;
-  return <Icon aria-hidden="true" className={cn('h-4 w-4', className)} {...rest} />;
+  return <Icon className={cn('h-4 w-4', className)} {...rest} />;
 }
 
 export function HomeIcon(props: LucideProps) {
