@@ -243,9 +243,9 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 
 ## 4. テスト
 
-* [ ] **Unit**: `use-decompose` がモック配列を返す
-* [ ] **Integration**: `handleBreakdown` が state のネストを正しく増やす
-* [ ] **E2E (Playwright)**: ユーザがボタンクリック → 新タスクが DOM に現れる
+* [x] **Unit**: `use-decompose` がモック配列を返す
+* [x] **Integration**: `handleBreakdown` が state のネストを正しく増やす
+* [x] **E2E (Playwright)**: ユーザがボタンクリック → 新タスクが DOM に現れる
 
 ## 5. ドキュメント
 
@@ -253,9 +253,9 @@ export const mockDecompose = (title: string, level: 1 | 2): string[] => {
 
 ## 6. レビュー & マージ
 
-* [ ] PR に SS / GIF を添付して UX を共有
-* [ ] CI 緑 + Reviewer OK → `main` へマージ
-* [ ] タグ `v0.3.0` を打ち、Vercel で preview を確認
+* [x] PR に SS / GIF を添付して UX を共有
+* [x] CI 緑 + Reviewer OK → `main` へマージ
+* [x] タグ `v0.3.0` を打ち、Vercel で preview を確認
 
 ---
 
