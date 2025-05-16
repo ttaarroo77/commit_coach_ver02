@@ -1,0 +1,963 @@
+2025-05-03T05:32:55.275673Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/.next")}
+2025-05-03T05:32:55.275715Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T05:59:51.514920Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T05:59:51.516527Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T05:59:53.607890Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T05:59:53.607941Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T05:59:54.603261Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T05:59:54.604593Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T05:59:57.303587Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T05:59:57.303609Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:03.804918Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:03.804946Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:08.424191Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:08.424497Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:10.104759Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:10.104776Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:11.205859Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:11.205879Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:15.603136Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:15.603146Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:16.804671Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:16.804713Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:23.901850Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:23.901858Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:29.603303Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:29.603330Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:36.203204Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:36.203221Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:48.104701Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:48.104713Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:49.503849Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:49.503882Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:51.402883Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:51.402894Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:00:54.404657Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:00:54.404668Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:04:35.010366Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:04:35.010511Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:04:38.703936Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:04:38.703953Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:10:43.720118Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:10:43.721508Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:10:45.260238Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:10:45.278377Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:10:47.708970Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:10:47.709088Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:10:51.309886Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:10:51.309903Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:10:53.210594Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:10:53.210604Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:10:57.310222Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:10:57.310262Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:10:58.708787Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:10:58.708857Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:11:00.608892Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:11:00.608903Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:11:10.309725Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:11:10.309783Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:11:15.311787Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:11:15.311813Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:11:18.010998Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T06:11:18.011014Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:12:00.510827Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T06:12:00.510844Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T06:12:23.910193Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T06:12:23.910200Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T06:13:00.520746Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T06:13:00.520788Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T06:13:03.410493Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T06:13:03.410501Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T06:19:03.521616Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/globals.css")}
+2025-05-03T06:19:03.522775Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T06:58:37.901721Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T06:58:37.902834Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:11:34.111615Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T07:11:34.112552Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:14:42.328340Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T07:14:42.329978Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:16:50.681743Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T07:16:50.682003Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:25:41.290731Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T07:25:41.292558Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:30:47.884495Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:30:47.885208Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:30:50.173912Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:30:50.173927Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:35:11.780242Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:35:11.781122Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:35:15.070339Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:35:15.070375Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:35:29.069189Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:35:29.069198Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:36:05.369840Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:36:05.369869Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:45:23.514636Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:45:23.515581Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:45:26.306108Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:45:26.306134Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:45:34.306432Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:45:34.306441Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:45:38.904531Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:45:38.904552Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:45:49.304555Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:45:49.304580Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:45:50.905215Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md")}
+2025-05-03T07:45:50.905242Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:46:47.305794Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("レポート.md"), AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T07:46:47.305814Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:48:50.305696Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T07:48:50.305716Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T07:52:41.618311Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.mjs")}
+2025-05-03T07:52:41.619344Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:52:48.305109Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.mjs")}
+2025-05-03T07:52:48.305119Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:52:52.504912Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.mjs")}
+2025-05-03T07:52:52.504928Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:53:51.625285Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T07:53:51.628227Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:54:02.604845Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T07:54:02.604854Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:54:17.905971Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T07:54:17.906002Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:54:18.705919Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T07:54:18.705927Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:57:07.721537Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T07:57:07.721562Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T07:57:11.409392Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T07:57:11.409413Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:00:53.516257Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:00:53.517567Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:00:55.906196Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:00:55.906206Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:02:04.206497Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:02:04.206831Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:02:07.215684Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:02:07.220118Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:02:08.607041Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/__tests__/ai.service.test.ts")}
+2025-05-03T08:02:08.607067Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T08:03:12.205629Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:03:12.205657Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:03:26.206649Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:03:26.206684Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:03:48.710545Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:03:48.710574Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:03:51.805765Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:03:51.805774Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:03:56.006184Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/page.tsx")}
+2025-05-03T08:03:56.006194Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:05:52.824350Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/layout.tsx")}
+2025-05-03T08:05:52.825779Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:05:58.806704Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/layout.tsx")}
+2025-05-03T08:05:58.806746Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:06:13.907025Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/layout.tsx")}
+2025-05-03T08:06:13.907078Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:08:22.522666Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json")}
+2025-05-03T08:08:22.522682Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:08:34.823612Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T08:08:34.823629Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:08:37.322974Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T08:08:37.322982Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:08:53.323937Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_42631_dc2206522d5c6a64cf68f15658694276"), AnchoredSystemPathBuf("")}
+2025-05-03T08:08:53.323971Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:08:57.325223Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:08:57.325241Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:08:57.924505Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:08:57.924512Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:08:58.042304Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:08:58.042311Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:08:59.428981Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:08:59.428988Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:08:59.537700Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:08:59.537708Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:08:59.633858Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:08:59.633870Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:00.242000Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:00.242014Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:01.833208Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:01.833216Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:01.980041Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:01.980050Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:05.535987Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:05.536003Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:05.734589Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:05.734605Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:05.843091Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:05.843103Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:06.041275Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:06.041288Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:06.148523Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:06.148955Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:06.248040Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:06.248048Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:06.356860Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:06.357007Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:06.662820Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:06.662829Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:06.826968Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:06.826982Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:07.042577Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:07.042585Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:07.127874Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:07.127882Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:07.244329Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:07.244342Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:07.542892Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:07.542900Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:07.636581Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:07.636767Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:07.937066Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:07.937113Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:08.074578Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:08.074587Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:09.551882Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:09.551894Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:10.430944Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:10.430952Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:10.532135Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:10.532147Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:10.728420Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:10.728433Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:11.426966Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:11.426979Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:11.534210Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:11.534218Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:11.641021Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:11.641029Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:11.740623Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:11.740633Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:11.935571Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:11.935601Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:12.065153Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:09:12.065162Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:09:13.322482Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/node_modules")}
+2025-05-03T08:09:13.322493Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:09:14.524710Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.251261568")}
+2025-05-03T08:09:14.524726Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:09:34.823793Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".next")}
+2025-05-03T08:09:34.823803Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:12:25.678574Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:12:25.686813Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:12:25.708660Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:12:25.708667Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:12:25.827588Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:12:25.827601Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:12:31.832245Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:12:31.832846Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:12:37.728240Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:12:37.728265Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:12:38.026065Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules")}
+2025-05-03T08:12:38.026260Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:12:38.523224Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_42993_2566d0720d4d77e10025f85fbf168bbd"), AnchoredSystemPathBuf("")}
+2025-05-03T08:12:38.523259Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:12:49.923216Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_43012_7445a785f24c2509af00babd5512a6e7"), AnchoredSystemPathBuf("")}
+2025-05-03T08:12:49.923237Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:12:50.123740Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules")}
+2025-05-03T08:12:50.123747Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:12:50.325283Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:12:50.325292Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:12:52.028180Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:12:52.028188Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:13:02.646436Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:13:02.646479Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:13:12.627070Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:13:12.627077Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:15:41.114302Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:15:41.117322Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:15:47.227731Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:15:47.227741Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:15:47.525524Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_43698_3982adcdf70e816f8c7a33fdcae9ab0e"), AnchoredSystemPathBuf("")}
+2025-05-03T08:15:47.525534Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:15:52.826012Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_43705_30d3ca7082519a5f1c2c0df212c67c07")}
+2025-05-03T08:15:52.826056Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:15:57.425993Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/__tests__/mocks")}
+2025-05-03T08:15:57.426456Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T08:16:35.741340Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("node_modules")}
+2025-05-03T08:16:35.741366Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:16:35.855427Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:35.855435Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:36.128123Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:36.128131Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:36.296345Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:36.296359Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:36.433015Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:36.433023Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:36.626929Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:36.626936Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:36.732755Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:36.732762Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:36.830931Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:36.830939Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:36.932613Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:36.932621Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.030157Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.030166Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.142309Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.142324Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.227868Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.227876Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.333061Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.333074Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.429097Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.429104Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.526873Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.526881Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.628086Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.628092Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.727902Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.727915Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.827301Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.827309Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:37.927478Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:37.927487Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.030047Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.030054Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.145319Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.145328Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.225815Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.225822Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.439896Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.439905Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.528307Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.528314Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.629598Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.629607Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.727436Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.727444Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.832478Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.832485Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:38.932762Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:38.932774Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:39.027798Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:39.027805Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:39.131614Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:39.131621Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:39.329600Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:39.329609Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:39.427155Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:39.427163Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:39.529850Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:39.529858Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:39.673751Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:39.673762Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:39.899165Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:39.899281Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:40.433917Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:40.433927Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:40.530708Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:40.530716Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:40.628665Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:40.628673Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:40.730929Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:40.730937Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:40.829864Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:16:40.830020Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:16:49.325775Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.482776498")}
+2025-05-03T08:16:49.325783Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:16:49.425489Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.482776498"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:16:49.425504Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:18:30.144397Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:18:30.145820Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:20:37.626656Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:20:37.626690Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:21:18.637978Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:21:18.638666Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:22:40.427993Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:22:40.428020Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:22:43.727517Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:22:43.727557Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:22:56.627576Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:22:56.627584Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:30:21.642365Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:30:21.643572Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:30:26.329867Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:30:26.329877Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:30:34.930727Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T08:30:34.930743Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:33:25.832023Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:33:25.832072Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:33:26.432271Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_44848_411020bb8df2e2e9e83ca6660e35aea6"), AnchoredSystemPathBuf("")}
+2025-05-03T08:33:26.432279Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:33:46.030916Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json")}
+2025-05-03T08:33:46.030924Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:33:46.051516Z  WARN build:resolve_lockfile: turborepo_repository::package_graph::builder: Issues occurred when constructing package graph. Turbo will function, but some features may not be available: could not resolve workspaces: io error: No such file or directory (os error 2)
+2025-05-03T08:34:01.439329Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.mjs")}
+2025-05-03T08:34:01.441999Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:34:29.131744Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T08:34:29.131767Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:34:38.831938Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_44937_a7def459c009c05ecea7365423ebe77b")}
+2025-05-03T08:34:38.831951Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:35:03.533409Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.350676239")}
+2025-05-03T08:35:03.533451Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:35:03.737053Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules")}
+2025-05-03T08:35:03.737069Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:35:38.130971Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_45359_70d37551540b3afe7a2702782c89f350")}
+2025-05-03T08:35:38.130990Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:37:54.130236Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_45907_8c860c8b4ac027a9fbbdeed05b12c150"), AnchoredSystemPathBuf("")}
+2025-05-03T08:37:54.130259Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:37:59.249195Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1370236774"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:37:59.249213Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:38:01.230450Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json"), AnchoredSystemPathBuf("package.json.2563190301")}
+2025-05-03T08:38:01.230458Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:38:46.230620Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.mjs")}
+2025-05-03T08:38:46.230643Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:39:30.731264Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/shared-types/dist")}
+2025-05-03T08:39:30.731289Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@commit-coach/shared-types"), path: AnchoredSystemPathBuf("packages/shared-types") }}))
+2025-05-03T08:40:19.231959Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_46470_ed79c612336778f218663bca513f4088")}
+2025-05-03T08:40:19.232010Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:40:23.130627Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.3662364431")}
+2025-05-03T08:40:23.130640Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:40:23.231584Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.3662364431")}
+2025-05-03T08:40:23.231606Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:40:25.832490Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json.1958535935"), AnchoredSystemPathBuf("package.json")}
+2025-05-03T08:40:25.832528Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:41:39.931127Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_46571_31b516a836d418f1a2c5d4a219273169"), AnchoredSystemPathBuf("")}
+2025-05-03T08:41:39.931215Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:41:44.230160Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.2196488160"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:41:44.230175Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:41:45.730917Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json"), AnchoredSystemPathBuf("package.json.2255432162")}
+2025-05-03T08:41:45.730925Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:42:22.830489Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_46723_6b3e9ce0c188fec8e91c8cba6e3b5d60")}
+2025-05-03T08:42:22.830508Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:42:28.731252Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.1868976119")}
+2025-05-03T08:42:28.731261Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:42:33.031426Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json"), AnchoredSystemPathBuf("package.json.182363479")}
+2025-05-03T08:42:33.031456Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:43:16.331746Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_46824_3d7e186409070e4f0767571ac2dea850"), AnchoredSystemPathBuf("")}
+2025-05-03T08:43:16.331781Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:43:21.031035Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.560451790")}
+2025-05-03T08:43:21.031051Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:43:22.031199Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json.1366433166"), AnchoredSystemPathBuf("package.json")}
+2025-05-03T08:43:22.031206Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:43:36.631732Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/auth/login-form.tsx")}
+2025-05-03T08:43:36.631757Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:43:52.634838Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/projects/project-form.tsx")}
+2025-05-03T08:43:52.634855Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:44:06.831693Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/projects/[id]/tasks/[taskId]/edit/page.tsx")}
+2025-05-03T08:44:06.831713Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:44:15.231665Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/projects/[id]/tasks/[taskId]/edit/page.tsx")}
+2025-05-03T08:44:15.231690Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:44:22.930706Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/projects/[id]/tasks/[taskId]/edit/page.tsx")}
+2025-05-03T08:44:22.930715Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:44:38.131369Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/projects/[id]/tasks/[taskId]/edit/page.tsx")}
+2025-05-03T08:44:38.131392Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:45:19.432036Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_46886_25d4beff40387cc8c64bf7a28ed5d405"), AnchoredSystemPathBuf("")}
+2025-05-03T08:45:19.432078Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:45:40.132403Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/tasks/task-form.tsx")}
+2025-05-03T08:45:40.132426Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:45:48.432177Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/projects/[id]/tasks/[taskId]/edit/page.tsx")}
+2025-05-03T08:45:48.432188Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:46:41.335447Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_46975_9828812a924bd241faaf659d957e4ba3")}
+2025-05-03T08:46:41.335479Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:47:43.432593Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_47073_2876c2ef5ecfc6c69fead9717a007411")}
+2025-05-03T08:47:43.432625Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:47:48.133545Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1847516874"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:47:48.133561Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:47:48.833034Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json.1796266932"), AnchoredSystemPathBuf("package.json")}
+2025-05-03T08:47:48.833048Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:47:55.433179Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/postcss.config.mjs")}
+2025-05-03T08:47:55.433194Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:48:12.232536Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_47125_31e86b49d9b7c0cfca91ed577ae9e909"), AnchoredSystemPathBuf("")}
+2025-05-03T08:48:12.232551Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:48:28.434447Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/.next")}
+2025-05-03T08:48:28.434476Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:48:28.832532Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_47196_c9c2c6d7c216bad4006df380673a1ff7")}
+2025-05-03T08:48:28.832546Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:48:30.533625Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/.next")}
+2025-05-03T08:48:30.533647Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:48:56.034927Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:48:56.034959Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:48:56.433468Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_47288_61be3c34e134df50714966ab320a91d0"), AnchoredSystemPathBuf("")}
+2025-05-03T08:48:56.433482Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:49:10.634656Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules")}
+2025-05-03T08:49:10.634666Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:49:10.778809Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:10.778824Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:10.834960Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:10.834971Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:11.447817Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:11.447830Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:11.635186Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:11.635193Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:11.937416Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:11.937425Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:12.838486Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:12.838499Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:14.641688Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:14.641704Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:15.058552Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:15.058565Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:15.541270Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:15.541283Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:15.652979Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:15.652993Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:15.846465Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:15.846478Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:17.343570Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:17.343595Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:19.250798Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:19.250805Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:19.537775Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:19.537792Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:19.637119Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:19.637373Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:19.935507Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:19.935515Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:20.037793Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:20.037803Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:20.140608Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:20.140826Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:21.239770Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:21.239782Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:21.338881Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:21.339044Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:21.444484Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:21.444554Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:21.841010Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:21.841022Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:21.939147Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:21.939158Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:22.050428Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:22.050441Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:22.248631Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:22.248644Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:22.340967Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:22.340974Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:22.434313Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-05-03T08:49:22.434321Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-05-03T08:49:28.033540Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1586666475"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T08:49:28.033558Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:49:28.533685Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_47440_aa55f08d72bde681abc6c458036894c8"), AnchoredSystemPathBuf("")}
+2025-05-03T08:49:28.533696Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:49:32.833141Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.3907820761")}
+2025-05-03T08:49:32.833150Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:49:33.333445Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json"), AnchoredSystemPathBuf("package.json.1200282632")}
+2025-05-03T08:49:33.333460Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:49:40.633460Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/.next")}
+2025-05-03T08:49:40.633470Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:49:41.433047Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/.next")}
+2025-05-03T08:49:41.433074Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:52:07.434204Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_47606_54cb6ec0b7817cb2a6a8af1ede6ae0e2")}
+2025-05-03T08:52:07.434240Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:52:12.376921Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.4243122697")}
+2025-05-03T08:52:12.376931Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T08:52:13.533334Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json"), AnchoredSystemPathBuf("package.json.599091458")}
+2025-05-03T08:52:13.533342Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T08:52:20.434220Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/postcss.config.mjs")}
+2025-05-03T08:52:20.434244Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:52:32.834157Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/tailwind.config.ts")}
+2025-05-03T08:52:32.834176Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:53:53.734973Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/tailwind.config.ts"), AnchoredSystemPathBuf("apps/frontend/tailwind.config.js")}
+2025-05-03T08:53:53.735022Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:54:52.335402Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/postcss.config.mjs"), AnchoredSystemPathBuf("apps/frontend/postcss.config.js")}
+2025-05-03T08:54:52.335422Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:54:58.436593Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/.next")}
+2025-05-03T08:54:58.436612Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T08:54:59.334723Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/.next")}
+2025-05-03T08:54:59.334747Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T09:01:02.682039Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T09:01:02.685428Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T09:01:09.569227Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T09:01:09.569252Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T09:01:11.868910Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T09:01:11.868927Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T09:04:11.669336Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/ui/card.tsx")}
+2025-05-03T09:04:11.669379Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:16:24.914364Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/ui/label.tsx")}
+2025-05-03T12:16:24.914406Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:19:13.412302Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_49307_11e0ee43ef90bd7ab03aafe239152571"), AnchoredSystemPathBuf("")}
+2025-05-03T12:19:13.412352Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:19:20.112681Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.646450957")}
+2025-05-03T12:19:20.112698Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:19:21.012311Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json.3908744060"), AnchoredSystemPathBuf("package.json")}
+2025-05-03T12:19:21.012321Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-03T12:23:38.512010Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_49415_0404fc641dc967011f173116ed0464ef")}
+2025-05-03T12:23:38.512096Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:23:43.208041Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.2596963915")}
+2025-05-03T12:23:43.208065Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:24:47.108635Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_49445_9b947e02221fde5743e2c3352dbeb219")}
+2025-05-03T12:24:47.108685Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:24:53.007458Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.821241589")}
+2025-05-03T12:24:53.007477Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:27:15.616205Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_49566_bbd10626436a2f7c5bd87d5f068337a3"), AnchoredSystemPathBuf("")}
+2025-05-03T12:27:15.617414Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:27:22.105276Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.2078272520"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T12:27:22.105290Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:27:49.005518Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/ui/label.tsx")}
+2025-05-03T12:27:49.005794Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:28:02.505380Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_49611_888cb0f12f4d6c27942abcad5daa731b")}
+2025-05-03T12:28:02.505396Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:28:22.305664Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.2282224156")}
+2025-05-03T12:28:22.305687Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:28:22.704064Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json"), AnchoredSystemPathBuf("apps/frontend/package.json.1919758822")}
+2025-05-03T12:28:22.704077Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:29:46.504673Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_49661_2eef64ff35c8fd483927584f81c95ebb")}
+2025-05-03T12:29:46.504690Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:29:52.203689Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1290671431"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T12:29:52.203708Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:30:00.403491Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_49682_09ea2050f5918b7b48edb9ec3d4a5cde"), AnchoredSystemPathBuf("")}
+2025-05-03T12:30:00.403505Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:30:05.703451Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.2758896114")}
+2025-05-03T12:30:05.703466Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:30:14.503918Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_49705_512a62b6fd3a0d5f2257c0ae68878fcc")}
+2025-05-03T12:30:14.503936Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:30:19.103257Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.4047422577")}
+2025-05-03T12:30:19.103271Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:30:19.604096Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json.2475843654"), AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T12:30:19.604139Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:30:27.403559Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/node_modules")}
+2025-05-03T12:30:27.403569Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:30:27.802695Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_49738_04a6ecf64bd24b893a7090bfcf8afe48"), AnchoredSystemPathBuf("")}
+2025-05-03T12:30:27.802709Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:30:28.403590Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/node_modules")}
+2025-05-03T12:30:28.403604Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:30:44.915842Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/roles_and_roadmap.md")}
+2025-05-03T12:30:44.917698Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:30:52.405427Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/roles_and_roadmap.md")}
+2025-05-03T12:30:52.405465Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:33:37.401549Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/tailwind.config.js")}
+2025-05-03T12:33:37.402488Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:33:57.000458Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_49983_d8ea9931b687c3fbe3d351ecdfad3da9")}
+2025-05-03T12:33:57.000483Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:34:01.617416Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml.1328457137"), AnchoredSystemPathBuf("pnpm-lock.yaml")}
+2025-05-03T12:34:01.617426Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:34:02.600939Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json.2076217130"), AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T12:34:02.600947Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:34:18.999766Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/globals.css")}
+2025-05-03T12:34:18.999782Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:37:27.100692Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.mjs")}
+2025-05-03T12:37:27.100730Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:37:49.997971Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("_tmp_50196_5a3cdb27e9885e9383a8d5a820c8da89"), AnchoredSystemPathBuf("")}
+2025-05-03T12:37:49.997986Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:37:55.396753Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("pnpm-lock.yaml"), AnchoredSystemPathBuf("pnpm-lock.yaml.2304851292")}
+2025-05-03T12:37:55.396769Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:37:56.197899Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json.3617977185"), AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T12:37:56.197914Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:40:20.236268Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.js")}
+2025-05-03T12:40:20.236284Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:43:22.936648Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/layout.tsx")}
+2025-05-03T12:43:22.936679Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:43:43.636068Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T12:43:43.636083Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:44:01.036128Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T12:44:01.036166Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:44:10.736057Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T12:44:10.736075Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:44:23.034928Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T12:44:23.034944Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:48:38.634449Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/layout.tsx")}
+2025-05-03T12:48:38.634495Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:52:30.544121Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/package.json")}
+2025-05-03T12:52:30.545240Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:52:30.633664Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.mjs"), AnchoredSystemPathBuf("apps/frontend/src/contexts/AuthProvider.tsx")}
+2025-05-03T12:52:30.633673Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:52:30.733971Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/globals.css"), AnchoredSystemPathBuf("apps/frontend/src/app/layout.tsx")}
+2025-05-03T12:52:30.733980Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T12:55:21.419037Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T12:55:21.419914Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:55:27.909329Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/roadmap_of_o3.md")}
+2025-05-03T12:55:27.909339Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:55:37.506825Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/backup_plan.md")}
+2025-05-03T12:55:37.506833Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:55:37.607679Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/backup_plan.md")}
+2025-05-03T12:55:37.607687Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:55:46.907438Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/last_conversation.md")}
+2025-05-03T12:55:46.907446Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:55:52.509522Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/skratchpad.md")}
+2025-05-03T12:55:52.509530Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:55:52.807163Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/skratchpad.md")}
+2025-05-03T12:55:52.807170Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:55:59.707073Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T12:55:59.707081Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:56:07.207285Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/architecture/design.md"), AnchoredSystemPathBuf("docs/architecture")}
+2025-05-03T12:56:07.207363Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:56:09.206418Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/last_conversation.md")}
+2025-05-03T12:56:09.206426Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:56:11.306950Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/implementation"), AnchoredSystemPathBuf("docs/implementation/guide.md")}
+2025-05-03T12:56:11.306958Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:56:15.805656Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/operations"), AnchoredSystemPathBuf("docs/operations/manual.md")}
+2025-05-03T12:56:15.805664Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:58:49.307503Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/operations")}
+2025-05-03T12:58:49.307532Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:58:54.004748Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/implementation")}
+2025-05-03T12:58:54.004757Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T12:58:59.804886Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/architecture")}
+2025-05-03T12:58:59.804903Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:00:35.004112Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T13:00:35.004143Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:00:40.203329Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("bugfix_with_o3.md")}
+2025-05-03T13:00:40.203337Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:03:09.502432Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/last_conversation copy.md")}
+2025-05-03T13:03:09.502458Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:03:17.402316Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/next_day_tasks.md")}
+2025-05-03T13:03:17.402323Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:03:26.201892Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/project_refactoring_plan.md")}
+2025-05-03T13:03:26.201904Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:03:29.301057Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/skratchpad.md")}
+2025-05-03T13:03:29.301070Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:03:40.302053Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/commit-coach.zip")}
+2025-05-03T13:03:40.302062Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:03:54.501482Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/last_conversation.md")}
+2025-05-03T13:03:54.501494Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:04:10.004111Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/backup_plan.md")}
+2025-05-03T13:04:10.004587Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:04:38.901385Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/tests")}
+2025-05-03T13:04:38.901395Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:10:23.897665Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/data.spec.md")}
+2025-05-03T13:10:23.897700Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:12:26.096070Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/data.spec.md")}
+2025-05-03T13:12:26.096094Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:13:18.895639Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/supabase_setup.md")}
+2025-05-03T13:13:18.895655Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:13:22.795838Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/supabase_transactions.md")}
+2025-05-03T13:13:22.795847Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:17:06.893299Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:17:06.893327Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:17:38.292739Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/ci-cd-setup.md")}
+2025-05-03T13:17:38.292748Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:19:24.592358Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:19:24.592412Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:19:25.792236Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:19:25.792254Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:19:52.891793Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:19:52.891808Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:19:54.691618Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:19:54.691631Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:20:10.491410Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:20:10.491421Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:20:10.692600Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:20:10.692608Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:20:27.691088Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:20:27.691107Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:20:29.591847Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:20:29.591864Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:20:31.291500Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:20:31.291520Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:20:31.491413Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:20:31.491422Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:20:31.697771Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:20:31.698068Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:00.200110Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:21:00.201022Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:02.891640Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:21:02.891695Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:05.190715Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:21:05.190725Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:09.691284Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:21:09.691304Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:13.692004Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:21:13.692032Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:13.789818Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/architecture.spec.md")}
+2025-05-03T13:21:13.789840Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:21.398772Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/services")}
+2025-05-03T13:21:21.398782Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:21:54.723230Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:21:54.723241Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:23:59.932948Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/roles_and_roadmap.md")}
+2025-05-03T13:23:59.932994Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:24:48.225395Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/roles_and_roadmap.md")}
+2025-05-03T13:24:48.225413Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:24:51.827011Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/roles_and_roadmap.md")}
+2025-05-03T13:24:51.827020Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:25:23.826425Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("www_extra.md/roadmap_of_o3.md")}
+2025-05-03T13:25:23.826433Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:26:38.526048Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:26:38.526076Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:26:47.926868Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:26:47.926886Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:27:17.125394Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:27:17.125404Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:27:26.926282Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:27:26.926302Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:27:32.026673Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:27:32.026681Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:29:22.641533Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:29:22.641588Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:29:23.026451Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/data.spec.md")}
+2025-05-03T13:29:23.026465Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:29:53.725577Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:29:53.725592Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:30:31.226948Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:30:31.226960Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:34:48.026625Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/projects/[id]/page.tsx")}
+2025-05-03T13:34:48.027688Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:34:55.327534Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/projects/project-details.tsx")}
+2025-05-03T13:34:55.327574Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:35:05.326133Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/projects/[id]/page.tsx")}
+2025-05-03T13:35:05.326156Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:38:04.226999Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useProjects.ts")}
+2025-05-03T13:38:04.227048Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:38:29.926805Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useProjects.ts")}
+2025-05-03T13:38:29.926832Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:38:55.626295Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useProjects.ts")}
+2025-05-03T13:38:55.626310Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:39:16.925597Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useProjectTasks.ts")}
+2025-05-03T13:39:16.925641Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:39:25.827392Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useProjectTasks.ts")}
+2025-05-03T13:39:25.827408Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:39:38.026227Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useProjectTasks.ts")}
+2025-05-03T13:39:38.026243Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:39:58.326862Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useProjectTasks.ts")}
+2025-05-03T13:39:58.326878Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:40:22.826208Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:40:22.826225Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:41:47.626327Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:41:47.626342Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:42:55.327244Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:42:55.327258Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:43:20.325591Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:43:20.325599Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:43:39.226148Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:43:39.226169Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:44:20.326616Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad.md")}
+2025-05-03T13:44:20.326658Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:44:39.026050Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/development_flow.md")}
+2025-05-03T13:44:39.026071Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:49:13.469376Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/tsconfig.json")}
+2025-05-03T13:49:13.470879Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T13:49:13.560608Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/tsconfig.json")}
+2025-05-03T13:49:13.560616Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T13:49:41.661935Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/shared-types/dist")}
+2025-05-03T13:49:41.662318Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@commit-coach/shared-types"), path: AnchoredSystemPathBuf("packages/shared-types") }}))
+2025-05-03T13:49:47.560440Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:49:47.560451Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:50:06.861017Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:50:06.861055Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:52:14.472311Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/controllers/auth.controller.ts")}
+2025-05-03T13:52:14.473480Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T13:52:14.561877Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/controllers/auth.controller.ts")}
+2025-05-03T13:52:14.561892Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T13:55:45.652187Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/auth/login-form.tsx")}
+2025-05-03T13:55:45.653375Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:55:54.841729Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/auth/login-form.tsx")}
+2025-05-03T13:55:54.841743Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:56:09.942614Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:56:09.942655Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:56:17.058214Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/components/auth/login-form.tsx")}
+2025-05-03T13:56:17.058236Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:56:18.042670Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:56:18.042681Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:56:18.342608Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/data.spec.md")}
+2025-05-03T13:56:18.342615Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T13:56:27.442220Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:56:27.442237Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:56:35.042490Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/routes/auth.ts")}
+2025-05-03T13:56:35.042498Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T13:56:38.242600Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:56:38.242609Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:57:00.242756Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:57:00.242769Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:57:13.142567Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/routes/auth.ts")}
+2025-05-03T13:57:13.142590Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T13:58:05.943788Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:58:05.943885Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:58:14.543530Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:58:14.543543Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:58:24.242051Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T13:58:24.242064Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T13:58:33.043027Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/hooks/useAuth.tsx")}
+2025-05-03T13:58:33.043050Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:00:10.044138Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/data.spec.md")}
+2025-05-03T14:00:10.044164Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:00:10.144301Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/overview/data.spec.md")}
+2025-05-03T14:00:10.144311Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:00:50.571518Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/routes/auth.routes.ts"), AnchoredSystemPathBuf("logs/auth.routes.ts")}
+2025-05-03T14:00:50.581645Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:03:19.045325Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/index.ts")}
+2025-05-03T14:03:19.045386Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:03:19.145419Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/index.ts")}
+2025-05-03T14:03:19.145429Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:03:20.544463Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:03:20.544483Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:03:40.244322Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:03:40.244362Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:04:03.545867Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/routes/index.ts")}
+2025-05-03T14:04:03.545877Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:04:03.644134Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/routes/index.ts")}
+2025-05-03T14:04:03.644144Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:04:08.045937Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:04:08.045952Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:04:19.044960Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:04:19.044970Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:04:27.146932Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:04:27.146975Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:04:44.145613Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/dashboard/page.tsx")}
+2025-05-03T14:04:44.145629Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:10:12.455140Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:10:12.456067Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:10:28.646989Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:10:28.647009Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:10:49.747456Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:10:49.747465Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:10:54.147340Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:10:54.147351Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:10:58.147949Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:10:58.147958Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:03.248169Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:03.248205Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:07.047671Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:07.047679Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:17.748373Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:17.748431Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:19.448446Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:19.448475Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:31.847762Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:31.847787Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:56.748194Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:56.748213Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:58.248786Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:58.248803Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:11:59.648802Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:11:59.648812Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:12:04.948620Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:12:04.948638Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:14:06.249403Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/dashboard/page.tsx")}
+2025-05-03T14:14:06.250412Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:14:23.149527Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.js")}
+2025-05-03T14:14:23.149541Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:14:36.849590Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/next.config.js")}
+2025-05-03T14:14:36.849613Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:14:48.649381Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:14:48.649406Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:15:10.149879Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:15:10.149889Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:15:19.849202Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:15:19.849226Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:15:28.249316Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/frontend/src/app/login/page.tsx")}
+2025-05-03T14:15:28.249330Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("commit-coach"), path: AnchoredSystemPathBuf("apps/frontend") }}))
+2025-05-03T14:22:17.251120Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:22:17.251149Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:22:26.451624Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("o3_backend_error_report.md")}
+2025-05-03T14:22:26.451634Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:30:02.881913Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/types/task.types.ts")}
+2025-05-03T14:30:02.883210Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:30:02.970685Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/types/task.types.ts")}
+2025-05-03T14:30:02.970693Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:30:12.970742Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/services/task.service.ts")}
+2025-05-03T14:30:12.970751Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:30:13.071034Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/services/task.service.ts")}
+2025-05-03T14:30:13.071042Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:30:23.669699Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/services/ai.service.ts")}
+2025-05-03T14:30:23.669708Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:30:24.071087Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/services/ai.service.ts")}
+2025-05-03T14:30:24.071095Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:35:03.981783Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/services/ai.service.ts")}
+2025-05-03T14:35:03.982876Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:35:48.473877Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/app.ts")}
+2025-05-03T14:35:48.473908Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:35:48.674399Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/app.ts")}
+2025-05-03T14:35:48.674420Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:35:49.074388Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/backend/src/app.ts")}
+2025-05-03T14:35:49.074397Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("backend"), path: AnchoredSystemPathBuf("apps/backend") }}))
+2025-05-03T14:45:53.992050Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("skratchpad copy.md")}
+2025-05-03T14:45:53.993382Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:46:02.979422Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("backend_refactorin_plan.md"), AnchoredSystemPathBuf("skratchpad copy.md")}
+2025-05-03T14:46:02.979431Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:46:13.080610Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("backend_refactorin_plan.md")}
+2025-05-03T14:46:13.080619Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:46:15.480744Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("backend_refactorin_plan.md")}
+2025-05-03T14:46:15.480754Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:46:23.880870Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("backend_refactorin_plan.md")}
+2025-05-03T14:46:23.880881Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-03T14:46:24.880136Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("backend_refactorin_plan.md")}
+2025-05-03T14:46:24.880154Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
