@@ -17,6 +17,12 @@ import {
   calculateProgress,
   type TaskGroup,
   type SubTask,
+  makeDragId,
+  makeTaskDragId,
+  makeSubtaskDragId,
+  splitDragId,
+  splitTaskDragId,
+  splitSubtaskDragId
 } from "@/lib/dashboard-utils"
 
 export default function DashboardPage() {
@@ -490,6 +496,7 @@ export default function DashboardPage() {
 
     // タスクの並び替え
     if (type === "task") {
+      // 複合IDから元のIDを取得
       const [sourceGroupId, sourceProjectId] = source.droppableId.split(":")
       const [destGroupId, destProjectId] = destination.droppableId.split(":")
 
@@ -543,6 +550,7 @@ export default function DashboardPage() {
 
     // サブタスクの並び替え
     if (type === "subtask") {
+      // 複合IDから元のIDを取得
       const [sourceGroupId, sourceProjectId, sourceTaskId] = source.droppableId.split(":")
       const [destGroupId, destProjectId, destTaskId] = destination.droppableId.split(":")
 
@@ -763,7 +771,7 @@ export default function DashboardPage() {
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-6">
                     {taskGroups.map((group, groupIndex) => (
-                      <Draggable key={`${group.id}-${groupIndex}`} draggableId={group.id} index={groupIndex}>
+                      <Draggable key={`group-${group.id}`} draggableId={group.id} index={groupIndex}>
                         {(provided) => (
                           <div
                             ref={provided.innerRef}
@@ -798,7 +806,11 @@ export default function DashboardPage() {
                                     {(provided) => (
                                       <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
                                         {group.projects.map((project, projectIndex) => (
-                                          <Draggable key={`${group.id}-${project.id}-${projectIndex}`} draggableId={project.id} index={projectIndex}>
+                                          <Draggable
+                                            key={`${group.id}-${project.id}`}
+                                            draggableId={makeDragId(group.id, project.id)}
+                                            index={projectIndex}
+                                          >
                                             {(provided) => (
                                               <div
                                                 ref={provided.innerRef}
@@ -837,8 +849,8 @@ export default function DashboardPage() {
                                                         >
                                                           {project.tasks.map((task, taskIndex) => (
                                                             <Draggable
-                                                              key={`${group.id}-${project.id}-${task.id}-${taskIndex}`}
-                                                              draggableId={task.id}
+                                                              key={`${group.id}-${project.id}-${task.id}`}
+                                                              draggableId={makeTaskDragId(group.id, project.id, task.id)}
                                                               index={taskIndex}
                                                             >
                                                               {(provided) => (
@@ -893,8 +905,8 @@ export default function DashboardPage() {
                                                                           {task.subtasks.map(
                                                                             (subtask, subtaskIndex) => (
                                                                               <Draggable
-                                                                                key={`${group.id}-${project.id}-${task.id}-${subtask.id}-${subtaskIndex}`}
-                                                                                draggableId={subtask.id}
+                                                                                key={`${group.id}-${project.id}-${task.id}-${subtask.id}`}
+                                                                                draggableId={makeSubtaskDragId(group.id, project.id, task.id, subtask.id)}
                                                                                 index={subtaskIndex}
                                                                               >
                                                                                 {(provided) => (
