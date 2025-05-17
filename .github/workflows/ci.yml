@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop, fix/* ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        cd apps/frontend
+        npm ci
+
+    - name: Lint
+      run: |
+        cd apps/frontend
+        npm run lint
+
+    - name: Test
+      run: |
+        cd apps/frontend
+        npm test
+
+    - name: Build
+      run: |
+        cd apps/frontend
+        npm run build

@@ -4,11 +4,21 @@
     "plugin:react-x/recommended"
   ],
   "plugins": [
-    "react-x"
+    "react-x",
+    "@typescript-eslint"
   ],
   "rules": {
     "react-x/no-duplicate-key": "error",
     "react/no-array-index-key": "warn",
-    "react/jsx-boolean-value": ["error", "never"]
+    "react/jsx-boolean-value": ["error", "never"],
+    "react/no-duplicate-key": "error",
+    "@typescript-eslint/strict-boolean-expressions": [
+      "error",
+      {
+        "allowString": false,
+        "allowNumber": false,
+        "allowNullableObject": false
+      }
+    ]
   }
 }

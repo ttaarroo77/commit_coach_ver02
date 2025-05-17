@@ -802,7 +802,7 @@ export default function DashboardPage() {
 
                               {group.expanded && (
                                 <CardContent className="p-4">
-                                  <Droppable droppableId={group.id} type="project">
+                                  <Droppable droppableId={group.id} type="project" isDropDisabled={!!group.locked}>
                                     {(provided) => (
                                       <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
                                         {group.projects.map((project, projectIndex) => (
@@ -840,7 +840,7 @@ export default function DashboardPage() {
 
                                                 {project.expanded && (
                                                   <div>
-                                                    <Droppable droppableId={`${group.id}:${project.id}`} type="task">
+                                                    <Droppable droppableId={`${group.id}:${project.id}`} type="task" isDropDisabled={!!project.locked}>
                                                       {(provided) => (
                                                         <div
                                                           {...provided.droppableProps}
@@ -896,6 +896,7 @@ export default function DashboardPage() {
                                                                     <Droppable
                                                                       droppableId={`${group.id}:${project.id}:${task.id}`}
                                                                       type="subtask"
+                                                                      isDropDisabled={!!task.locked}
                                                                     >
                                                                       {(provided) => (
                                                                         <div
@@ -971,23 +972,22 @@ export default function DashboardPage() {
                                                             </Draggable>
                                                           ))}
                                                           {provided.placeholder}
-                                                        </div>
-                                                      )}
-                                                    </Droppable>
 
-                                                    {/* タスク追加ボタン */}
-                                                    <div className="mt-2 pl-8">
-                                                      <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="text-gray-500 hover:text-gray-700"
-                                                        onClick={() => handleAddTask(group.id, project.id)}
-                                                      >
-                                                        <Plus className="h-4 w-4 mr-1" />
-                                                        タスクを追加
-                                                      </Button>
-                                                    </div>
-                                                  </div>
+                                                        {/* タスク追加ボタン */}
+                                                        <div className="mt-2 pl-8">
+                                                          <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="text-gray-500 hover:text-gray-700"
+                                                            onClick={() => handleAddTask(group.id, project.id)}
+                                                          >
+                                                            <Plus className="h-4 w-4 mr-1" />
+                                                            タスクを追加
+                                                          </Button>
+                                                        </div>
+                                                      </div>
+                                                    )}
+                                                  </Droppable>
                                                 )}
                                               </div>
                                             )}
