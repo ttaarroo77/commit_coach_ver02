@@ -1,13 +1,13 @@
-import type React from "react"
-import type { Metadata } from "next"
-import Script from "next/script"
-import { AuthProvider } from "@/context/auth-context"
 import "./globals.css"
+import { Inter } from "next/font/google"
+import { AuthProvider } from "@/context/auth-context"
+import Script from "next/script"
 
-export const metadata: Metadata = {
-  title: "コミットコーチ - AIタスク管理アプリ",
-  description: "AIコーチングでタスク管理を次のレベルへ",
-  generator: 'v0.dev'
+const inter = Inter({ subsets: ["latin"] })
+
+export const metadata = {
+  title: "Commit Coach",
+  description: "AI駆動のタスク管理アプリケーション",
 }
 
 export default function RootLayout({
@@ -18,10 +18,19 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <Script
-          id="remove-extension-attrs"
-          strategy="beforeInteractive"
-          src="/_scripts/remove-extension-attrs.js"
+        {/* ★ ページに何より先に実行させる拡張機能属性除去スクリプト */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('[data-redeviation-bs-uid],[cz-shortcut-listen]')
+                  .forEach(el => {
+                    el.removeAttribute('data-redeviation-bs-uid');
+                    el.removeAttribute('cz-shortcut-listen');
+                  });
+              });
+            `,
+          }}
         />
       </head>
       <body>

@@ -1,5 +1,8 @@
 // lib- > dashboard-utils.ts
 
+// nanoidのインポート（インストールが必要な場合はnpm install nanoid）
+import { nanoid } from 'nanoid';
+
 // ダッシュボードに追加するタスクの型定義
 export interface SubTask {
   id: string
@@ -73,9 +76,13 @@ export const saveDashboardData = (data: TaskGroup[]) => {
 
 // デフォルトのダッシュボードデータを取得
 export const getDefaultDashboardData = (): TaskGroup[] => {
+  // 一意のグループIDを生成
+  const todayGroupId = makeGroupId();
+  const unscheduledGroupId = makeGroupId();
+
   return [
     {
-      id: "today",
+      id: todayGroupId, // 一意のIDを使用
       title: "今日のタスク",
       expanded: true,
       projects: [
@@ -184,7 +191,7 @@ export const getDefaultDashboardData = (): TaskGroup[] => {
       ],
     },
     {
-      id: "unscheduled",
+      id: unscheduledGroupId, // 一意のIDを使用
       title: "未定のタスク",
       expanded: true,
       projects: [
@@ -252,7 +259,7 @@ export const getDefaultDashboardData = (): TaskGroup[] => {
 }
 
 // プロジェクト一覧からプロジェクトをダッシュボードに追加（階層構造を維持）
-export const addProjectToDashboard = (projectId: string, projectTitle: string, groupId = "today"): void => {
+export const addProjectToDashboard = (projectId: string, projectTitle: string, groupId = ""): void => {
   const now = new Date()
   const startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
   const endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
@@ -269,6 +276,14 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
         // プロジェクトデータを取得
         const sourceProject = projects[projectId]
 
+        // グループを見つける
+        const dashboardData = getDashboardData()
+        // 指定されたgroupIdが空または存在しない場合は最初のグループを使用
+        let targetGroup = groupId ? dashboardData.find(g => g.id === groupId) : null
+        if (!targetGroup) {
+          targetGroup = dashboardData[0] // 最初のグループを使用
+        }
+
         // ダッシュボード用のプロジェクトデータを作成
         projectData = {
           id: projectId,
@@ -276,8 +291,9 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
           completed: false,
           expanded: true,
           tasks: [],
-          startTime: groupId === "today" ? startTime : undefined,
-          endTime: groupId === "today" ? endTime : undefined,
+          // 今日のタスクグループの場合だけ時間を設定
+          startTime: targetGroup.title === "今日のタスク" ? startTime : undefined,
+          endTime: targetGroup.title === "今日のタスク" ? endTime : undefined,
           status: "todo",
           priority: "中",
         }
@@ -359,6 +375,11 @@ export const addProjectToDashboard = (projectId: string, projectTitle: string, g
 // タスクをプロジェクトに追加（サブタスクも含めて）
 export const addTaskToProject = (taskTitle: string, projectId: string, groupId: string, sourceTaskData?: any): void => {
   const dashboardData = getDashboardData()
+
+  // グループを見つける
+  const targetGroup = dashboardData.find(g => g.id === groupId)
+  if (!targetGroup) return; // グループが見つからない場合は終了
+
   const updatedData = dashboardData.map((group) => {
     if (group.id === groupId) {
       return {
@@ -412,7 +433,7 @@ export const addTaskToProject = (taskTitle: string, projectId: string, groupId: 
             }
 
             // 今日のタスクの場合は時間を設定
-            if (groupId === "today") {
+            if (targetGroup.title === "今日のタスク") {
               const now = new Date()
               newTask.startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
               newTask.endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
@@ -438,8 +459,15 @@ export const addTaskToDashboard = (
   taskId: string,
   taskTitle: string,
   projectTitle?: string,
-  groupId = "today",
+  groupId = ""
 ): void => {
+  // グループIDが空の場合は、最初のグループを使用（通常は「今日のタスク」）
+  const dashboardData = getDashboardData();
+  let targetGroupId = groupId;
+  if (!targetGroupId && dashboardData.length > 0) {
+    targetGroupId = dashboardData[0].id;
+  }
+
   // プロジェクト一覧からタスクデータを取得（実際の実装ではAPIやデータベースから取得）
   let taskData: any = null
   let foundProject = false
@@ -471,16 +499,13 @@ export const addTaskToDashboard = (
     console.error("タスクデータの取得に失敗しました", error)
   }
 
-  // ダッシュボードデータを取得
-  const dashboardData = getDashboardData()
-
   // プロジェクトを探す、または新規作成
   let targetProject: Project | null = null
 
   // プロジェクトタイトルが指定されている場合は、そのプロジェクトを探す
   if (projectTitle) {
     // 指定されたグループ内でプロジェクトを探す
-    const group = dashboardData.find((g) => g.id === groupId)
+    const group = dashboardData.find((g) => g.id === targetGroupId)
     if (group) {
       targetProject = group.projects.find((p) => p.title === projectTitle) || null
     }
@@ -497,15 +522,15 @@ export const addTaskToDashboard = (
         completed: false,
         expanded: true,
         tasks: [],
-        startTime: groupId === "today" ? startTime : undefined,
-        endTime: groupId === "today" ? endTime : undefined,
+        startTime: targetGroupId === "today" ? startTime : undefined,
+        endTime: targetGroupId === "today" ? endTime : undefined,
         status: "todo",
         priority: "中",
       }
 
       // 新規プロジェクトをダッシュボードに追加
       const updatedData = dashboardData.map((group) => {
-        if (group.id === groupId) {
+        if (group.id === targetGroupId) {
           return {
             ...group,
             projects: [...group.projects, targetProject!],
@@ -518,10 +543,10 @@ export const addTaskToDashboard = (
     }
 
     // タスクをプロジェクトに追加
-    addTaskToProject(taskTitle, targetProject.id, groupId, taskData)
+    addTaskToProject(taskTitle, targetProject.id, targetGroupId, taskData)
   } else {
     // プロジェクトタイトルが指定されていない場合は、「その他」プロジェクトを作成または使用
-    const group = dashboardData.find((g) => g.id === groupId)
+    const group = dashboardData.find((g) => g.id === targetGroupId)
     if (group) {
       targetProject = group.projects.find((p) => p.title === "その他") || null
     }
@@ -537,15 +562,15 @@ export const addTaskToDashboard = (
         completed: false,
         expanded: true,
         tasks: [],
-        startTime: groupId === "today" ? startTime : undefined,
-        endTime: groupId === "today" ? endTime : undefined,
+        startTime: targetGroupId === "today" ? startTime : undefined,
+        endTime: targetGroupId === "today" ? endTime : undefined,
         status: "todo",
         priority: "中",
       }
 
       // 「その他」プロジェクトをダッシュボードに追加
       const updatedData = dashboardData.map((group) => {
-        if (group.id === groupId) {
+        if (group.id === targetGroupId) {
           return {
             ...group,
             projects: [...group.projects, targetProject!],
@@ -558,7 +583,7 @@ export const addTaskToDashboard = (
     }
 
     // タスクをプロジェクトに追加
-    addTaskToProject(taskTitle, targetProject.id, groupId, taskData)
+    addTaskToProject(taskTitle, targetProject.id, targetGroupId, taskData)
   }
 }
 
@@ -605,8 +630,15 @@ export const addSubtaskToDashboard = (
   subtaskTitle: string,
   taskTitle?: string,
   projectTitle?: string,
-  groupId = "today",
+  groupId = ""
 ): void => {
+  // グループIDが空の場合は、最初のグループを使用（通常は「今日のタスク」）
+  const dashboardData = getDashboardData();
+  let targetGroupId = groupId;
+  if (!targetGroupId && dashboardData.length > 0) {
+    targetGroupId = dashboardData[0].id;
+  }
+
   // プロジェクト一覧からサブタスクデータを取得（実際の実装ではAPIやデータベースから取得）
   let subtaskData: any = null
   let parentTaskData: any = null
@@ -655,7 +687,7 @@ export const addSubtaskToDashboard = (
   // プロジェクトタイトルが指定されている場合は、そのプロジェクトを探す
   if (projectTitle) {
     // 指定されたグループ内でプロジェクトを探す
-    const group = dashboardData.find((g) => g.id === groupId)
+    const group = dashboardData.find((g) => g.id === targetGroupId)
     if (group) {
       targetProject = group.projects.find((p) => p.title === projectTitle) || null
     }
@@ -672,15 +704,15 @@ export const addSubtaskToDashboard = (
         completed: false,
         expanded: true,
         tasks: [],
-        startTime: groupId === "today" ? startTime : undefined,
-        endTime: groupId === "today" ? endTime : undefined,
+        startTime: targetGroupId === "today" ? startTime : undefined,
+        endTime: targetGroupId === "today" ? endTime : undefined,
         status: "todo",
         priority: "中",
       }
 
       // 新規プロジェクトをダッシュボードに追加
       const updatedData = dashboardData.map((group) => {
-        if (group.id === groupId) {
+        if (group.id === targetGroupId) {
           return {
             ...group,
             projects: [...group.projects, targetProject!],
@@ -708,8 +740,8 @@ export const addSubtaskToDashboard = (
           completed: false,
           expanded: true,
           subtasks: [],
-          startTime: groupId === "today" ? startTime : undefined,
-          endTime: groupId === "today" ? endTime : undefined,
+          startTime: targetGroupId === "today" ? startTime : undefined,
+          endTime: targetGroupId === "today" ? endTime : undefined,
           status: "todo",
           priority: "中",
           progress: 0,
@@ -717,7 +749,7 @@ export const addSubtaskToDashboard = (
 
         // 新規タスクをプロジェクトに追加
         const updatedData = dashboardData.map((group) => {
-          if (group.id === groupId) {
+          if (group.id === targetGroupId) {
             return {
               ...group,
               projects: group.projects.map((project) => {
@@ -745,7 +777,7 @@ export const addSubtaskToDashboard = (
       }
 
       const updatedData = dashboardData.map((group) => {
-        if (group.id === groupId) {
+        if (group.id === targetGroupId) {
           return {
             ...group,
             projects: group.projects.map((project) => {
@@ -786,8 +818,8 @@ export const addSubtaskToDashboard = (
           completed: false,
           expanded: true,
           subtasks: [],
-          startTime: groupId === "today" ? startTime : undefined,
-          endTime: groupId === "today" ? endTime : undefined,
+          startTime: targetGroupId === "today" ? startTime : undefined,
+          endTime: targetGroupId === "today" ? endTime : undefined,
           status: "todo",
           priority: "中",
           progress: 0,
@@ -795,7 +827,7 @@ export const addSubtaskToDashboard = (
 
         // 「その他」タスクをプロジェクトに追加
         const updatedData = dashboardData.map((group) => {
-          if (group.id === groupId) {
+          if (group.id === targetGroupId) {
             return {
               ...group,
               projects: group.projects.map((project) => {
@@ -823,7 +855,7 @@ export const addSubtaskToDashboard = (
       }
 
       const updatedData = dashboardData.map((group) => {
-        if (group.id === groupId) {
+        if (group.id === targetGroupId) {
           return {
             ...group,
             projects: group.projects.map((project) => {
@@ -852,7 +884,7 @@ export const addSubtaskToDashboard = (
     }
   } else {
     // プロジェクトタイトルが指定されていない場合は、「その他」プロジェクトを作成または使用
-    const group = dashboardData.find((g) => g.id === groupId)
+    const group = dashboardData.find((g) => g.id === targetGroupId)
     if (group) {
       targetProject = group.projects.find((p) => p.title === "その他") || null
     }
@@ -868,15 +900,15 @@ export const addSubtaskToDashboard = (
         completed: false,
         expanded: true,
         tasks: [],
-        startTime: groupId === "today" ? startTime : undefined,
-        endTime: groupId === "today" ? endTime : undefined,
+        startTime: targetGroupId === "today" ? startTime : undefined,
+        endTime: targetGroupId === "today" ? endTime : undefined,
         status: "todo",
         priority: "中",
       }
 
       // 「その他」プロジェクトをダッシュボードに追加
       const updatedData = dashboardData.map((group) => {
-        if (group.id === groupId) {
+        if (group.id === targetGroupId) {
           return {
             ...group,
             projects: [...group.projects, targetProject!],
@@ -902,8 +934,8 @@ export const addSubtaskToDashboard = (
         completed: false,
         expanded: true,
         subtasks: [],
-        startTime: groupId === "today" ? startTime : undefined,
-        endTime: groupId === "today" ? endTime : undefined,
+        startTime: targetGroupId === "today" ? startTime : undefined,
+        endTime: targetGroupId === "today" ? endTime : undefined,
         status: "todo",
         priority: "中",
         progress: 0,
@@ -911,7 +943,7 @@ export const addSubtaskToDashboard = (
 
       // 「その他」タスクをプロジェクトに追加
       const updatedData = dashboardData.map((group) => {
-        if (group.id === groupId) {
+        if (group.id === targetGroupId) {
           return {
             ...group,
             projects: group.projects.map((project) => {
@@ -939,7 +971,7 @@ export const addSubtaskToDashboard = (
     }
 
     const updatedData = dashboardData.map((group) => {
-      if (group.id === groupId) {
+      if (group.id === targetGroupId) {
         return {
           ...group,
           projects: group.projects.map((project) => {
@@ -992,12 +1024,21 @@ export const getProjectColor = (project: string) => {
 }
 
 /**
+ * 一意のグループIDを生成する
+ * @param date 日付（デフォルトは現在の日付）
+ * @returns 日付とランダムな文字列を組み合わせた一意のID
+ */
+export const makeGroupId = (date: Date = new Date()): string =>
+  `${date.toISOString().slice(0,10)}-${nanoid(6)}`;
+
+/**
  * ドラッグ&ドロップで使用する複合IDを生成する
  * @param groupId グループID
  * @param projectId プロジェクトID
  * @returns 複合ID（形式: "groupId:projectId"）
  */
-export const makeDragId = (groupId: string, projectId: string): string => `${groupId}:${projectId}`;
+export const makeDragId = (groupId: string, projectId: string): string =>
+  `${groupId}:${projectId}`;
 
 /**
  * タスク用の複合IDを生成する
@@ -1055,3 +1096,8 @@ export const splitSubtaskDragId = (
   const [groupId, projectId, taskId, subtaskId] = dragId.split(':');
   return { groupId, projectId, taskId, subtaskId };
 };
+
+// 「今日のタスク」グループを探す
+const getGroupByTitle = (title: string, groups: TaskGroup[]): TaskGroup | undefined => {
+  return groups.find(group => group.title === title);
+}

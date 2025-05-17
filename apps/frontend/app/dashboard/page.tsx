@@ -475,14 +475,14 @@ export default function DashboardPage() {
           const [movedProject] = sourceGroup.projects.splice(source.index, 1)
 
           // 今日のタスクに移動する場合は時間を設定
-          if (destGroupId === "today" && !movedProject.startTime) {
+          if (destGroup.title === "今日のタスク" && !movedProject.startTime) {
             const now = new Date()
             movedProject.startTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
             movedProject.endTime = `${(now.getHours() + 1).toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
           }
 
           // 未定のタスクに移動する場合は時間を削除
-          if (destGroupId === "unscheduled") {
+          if (destGroup.title === "未定のタスク") {
             delete movedProject.startTime
             delete movedProject.endTime
           }
