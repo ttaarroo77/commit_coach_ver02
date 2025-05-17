@@ -16,8 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body suppressHydrationWarning>
-        <AuthProvider>{children}</AuthProvider>
+      <body>
+        <div id="__extension_safe_root" suppressHydrationWarning>
+          <AuthProvider>{children}</AuthProvider>
+        </div>
       </body>
     </html>
   )
