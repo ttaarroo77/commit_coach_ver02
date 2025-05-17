@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body>
         <div id="__extension_safe_root" suppressHydrationWarning>
           <AuthProvider>{children}</AuthProvider>
